@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEIM Australia | LCA & Performance Modeling Tool</title>
+    
+    <!-- Tailwind CSS for Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(5px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        
+        /* --- NATIVE HIGH-FIDELITY PDF PRINT STYLES --- */
+        @media print {
+            @page { size: landscape; margin: 10mm; }
+            body { background-color: #f8fafc !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* Hide UI controls and redundant info */
+            header, #controls-section, #tab-buttons, #main-intro, .print-hide { display: none !important; }
+            
+            /* Expand main results to full width */
+            #main-results { grid-column: span 12 / span 12 !important; }
+            
+            /* Show Print-only Header Summary */
+            #print-summary { display: block !important; }
+            
+            /* Un-hide all tabs for the PDF report */
+            .tab-content { display: block !important; page-break-inside: avoid; padding-top: 1.5rem; border-top: 2px solid #f1f5f9; margin-top: 1.5rem; }
+            
+            /* Force Grids (overrides Tailwind responsive limits during print) */
+            .print-grid-4 { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1.5rem !important; }
+            .print-grid-3 { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 1.5rem !important; }
+            .print-grid-2 { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1.5rem !important; }
+            .print-flex-row { display: flex !important; flex-direction: row !important; align-items: flex-end !important; }
+            
+            /* Prevent awkward page breaks inside cards */
+            .break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-emerald-200 overflow-x-hidden pb-10">
+
+    <!-- HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="flex flex-col">
+                    <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">KEIM Australia</h1>
+                    <p class="text-[10px] sm:text-xs text-emerald-700 uppercase tracking-widest font-bold leading-tight">LCA & Performance Modeling</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button onclick="generatePDF()" class="hidden sm:flex items-center bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm transform active:scale-95">
+                    <i class="fa-solid fa-download mr-2"></i> Download Report
+                </button>
+                <div class="hidden md:flex items-center space-x-2 border-l border-slate-200 pl-4">
+                    <span class="flex items-center bg-red-50 text-red-700 px-2 py-1 rounded-full text-[10px] font-bold border border-red-200">
+                        <i class="fa-solid fa-fire mr-1"></i> AS 1530.1
+                    </span>
+                    <span class="flex items-center bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full text-[10px] font-bold border border-emerald-200">
+                        <i class="fa-solid fa-file-contract mr-1"></i> EN 15804
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 bg-slate-50">
+        
+        <!-- INTRO (Hidden in PDF) -->
+        <div id="main-intro" class="mb-6 sm:mb-8 max-w-4xl">
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Life Cycle Assessment (LCA) Projection</h2>
+            <p class="text-sm sm:text-lg text-slate-600 leading-relaxed">
+                This tool models projected carbon data in accordance with <strong>EN 15804 methodology</strong>. It compares the upfront embodied carbon (Modules A1-A5) and operational maintenance requirements (Modules B1-B7) of inorganic silicate binders against standard polymer dispersions over a specified Reference Service Life (RSL).
+            </p>
+        </div>
+
+        <!-- DASHBOARD & CALCULATOR -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 sm:mb-16">
+            
+            <!-- Controls (Left Sidebar - Hidden in PDF) -->
+            <div id="controls-section" class="lg:col-span-4 space-y-6">
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center mb-5">
+                        <i class="fa-solid fa-sliders mr-2 text-emerald-600"></i> Project Parameters
+                    </h3>
+                    
+                    <!-- Scope Toggle -->
+                    <div class="mb-6">
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider">Application Scope</label>
+                        <div class="flex rounded-xl overflow-hidden border border-slate-200 p-1 bg-slate-100 shadow-inner">
+                            <button id="btn-exterior" onclick="setScope('exterior')" class="flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-white shadow text-emerald-700 border border-slate-200">Exterior Facade</button>
+                            <button id="btn-interior" onclick="setScope('interior')" class="flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 border border-transparent">Interior Surfaces</button>
+                        </div>
+                    </div>
+
+                    <!-- Area Input -->
+                    <div class="mb-6">
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Gross Surface Area (m²)</label>
+                        <input type="range" id="area-slider" min="100" max="20000" step="100" value="2500" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 mt-3" oninput="updateInputs('area', this.value)" />
+                        <div class="mt-4 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
+                            <input type="number" id="area-input" value="2500" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="updateInputs('area', this.value)" />
+                            <span class="text-sm font-bold text-slate-500 px-3">m²</span>
+                        </div>
+                    </div>
+
+                    <!-- Lifespan Input -->
+                    <div class="mb-2">
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Reference Service Life (RSL)</label>
+                        <input type="range" id="life-slider" min="10" max="100" step="5" value="60" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 mt-3" oninput="updateInputs('life', this.value)" />
+                        <div class="mt-4 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
+                            <input type="number" id="life-input" value="60" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="updateInputs('life', this.value)" />
+                            <span class="text-sm font-bold text-slate-500 px-3">Years</span>
+                        </div>
+                    </div>
+
+                    <!-- PDF Download Button -->
+                    <div class="mt-8 pt-6 border-t border-slate-200">
+                        <button onclick="generatePDF()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all flex items-center justify-center transform active:scale-95">
+                            <i class="fa-solid fa-file-pdf mr-2"></i> Download Full Report
+                        </button>
+                        <p class="text-[10px] text-center text-slate-400 mt-3 font-medium uppercase tracking-wider">Compiles PDF based on parameters</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results & Charts (Right Section -> Becomes Full Width in PDF) -->
+            <div id="main-results" class="lg:col-span-8 space-y-6">
+                
+                <!-- Report Summary Header (Only visible in PDF) -->
+                <div id="print-summary" class="hidden mb-6 bg-slate-900 text-white p-8 rounded-3xl shadow-md border border-slate-800 break-inside-avoid">
+                    <div class="flex justify-between items-start border-b border-slate-700 pb-6 mb-6">
+                        <div>
+                            <h2 class="text-3xl font-black tracking-tight mb-1">Environmental Impact Projection</h2>
+                            <p class="text-emerald-400 text-sm font-bold uppercase tracking-widest">KEIM Australia</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-slate-400 text-xs font-medium mb-1">Generated parameters for:</p>
+                            <p class="text-xl font-bold bg-slate-800 px-3 py-1 rounded border border-slate-700 inline-block capitalize" id="print-scope">Exterior</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <span class="text-slate-400 uppercase tracking-widest text-[10px] font-bold block mb-1">Gross Surface Area</span>
+                            <span class="font-black text-2xl text-white"><span id="print-area">2500</span> <span class="text-base text-slate-400">m²</span></span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 uppercase tracking-widest text-[10px] font-bold block mb-1">Reference Service Life (RSL)</span>
+                            <span class="font-black text-2xl text-white"><span id="print-life">60</span> <span class="text-base text-slate-400">Years</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Metric Card -->
+                <div class="bg-gradient-to-br from-emerald-600 to-emerald-900 rounded-2xl p-6 sm:p-8 shadow-lg text-white relative overflow-hidden flex flex-col justify-center break-inside-avoid">
+                    <div class="absolute top-0 right-0 p-4 sm:p-8 opacity-10 pointer-events-none">
+                        <i class="fa-solid fa-chart-line text-[200px]"></i>
+                    </div>
+                    
+                    <div class="relative z-10 border-b border-emerald-500/30 pb-6 mb-6">
+                        <div class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-400/20 border border-emerald-400/30 text-emerald-100 text-[10px] sm:text-xs font-black tracking-widest uppercase mb-4 sm:mb-6">
+                            <i class="fa-solid fa-check-double mr-1.5"></i> PROJECTED LCA OUTCOME
+                        </div>
+                        <div class="flex flex-col md:flex-row md:items-end md:space-x-6 mb-2 print-flex-row">
+                            <h2 class="text-7xl sm:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-none drop-shadow-md">
+                                <span id="out-co2-percent">0</span><span class="text-4xl sm:text-6xl text-emerald-300">%</span>
+                            </h2>
+                            <div class="pb-2 sm:pb-4 text-emerald-100 font-bold text-sm sm:text-lg uppercase tracking-widest mt-2 md:mt-0">
+                                Total Lifecycle<br/>CO₂e Variance
+                            </div>
+                        </div>
+                        <p class="text-sm sm:text-base text-emerald-50 max-w-2xl font-medium mt-2">
+                            A projected net reduction of <strong class="text-white bg-emerald-500/30 px-2 py-0.5 rounded shadow-sm"><span id="out-total-co2">0</span> kg of CO₂e</strong> emissions over the selected <span id="out-design-life">60</span>-year design life versus polymer dispersions.
+                        </p>
+                    </div>
+
+                    <!-- Tangible Impact Equivalencies -->
+                    <div class="relative z-10">
+                        <p class="text-[10px] sm:text-xs font-bold text-emerald-300 uppercase tracking-widest mb-4">ESG Reporting Equivalencies for <span id="out-total-co2-sub">0</span> kg CO₂e:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 print-grid-2">
+                            <div class="bg-emerald-800/50 rounded-xl p-4 border border-emerald-500/30 backdrop-blur-sm flex items-center">
+                                <i class="fa-solid fa-car text-3xl text-emerald-400 mr-4 shrink-0 w-8 text-center"></i>
+                                <div>
+                                    <p class="text-lg sm:text-xl font-black text-white"><span id="out-km">0</span> km</p>
+                                    <p class="text-[10px] sm:text-xs text-emerald-200 leading-tight mt-0.5">Avg. passenger vehicle (170g/km).<br/><strong class="text-emerald-100">Equates to <span id="out-car-years">0</span> vehicle-years.</strong></p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-800/50 rounded-xl p-4 border border-emerald-500/30 backdrop-blur-sm flex items-center">
+                                <i class="fa-solid fa-house-chimney-bolt text-3xl text-emerald-400 mr-4 shrink-0 w-8 text-center"></i>
+                                <div>
+                                    <p class="text-lg sm:text-xl font-black text-white"><span id="out-home-val">0</span> <span id="out-home-unit">Years</span></p>
+                                    <p class="text-[10px] sm:text-xs text-emerald-200 leading-tight mt-0.5">Energy for avg. AU household.<br/><span class="opacity-75">(grid baseline: 5 tonnes CO₂/yr)</span></p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-800/50 rounded-xl p-4 border border-emerald-500/30 backdrop-blur-sm flex items-center">
+                                <i class="fa-solid fa-tree text-3xl text-emerald-400 mr-4 shrink-0 w-8 text-center"></i>
+                                <div>
+                                    <p class="text-lg sm:text-xl font-black text-white"><span id="out-trees">0</span> Trees</p>
+                                    <p class="text-[10px] sm:text-xs text-emerald-200 leading-tight mt-0.5">Annual biological sequestration.<br/><span class="opacity-75">(21kg CO₂ per mature tree)</span></p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-800/50 rounded-xl p-4 border border-emerald-500/30 backdrop-blur-sm flex items-center">
+                                <i class="fa-solid fa-plane text-3xl text-emerald-400 mr-4 shrink-0 w-8 text-center"></i>
+                                <div>
+                                    <p class="text-lg sm:text-xl font-black text-white"><span id="out-flights">0</span> Flights</p>
+                                    <p class="text-[10px] sm:text-xs text-emerald-200 leading-tight mt-0.5">Domestic aviation emissions.<br/><span class="opacity-75">(165kg/flight SYD-MEL)</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 Micro Data Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 break-inside-avoid print-grid-4">
+                    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                        <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-fill-drip text-sm"></i></div></div>
+                        <div>
+                            <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-paint">0</span> <span class="text-sm sm:text-lg text-slate-400">L</span></p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Material Vol. Reduction</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                        <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-arrows-spin text-sm"></i></div></div>
+                        <div>
+                            <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-repaints">0</span> <span class="text-sm sm:text-lg text-slate-400">Cycles</span></p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">LCA Phase B2 Avoided</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                        <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-wind text-sm"></i></div></div>
+                        <div>
+                            <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-vocs">0</span> <span class="text-sm sm:text-lg text-slate-400">kg</span></p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">VOCs Prevented</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                        <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-cubes text-sm"></i></div></div>
+                        <div>
+                            <p class="text-xl sm:text-2xl font-black text-slate-700"><span id="out-micro">0</span> <span class="text-sm sm:text-lg text-slate-400">kg</span></p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Polymer Binder Mass</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stacked Carbon Chart -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 mt-6 break-inside-avoid">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 print-flex-row">
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
+                            <i class="fa-solid fa-chart-column mr-2 text-emerald-600"></i> Life Cycle Carbon Profile
+                        </h3>
+                        <div class="flex items-center space-x-4 mt-4 sm:mt-0 text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider">
+                            <div class="flex items-center"><div class="w-3 h-3 rounded bg-emerald-500 mr-1.5"></div> Upfront (A1-A5)</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded bg-slate-800 mr-1.5"></div> Maintenance (B1-B7)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex h-64 sm:h-72 items-end space-x-4 sm:space-x-8 px-2 sm:px-16 border-b-2 border-slate-100 pb-2">
+                        <!-- Acrylic Bar -->
+                        <div class="flex-1 flex flex-col items-center group h-full justify-end relative">
+                            <div id="chart-acr-total" class="absolute -top-8 text-lg sm:text-xl font-black text-slate-700 transition-transform group-hover:-translate-y-1">0</div>
+                            <div class="w-full max-w-[80px] sm:max-w-[120px] flex flex-col-reverse h-full justify-start rounded-t-xl overflow-hidden shadow-sm border border-slate-200 border-b-0">
+                                <div id="chart-acr-up" class="bg-slate-400 w-full transition-all duration-700 flex items-center justify-center border-t border-slate-500/30">
+                                    <span id="chart-acr-up-txt" class="text-white text-[10px] sm:text-xs font-bold"></span>
+                                </div>
+                                <div id="chart-acr-maint" class="bg-slate-700 w-full transition-all duration-700 flex items-center justify-center">
+                                    <span id="chart-acr-maint-txt" class="text-slate-200 text-[10px] sm:text-xs font-bold"></span>
+                                </div>
+                            </div>
+                            <div class="mt-3 font-black text-slate-800 text-center uppercase tracking-wider text-[10px] sm:text-xs leading-tight">Polymer<br/>Dispersion</div>
+                        </div>
+
+                        <!-- Keim Bar -->
+                        <div class="flex-1 flex flex-col items-center group h-full justify-end relative">
+                            <div id="chart-keim-total" class="absolute -top-8 text-lg sm:text-xl font-black text-emerald-600 transition-transform group-hover:-translate-y-1">0</div>
+                            <div class="w-full max-w-[80px] sm:max-w-[120px] flex flex-col-reverse h-full justify-start rounded-t-xl overflow-hidden shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                                <div id="chart-keim-up" class="bg-emerald-500 w-full transition-all duration-700 flex items-center justify-center border-t border-emerald-400/30">
+                                    <span id="chart-keim-up-txt" class="text-white text-[10px] sm:text-xs font-bold"></span>
+                                </div>
+                                <div id="chart-keim-maint" class="bg-emerald-900 w-full transition-all duration-700 flex items-center justify-center">
+                                    <span id="chart-keim-maint-txt" class="text-emerald-100 text-[10px] sm:text-xs font-bold"></span>
+                                </div>
+                            </div>
+                            <div class="mt-3 font-black text-emerald-700 text-center uppercase tracking-wider text-[10px] sm:text-xs leading-tight">Inorganic<br/>Silicate</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col text-xs text-slate-500">
+                        <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>Methodology Note:</strong> Modeling relies on parameters established by <strong>EN 15804</strong> for Life Cycle Assessments. <em>Upfront Carbon (A1-A5)</em> reflects raw material extraction, transport, and manufacturing data. <em>Maintenance Carbon (B1-B7)</em> illustrates compounding embodied carbon triggered by operational recoating when standard Reference Service Lifespan (RSL) limits are reached.</p>
+                        <p class="text-[10px] italic text-slate-400 border-t border-slate-200 pt-2 mt-1">Disclaimer: The quantitative metrics (GWP/CO₂e, VOCs, lifespans) generated by this tool are based on representative, aggregated baseline data drawn from industry-standard Environmental Product Declarations (EPDs) for silicate and acrylic systems. Actual project performance will vary depending on specific substrate conditions, environmental exposure, and precise product formulation specified. For certified project documentation, please refer to product-specific EPD certificates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALIGNMENT WITH MACRO-ENVIRONMENTAL FRAMEWORKS -->
+        <div class="mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
+            <div class="text-center mb-10 sm:mb-12">
+                <span class="bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 inline-block shadow-sm">ESD Specification Alignment</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Meeting Global Sustainability Targets</h2>
+                <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">How specifying inorganic silicate technology directly satisfies the requirements of Australia’s most rigorous architectural, carbon, and circularity frameworks.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 print-grid-3">
+                
+                <!-- Net Zero target -->
+                <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-slate-800 transition-colors"></div>
+                    <div class="w-14 h-14 bg-slate-100 text-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-200">
+                        <i class="fa-solid fa-scale-balanced text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3">Net Zero Asset Trajectories</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Achieving Net Zero requires aggressive reduction of Whole Life Carbon (WLC), focusing heavily on Scope 3 emissions.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-arrow-trend-down text-slate-600 mr-3 mt-1 shrink-0"></i>
+                            <div><span class="text-sm font-bold text-slate-800">Eliminating Phase B Carbon:</span> <span class="text-sm text-slate-500">By matching the asset's structural lifespan, KEIM removes the repetitive embodied carbon spikes associated with 7-10 year repainting cycles.</span></div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-temperature-arrow-down text-slate-600 mr-3 mt-1 shrink-0"></i>
+                            <div><span class="text-sm font-bold text-slate-800">Operational Energy (B6):</span> <span class="text-sm text-slate-500">Passive TSR cooling and substrate moisture reduction directly lower HVAC operational demands, reducing overall energy intensity.</span></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Passivhaus -->
+                <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-blue-500 transition-colors"></div>
+                    <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-blue-100">
+                        <i class="fa-solid fa-house-circle-check text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3">Passive House (Passivhaus)</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Highly insulated, airtight building envelopes present critical challenges for moisture management and Indoor Air Quality (IAQ).
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-wind text-blue-500 mr-3 mt-1 shrink-0"></i>
+                            <div><span class="text-sm font-bold text-slate-800">Vapor Permeability:</span> <span class="text-sm text-slate-500">An Sd-value of &lt;0.01m allows structural vapor to diffuse freely, entirely preventing interstitial condensation and mold in highly sealed envelopes.</span></div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-lungs text-blue-500 mr-3 mt-1 shrink-0"></i>
+                            <div><span class="text-sm font-bold text-slate-800">Pristine IAQ:</span> <span class="text-sm text-slate-500">Absolute zero VOCs, zero solvents, and zero synthetic biocides ensure the airtight interior environment remains perfectly healthy from day one.</span></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Circular Economy -->
+                <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500 transition-colors"></div>
+                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-emerald-100">
+                        <i class="fa-solid fa-arrows-spin text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 mb-3">The Circular Economy</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Transitioning the construction sector away from linear "take-make-dispose" models utilizing petrochemical plastics.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-cubes text-emerald-500 mr-3 mt-1 shrink-0"></i>
+                            <div><span class="text-sm font-bold text-slate-800">Cradle to Cradle Certified®:</span> <span class="text-sm text-slate-500">Manufactured from abundant, raw earth minerals. Validated to be safe for human health and the environment.</span></div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-recycle text-emerald-500 mr-3 mt-1 shrink-0"></i>
+                            <div><span class="text-sm font-bold text-slate-800">Closed-Loop End of Life:</span> <span class="text-sm text-slate-500">At demolition (Module C), KEIM-coated masonry is free of plastic films. It is crushed and re-enters the supply chain as clean aggregate fill.</span></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE MATRIX TABS -->
+        <div class="mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Performance Metrics by Discipline</h2>
+                <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">Evaluating the structural, aesthetic, and financial impact of inorganic silicate systems across specific architectural and engineering disciplines.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div id="tab-buttons" class="flex border-b border-slate-200 overflow-x-auto hide-scrollbar">
+                    <button id="tab-btn-owner" onclick="switchTab('owner')" class="flex-shrink-0 min-w-[120px] flex-1 py-4 px-2 text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex justify-center items-center bg-emerald-50 text-emerald-700 border-b-2 border-emerald-600">
+                        <i class="fa-solid fa-building-user mr-2"></i> Asset Owner / LCC
+                    </button>
+                    <button id="tab-btn-architect" onclick="switchTab('architect')" class="flex-shrink-0 min-w-[120px] flex-1 py-4 px-2 text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex justify-center items-center text-slate-500 hover:bg-slate-50 border-b-2 border-transparent">
+                        <i class="fa-solid fa-pen-ruler mr-2"></i> Architect / Specifier
+                    </button>
+                    <button id="tab-btn-sus" onclick="switchTab('sus')" class="flex-shrink-0 min-w-[120px] flex-1 py-4 px-2 text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex justify-center items-center text-slate-500 hover:bg-slate-50 border-b-2 border-transparent">
+                        <i class="fa-solid fa-leaf mr-2"></i> Green Star & ESD
+                    </button>
+                </div>
+
+                <div class="p-6 sm:p-8 relative min-h-[250px]">
+                    <div id="tab-owner" class="tab-content active">
+                        <h3 class="text-xl font-black text-slate-900 mb-3">Lifecycle Costing (LCC) Optimization</h3>
+                        <p class="text-slate-600 mb-6 leading-relaxed">The primary financial liability of a facade coating is not the initial material supply (Module A1-A3), but the operational expenditure (OPEX) during the Use Phase (Module B2). Repainting cycles mandate significant logistical outlays including scaffolding, site management, and operational downtime.</p>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 print-grid-2">
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Extended Reference Service Life (RSL)</strong> By chemically bonding to the substrate (silicification), the coating achieves an RSL that aligns with the structural lifespan of the masonry asset.</li>
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Operational Continuity</strong> Extending intervals between facade remediation minimizes disruption to tenants and mitigates risks associated with high-access maintenance.</li>
+                        </ul>
+                    </div>
+                    <div id="tab-architect" class="tab-content">
+                        <h3 class="text-xl font-black text-slate-900 mb-3">Aesthetic Longevity & Substrate Compatibility</h3>
+                        <p class="text-slate-600 mb-6 leading-relaxed">Silicate systems do not form a macro-molecular film. They penetrate the substrate, preserving the natural materiality, texture, and acoustic properties of concrete, render, and brick while delivering a flat-matte finish.</p>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 print-grid-2">
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Absolute UV Stability (Class A1)</strong> Utilizing exclusively inorganic earth pigments ensures resistance to photochemical degradation, maintaining design intent over decades.</li>
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">High Permeability (Low Sd-Value)</strong> Prevents osmotic blistering by permitting structural moisture vapor to pass freely, which is critical for both modern off-form concrete and heritage masonry.</li>
+                        </ul>
+                    </div>
+                    <div id="tab-sus" class="tab-content">
+                        <h3 class="text-xl font-black text-slate-900 mb-3">Green Star Buildings & New Green Star Fitouts</h3>
+                        <p class="text-slate-600 mb-6 leading-relaxed">Achieving high ratings under the latest Green Star frameworks requires validated data and a shift towards circular, healthy materials. Inorganic silicates directly support the aggressive carbon and health targets of both base building and interior fitout tools.</p>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 print-grid-2">
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Green Star Buildings (v1.1)</strong> Targets the 'Positive' category by heavily lowering Whole Life Carbon (Upfront A1-A3 + Maintenance B2) and mitigating urban heat island effects (Passive TSR).</li>
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Green Star Fitouts</strong> Maximizes points in the 'Healthy' and 'Places' categories via absolute zero VOC emissions, zero biocides, and Cradle-to-Cradle Certified® material health.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- THE SCIENCE OF SILICIFICATION -->
+        <div class="border-t-2 border-slate-100 pt-12 sm:pt-16 break-inside-avoid">
+            <div class="text-center mb-10 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Scientific Cross-Section: Mode of Degradation vs. Silicification</h2>
+                <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">A comparative structural analysis of synthetic polymer film-forming binders versus inorganic potassium silicate binders.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-16 print-grid-2">
+                <!-- Acrylic Graphic -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col">
+                    <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+                        <div><span class="text-sm font-black text-slate-800 uppercase tracking-widest block">Standard Polymer Dispersion</span><span class="text-[10px] text-slate-500 font-bold tracking-wider">ACRYLIC COATING</span></div>
+                        <div class="text-right"><span class="text-[10px] text-slate-400 uppercase tracking-widest block font-bold mb-1">Sd-Value (Permeability)</span><span class="text-xs font-black text-slate-600 bg-slate-100 px-2 py-1 rounded border border-slate-200">&gt; 0.1m (High Resistance)</span></div>
+                    </div>
+                    <div class="w-full h-auto bg-slate-50 rounded-xl border border-slate-200 p-2 overflow-hidden flex-shrink-0">
+                        <svg viewBox="0 0 400 250" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="concrete-acrylic" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <circle cx="2" cy="2" r="1" fill="#cbd5e1" />
+                                    <circle cx="10" cy="8" r="1.5" fill="#94a3b8" />
+                                    <circle cx="16" cy="18" r="1" fill="#cbd5e1" />
+                                    <path d="M 5,15 L 8,12 L 12,16 Z" fill="#e2e8f0" />
+                                </pattern>
+                            </defs>
+                            <rect x="0" y="100" width="400" height="150" fill="#f1f5f9" />
+                            <rect x="0" y="100" width="400" height="150" fill="url(#concrete-acrylic)" />
+                            <g class="text-blue-400 opacity-80">
+                                <circle cx="180" cy="105" r="4" fill="currentColor"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite" /></circle>
+                                <circle cx="200" cy="115" r="6" fill="currentColor"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" begin="0.5s" repeatCount="indefinite" /></circle>
+                                <circle cx="220" cy="108" r="5" fill="currentColor"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" begin="1s" repeatCount="indefinite" /></circle>
+                                <path d="M190,125 Q200,80 210,125" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2,2" />
+                                <path d="M170,135 Q200,70 230,135" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2,2" />
+                            </g>
+                            <path d="M0,100 L120,100 C150,100 160,50 200,50 C240,50 250,100 280,100 L400,100 L400,85 L280,85 C250,85 240,35 200,35 C160,35 150,85 120,85 L0,85 Z" fill="#64748b" opacity="0.9" />
+                            <g stroke="#f59e0b" stroke-width="2" stroke-linecap="round">
+                                <path d="M50,10 L40,30" /><polygon points="40,30 45,25 35,25" fill="#f59e0b" stroke="none" />
+                                <path d="M200,5 L200,25" /><polygon points="200,25 205,20 195,20" fill="#f59e0b" stroke="none" />
+                                <path d="M350,10 L360,30" /><polygon points="360,30 355,25 365,25" fill="#f59e0b" stroke="none" />
+                            </g>
+                            <g font-size="10" font-family="sans-serif" font-weight="bold" fill="#1e293b">
+                                <text x="10" y="75">Synthetic Polymer Film</text>
+                                <text x="215" y="65" fill="#ef4444">Adhesion Failure (Blistering)</text>
+                                <text x="10" y="120" fill="#64748b">Masonry Substrate</text>
+                                <text x="235" y="130" fill="#3b82f6">Osmotic / Vapor Pressure</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="mt-6 space-y-3 flex-grow">
+                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-slate-200 pl-3"><strong>Mechanism:</strong> Macro-molecular polymer resins cure to form a dense, continuous thermoplastic film over the substrate surface.</p>
+                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-slate-200 pl-3"><strong>Mode of Degradation:</strong> The high Sd-value of the polymer film impedes vapor diffusion. Subsequent condensation creates osmotic pressure that overcomes mechanical surface adhesion, leading to blistering, flaking, and structural exposure.</p>
+                    </div>
+                </div>
+
+                <!-- Keim Graphic -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border-2 border-emerald-100 flex flex-col">
+                    <div class="flex items-center justify-between mb-6 border-b border-emerald-50 pb-4">
+                        <div><span class="text-sm font-black text-emerald-800 uppercase tracking-widest block">Inorganic Silicate</span><span class="text-[10px] text-emerald-600 font-bold tracking-wider">POTASSIUM SILICATE BINDER</span></div>
+                        <div class="text-right"><span class="text-[10px] text-slate-400 uppercase tracking-widest block font-bold mb-1">Sd-Value (Permeability)</span><span class="text-xs font-black text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">&lt; 0.01m (Highly Porous)</span></div>
+                    </div>
+                    <div class="w-full h-auto bg-slate-50 rounded-xl border border-slate-200 p-2 overflow-hidden flex-shrink-0">
+                        <svg viewBox="0 0 400 250" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="concrete-keim" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <circle cx="2" cy="2" r="1" fill="#cbd5e1" />
+                                    <circle cx="10" cy="8" r="1.5" fill="#94a3b8" />
+                                    <circle cx="16" cy="18" r="1" fill="#cbd5e1" />
+                                    <path d="M 5,15 L 8,12 L 12,16 Z" fill="#e2e8f0" />
+                                </pattern>
+                            </defs>
+                            <rect x="0" y="100" width="400" height="150" fill="#f1f5f9" />
+                            <rect x="0" y="100" width="400" height="150" fill="url(#concrete-keim)" />
+                            <path d="M0,85 Q20,83 40,85 T80,85 T120,86 T160,84 T200,85 T240,86 T280,84 T320,85 T360,86 T400,85 L400,100 L0,100 Z" fill="#34d399" opacity="0.5" />
+                            
+                            <g stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3" opacity="0.6">
+                                <path d="M60,180 L60,40"><animate attributeName="stroke-dashoffset" from="140" to="0" dur="2s" repeatCount="indefinite" /></path>
+                                <polygon points="60,35 55,45 65,45" fill="#3b82f6" stroke="none" />
+                                <path d="M200,180 L200,40"><animate attributeName="stroke-dashoffset" from="140" to="0" dur="2s" begin="0.5s" repeatCount="indefinite" /></path>
+                                <polygon points="200,35 195,45 205,45" fill="#3b82f6" stroke="none" />
+                                <path d="M340,180 L340,40"><animate attributeName="stroke-dashoffset" from="140" to="0" dur="2s" begin="1s" repeatCount="indefinite" /></path>
+                                <polygon points="340,35 335,45 345,45" fill="#3b82f6" stroke="none" />
+                            </g>
+                            
+                            <g stroke="#f59e0b" stroke-width="2" stroke-linecap="round">
+                                <path d="M120,10 L140,30" /><path d="M140,30 L160,10" />
+                                <path d="M260,10 L280,30" /><path d="M280,30 L300,10" />
+                            </g>
+                            <g font-size="10" font-family="sans-serif" font-weight="bold" fill="#1e293b">
+                                <text x="10" y="70" fill="#047857">Inorganic Pigments (UV Stable)</text>
+                                <text x="215" y="115" fill="#047857">Silicification Zone (Chemical Bond)</text>
+                                <text x="10" y="140" fill="#64748b">Masonry Substrate</text>
+                                <text x="215" y="55" fill="#3b82f6">Unhindered Vapor Diffusion</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="mt-6 space-y-3 flex-grow">
+                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-emerald-200 pl-3"><strong>Mechanism:</strong> Liquid potassium silicate undergoes a reactive chemical crystallization process (silicification) with calcium carbonate/quartz present in the masonry substrate.</p>
+                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-emerald-200 pl-3"><strong>Performance Vector:</strong> Because no distinct interfacial film is formed, mechanical adhesion failure is physically precluded. An ultra-low Sd-value permits unhindered vapor diffusion, establishing a balanced moisture equilibrium within the structural wall.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MICROPLASTICS CRISIS -> POLYMER DEGRADATION -->
+        <div class="bg-slate-900 rounded-3xl p-8 sm:p-12 mb-16 relative overflow-hidden shadow-2xl border border-slate-700 break-inside-avoid">
+            <div class="absolute top-0 right-0 opacity-5"><i class="fa-solid fa-layer-group text-[300px] text-slate-300 transform translate-x-1/4 -translate-y-1/4"></i></div>
+            
+            <div class="relative z-10">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-12 h-12 bg-slate-800 text-slate-300 rounded-xl flex items-center justify-center border border-slate-700">
+                        <i class="fa-solid fa-microscope text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-slate-400 font-bold uppercase tracking-widest text-xs">Environmental Risk Mitigation</h2>
+                        <h3 class="text-3xl font-black text-white">Polymer Matrix Degradation</h3>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 print-grid-2">
+                    <div>
+                        <p class="text-slate-300 text-lg leading-relaxed mb-6">
+                            Architectural coatings are currently recognized globally as a primary source of environmental microplastics. As environmental regulations tighten, the specification of exterior polymer coatings represents an escalating liability for asset owners.
+                        </p>
+                        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700">
+                            <h4 class="text-white font-bold mb-3 flex items-center"><i class="fa-solid fa-chart-line text-slate-400 mr-2"></i> Mechanism of Particulate Shedding</h4>
+                            <p class="text-sm text-slate-400 leading-relaxed mb-4">
+                                Polymer-based coatings (acrylics/elastomerics) experience continuous photolytic and thermal degradation under ultraviolet exposure. This manifests as chalking, thickness loss, and delamination. Routine high-pressure facade maintenance subsequently flushes these degraded polymer particulates directly into municipal stormwater infrastructure.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <div class="bg-slate-800 p-8 rounded-2xl border border-slate-600 text-center">
+                            <p class="text-slate-400 font-black uppercase tracking-widest text-xs mb-2">Projected Polymer Binder Mass:</p>
+                            <p class="text-5xl sm:text-6xl font-black text-white mb-2"><span id="out-micro-large">0</span> <span class="text-2xl text-slate-400">kg</span></p>
+                            <p class="text-sm text-slate-300 font-medium">Of dry polymer plastic will be introduced to the facade over the specified RSL if standard dispersions are specified.</p>
+                            <div class="mt-8 pt-6 border-t border-slate-700">
+                                <p class="text-emerald-400 font-bold text-lg">Inorganic Silicates contain 0% plastic film.</p>
+                                <p class="text-xs text-slate-400 mt-2 uppercase tracking-wide">Pre-empt future compliance risks regarding microplastic shedding.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHEMICAL COMPOSITION & TOXICITY -->
+        <div class="mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
+            <div class="text-center mb-10 sm:mb-12">
+                <span class="bg-red-50 text-red-700 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 inline-block shadow-sm">Material Health & Toxicity</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Chemical Composition Comparison</h2>
+                <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">A transparent breakdown of the fundamental constituents found in inorganic silicate systems versus synthetic acrylic formulations.</p>
+            </div>
+
+            <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 print-grid-2">
+                    <!-- KEIM Column -->
+                    <div class="p-8 sm:p-10 border-b md:border-b-0 md:border-r border-slate-200 bg-emerald-50/30">
+                        <h3 class="text-2xl font-black text-emerald-800 mb-4 border-b-2 border-emerald-500 pb-4 flex items-center">
+                            <i class="fa-solid fa-leaf mr-3 text-emerald-500"></i> KEIM Products
+                        </h3>
+                        <ul class="space-y-4 mt-6">
+                            <li class="flex items-center text-slate-800 font-bold text-lg"><i class="fa-solid fa-check text-emerald-500 mr-3"></i> Potassium Carbonate</li>
+                            <li class="flex items-center text-slate-800 font-bold text-lg"><i class="fa-solid fa-check text-emerald-500 mr-3"></i> Natural Mineral Binders</li>
+                            <li class="flex items-center text-slate-800 font-bold text-lg"><i class="fa-solid fa-check text-emerald-500 mr-3"></i> Natural Oxide Pigments</li>
+                        </ul>
+                        
+                        <div class="mt-12 bg-emerald-100/50 p-4 rounded-xl border border-emerald-200">
+                            <p class="text-xs text-emerald-800 leading-relaxed font-medium">
+                                <i class="fa-solid fa-circle-info mr-1"></i> Formulated entirely from earth-abundant minerals. Free from solvents, preservatives, and volatile organic compounds (VOCs).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Acrylic Column -->
+                    <div class="p-8 sm:p-10 bg-slate-50">
+                        <h3 class="text-2xl font-black text-slate-800 mb-4 border-b-2 border-red-500 pb-4 flex items-center">
+                            <i class="fa-solid fa-flask mr-3 text-red-500"></i> Acrylic Paints
+                        </h3>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 mt-6 print-grid-2">
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Concentrated Volatile Monomers</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Benzene</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Toluene</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Ammonia</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Acetone</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Kerosene</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Biocides</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Vinyl Chloride</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Alkylphenol Ethoxylates</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Butyl acrylate</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Ethyl acrylate</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Propylene Glycol</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Glycol ether</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Triethylimene</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Formaldehyde</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Plastic softeners</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Phthalates</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- THERMAL DYNAMICS -->
+        <div class="mb-16 break-inside-avoid">
+            <div class="text-center mb-10 sm:mb-12">
+                <span class="bg-slate-200 text-slate-800 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 inline-block shadow-sm">Thermal Dynamics & Facade Performance</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Passive Solar Reflectance vs. Active Vegetated Systems</h2>
+                <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">Evaluating the engineering feasibility, maintenance burdens, and actual thermal performance of modern facade cooling methodologies.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 print-grid-2">
+                <div class="bg-slate-50 rounded-3xl p-8 border-2 border-slate-200 shadow-sm relative overflow-hidden flex flex-col h-full">
+                    <div class="absolute -right-10 -top-10 opacity-5"><i class="fa-solid fa-leaf text-[200px] text-slate-800"></i></div>
+                    <div class="mb-6 border-b border-slate-200 pb-4 relative z-10">
+                        <h3 class="text-2xl font-black text-slate-800 mb-2">Active Vegetated Facades</h3>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-widest bg-slate-200 px-2 py-1 rounded">High Resource Input / High LCC</span>
+                    </div>
+                    <ul class="space-y-6 flex-grow relative z-10">
+                        <li class="flex items-start">
+                            <div class="w-10 h-10 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center shrink-0 mr-4 mt-1"><i class="fa-solid fa-droplet"></i></div>
+                            <div>
+                                <strong class="block text-slate-800 mb-1">Operational Resource Demands</strong>
+                                <p class="text-sm text-slate-600 leading-relaxed">Systems require active, continuous irrigation infrastructure, electrical pumping, and intensive horticultural maintenance to sustain viability.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-10 h-10 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center shrink-0 mr-4 mt-1"><i class="fa-solid fa-temperature-arrow-up"></i></div>
+                            <div>
+                                <strong class="block text-slate-800 mb-1">Moisture-Induced Thermal Bridging</strong>
+                                <p class="text-sm text-slate-600 leading-relaxed">Vegetation traps humidity against the substrate. Saturated concrete displays up to 15x higher thermal conductivity than dry concrete, frequently negating any transpirational cooling benefits.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 rounded-3xl p-8 border-2 border-blue-200 shadow-lg relative overflow-hidden flex flex-col h-full transform transition-transform hover:-translate-y-1">
+                    <div class="absolute -right-10 -top-10 opacity-10"><i class="fa-solid fa-sun text-[200px] text-blue-600"></i></div>
+                    <div class="mb-6 border-b border-blue-200 pb-4 relative z-10">
+                        <h3 class="text-2xl font-black text-blue-900 mb-2">Inorganic Silicate Systems (TSR)</h3>
+                        <span class="text-xs font-bold text-blue-700 uppercase tracking-widest bg-blue-200/50 px-2 py-1 rounded">Passive Performance / Zero Operational Input</span>
+                    </div>
+                    <ul class="space-y-6 flex-grow relative z-10">
+                        <li class="flex items-start">
+                            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0 mr-4 mt-1"><i class="fa-solid fa-temperature-half"></i></div>
+                            <div>
+                                <strong class="block text-blue-900 mb-1">Total Solar Reflectance (TSR) Optimization</strong>
+                                <p class="text-sm text-blue-800/80 leading-relaxed">Inorganic pigments inherently reflect high levels of Near-Infrared (NIR) radiation. Specialized formulations (e.g., KEIM Coolit) expand this capability to dark architectural shades, passively mitigating thermal loading.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0 mr-4 mt-1"><i class="fa-solid fa-wind"></i></div>
+                            <div>
+                                <strong class="block text-blue-900 mb-1">Substrate Desiccation</strong>
+                                <p class="text-sm text-blue-800/80 leading-relaxed">Unrestricted vapor permeability ensures the structural masonry remains continuously dry, optimizing the substrate's natural thermal resistance and reducing HVAC load requirements.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGULATORY COMPLIANCE -->
+        <div class="border-t-2 border-slate-100 pt-12 sm:pt-16 mb-16 break-inside-avoid">
+            <div class="text-center mb-10 sm:mb-12">
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Regulatory & Technical Compliance</h2>
+                <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">Silicate coating systems conform to rigorous standards for life safety, structural physics, and material stability.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 print-grid-3">
+                <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 relative overflow-hidden group">
+                    <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-fire text-xl"></i></div>
+                    <h3 class="text-lg font-black text-slate-900 mb-2">AS 1530.1 & EN 13501-1</h3>
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Combustibility Profile</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">Classified as entirely non-combustible (A2-s1,d0). The absence of organic solvents or polymer resins ensures zero ignition potential and zero toxic smoke contribution under thermal distress.</p>
+                </div>
+                <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 relative overflow-hidden group">
+                    <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-wind text-xl"></i></div>
+                    <h3 class="text-lg font-black text-slate-900 mb-2">ISO 7783</h3>
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Water Vapor Transmission</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">Class I vapor permeability rating (Sd &lt; 0.01m). Guarantees unhindered capillary transpiration, preventing interstitial condensation and associated concrete spalling or render delamination.</p>
+                </div>
+                <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 relative overflow-hidden group">
+                    <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-sun text-xl"></i></div>
+                    <h3 class="text-lg font-black text-slate-900 mb-2">BFS Leaflet 26</h3>
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Photochemical Stability</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">Class A1 categorization. The exclusion of organic compounds and exclusive use of mineral pigments eliminates susceptibility to UV degradation, chalking, and color fading.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 print-hide">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center text-[10px] sm:text-xs font-bold uppercase tracking-widest space-y-6">
+            <p class="text-slate-500">© 2026 KEIM Australia. Advanced Mineral Silicate Paints.</p>
+            <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-6">
+                <span class="text-emerald-500 flex items-center"><i class="fa-solid fa-check mr-1.5"></i> Cradle to Cradle Certified®</span>
+                <span class="text-slate-700 hidden md:inline">|</span>
+                <span class="text-slate-300 flex items-center"><i class="fa-solid fa-check mr-1.5"></i> EN 15804 Modalities</span>
+                <span class="text-slate-700 hidden md:inline">|</span>
+                <span class="text-red-400 flex items-center"><i class="fa-solid fa-check mr-1.5"></i> AS 1530.1 Verified</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC SCRIPT -->
+    <script type="text/javascript">
+        // State
+        let currentScope = 'exterior';
+        let currentArea = 2500;
+        let currentLife = 60;
+
+        // Constants - Updated to reflect realistic, defensible generic EPD baseline data
+        const metrics = {
+            exterior: { 
+                keimLifespan: 60,   // KEIM exterior longevity aligned with structural lifespan
+                keimCo2: 1.1,       // kg CO2e per Litre
+                keimVoc: 0,         // g/L
+                keimCov: 6,         // Coverage m2/L per coat (average 2-coat system)
+                keimCoats: 2, 
+                acrLifespan: 10,    // Standard acrylic exterior recoat cycle
+                acrCo2: 3.2,        // kg CO2e per Litre (higher impact formulation)
+                acrVoc: 45,         // g/L average
+                acrCov: 7, 
+                acrCoats: 2 
+            },
+            interior: { 
+                keimLifespan: 40,   // Interior lifespan (often limited by structural remodeling cycles)
+                keimCo2: 0.9,       // Lower impact interior formulation
+                keimVoc: 0, 
+                keimCov: 7, 
+                keimCoats: 2, 
+                acrLifespan: 7,     // Typical commercial interior recoat cycle
+                acrCo2: 2.8, 
+                acrVoc: 30, 
+                acrCov: 8, 
+                acrCoats: 2 
+            }
+        };
+
+        // UI Interactions
+        function setScope(scope) {
+            currentScope = scope;
+            if(scope === 'exterior') {
+                document.getElementById('btn-exterior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-white shadow text-emerald-700 border border-slate-200";
+                document.getElementById('btn-interior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 border border-transparent";
+            } else {
+                document.getElementById('btn-interior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-white shadow text-emerald-700 border border-slate-200";
+                document.getElementById('btn-exterior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 border border-transparent";
+            }
+            calculate();
+        }
+
+        function updateInputs(type, val) {
+            let num = Number(val);
+            if(type === 'area') {
+                currentArea = num;
+                document.getElementById('area-slider').value = num;
+                document.getElementById('area-input').value = num;
+            } else {
+                currentLife = num;
+                document.getElementById('life-slider').value = num;
+                document.getElementById('life-input').value = num;
+            }
+            calculate();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            const btnClassActive = "flex-shrink-0 min-w-[120px] flex-1 py-4 px-2 text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex justify-center items-center bg-emerald-50 text-emerald-700 border-b-2 border-emerald-600";
+            const btnClassInactive = "flex-shrink-0 min-w-[120px] flex-1 py-4 px-2 text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex justify-center items-center text-slate-500 hover:bg-slate-50 border-b-2 border-transparent";
+            
+            ['owner', 'architect', 'sus'].forEach(id => {
+                document.getElementById('tab-btn-' + id).className = (id === tabId) ? btnClassActive : btnClassInactive;
+            });
+        }
+
+        // PDF Generation via High-Fidelity Native Browser Print
+        function generatePDF() {
+            // Update the print summary text before triggering dialog
+            document.getElementById('print-scope').innerText = currentScope;
+            document.getElementById('print-area').innerText = currentArea;
+            document.getElementById('print-life').innerText = currentLife;
+            
+            // The browser's native print dialog will handle the rest beautifully 
+            // via our robust @media print CSS rules (ensuring landscape + perfect grids).
+            window.print();
+        }
+
+        // Calculation Engine
+        function calculate() {
+            const cm = metrics[currentScope];
+            
+            const keimInitialLitres = (currentArea / cm.keimCov) * cm.keimCoats;
+            const acrInitialLitres = (currentArea / cm.acrCov) * cm.acrCoats;
+
+            const keimCycles = Math.max(0, Math.ceil(currentLife / cm.keimLifespan) - 1);
+            const acrCycles = Math.max(0, Math.ceil(currentLife / cm.acrLifespan) - 1);
+
+            const keimTotalLitres = keimInitialLitres * (1 + keimCycles);
+            const acrTotalLitres = acrInitialLitres * (1 + acrCycles);
+
+            const keimUpfrontCo2 = keimInitialLitres * cm.keimCo2;
+            const acrUpfrontCo2 = acrInitialLitres * cm.acrCo2;
+
+            const keimMaintCo2 = (keimTotalLitres - keimInitialLitres) * cm.keimCo2;
+            const acrMaintCo2 = (acrTotalLitres - acrInitialLitres) * cm.acrCo2;
+
+            const keimTotalCo2 = keimUpfrontCo2 + keimMaintCo2;
+            const acrTotalCo2 = acrUpfrontCo2 + acrMaintCo2;
+
+            const keimTotalVoc = (keimTotalLitres * cm.keimVoc) / 1000;
+            const acrTotalVoc = (acrTotalLitres * cm.acrVoc) / 1000;
+
+            const totalCo2Saved = Math.max(0, acrTotalCo2 - keimTotalCo2);
+            const acrMicroplastics = acrTotalLitres * 0.25;
+
+            // Update DOM
+            const pct = acrTotalCo2 > 0 ? ((totalCo2Saved / acrTotalCo2) * 100).toFixed(0) : 0;
+            document.getElementById('out-co2-percent').innerText = pct;
+            document.getElementById('out-total-co2').innerText = totalCo2Saved.toFixed(0);
+            document.getElementById('out-total-co2-sub').innerText = totalCo2Saved.toFixed(0);
+            document.getElementById('out-design-life').innerText = currentLife;
+
+            // Micro Metrics
+            document.getElementById('out-paint').innerText = (acrTotalLitres - keimTotalLitres).toFixed(0);
+            document.getElementById('out-repaints').innerText = (acrCycles - keimCycles);
+            document.getElementById('out-vocs').innerText = (acrTotalVoc - keimTotalVoc).toFixed(1);
+            
+            const microEl1 = document.getElementById('out-micro');
+            const microEl2 = document.getElementById('out-micro-large');
+            if(microEl1) microEl1.innerText = acrMicroplastics.toFixed(0);
+            if(microEl2) microEl2.innerText = acrMicroplastics.toFixed(0);
+
+            // Equivalencies
+            const kmDriven = totalCo2Saved / 0.170;
+            document.getElementById('out-km').innerText = kmDriven.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            document.getElementById('out-car-years').innerText = (kmDriven / 15000).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+            let homeValue, homeUnit;
+            if (totalCo2Saved >= 5000) { 
+                homeValue = (totalCo2Saved / 5000).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }); 
+                homeUnit = "Years"; 
+            } else if (totalCo2Saved >= 416) { 
+                homeValue = (totalCo2Saved / 416).toLocaleString(undefined, { maximumFractionDigits: 0 }); 
+                homeUnit = "Months"; 
+            } else { 
+                homeValue = Math.max(1, (totalCo2Saved / 13.7)).toLocaleString(undefined, { maximumFractionDigits: 0 }); 
+                homeUnit = "Days"; 
+            }
+            document.getElementById('out-home-val').innerText = homeValue;
+            document.getElementById('out-home-unit').innerText = homeUnit;
+
+            const rawTrees = totalCo2Saved / 21;
+            document.getElementById('out-trees').innerText = rawTrees < 10 ? rawTrees.toFixed(1) : rawTrees.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            
+            const rawFlights = totalCo2Saved / 165;
+            document.getElementById('out-flights').innerText = rawFlights < 10 ? rawFlights.toFixed(1) : rawFlights.toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+            // Chart Updates
+            const maxGraphCo2 = Math.max(acrTotalCo2, keimTotalCo2);
+            
+            document.getElementById('chart-acr-total').innerText = acrTotalCo2.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            document.getElementById('chart-keim-total').innerText = keimTotalCo2.toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+            const acrUpPct = maxGraphCo2 === 0 ? 0 : (acrUpfrontCo2 / maxGraphCo2) * 100;
+            const acrMaintPct = maxGraphCo2 === 0 ? 0 : (acrMaintCo2 / maxGraphCo2) * 100;
+            const keimUpPct = maxGraphCo2 === 0 ? 0 : (keimUpfrontCo2 / maxGraphCo2) * 100;
+            const keimMaintPct = maxGraphCo2 === 0 ? 0 : (keimMaintCo2 / maxGraphCo2) * 100;
+
+            const elAcrUp = document.getElementById('chart-acr-up');
+            elAcrUp.style.height = acrUpPct + '%';
+            document.getElementById('chart-acr-up-txt').innerText = acrUpPct > 15 ? acrUpfrontCo2.toFixed(0) : "";
+
+            const elAcrMaint = document.getElementById('chart-acr-maint');
+            elAcrMaint.style.height = acrMaintPct + '%';
+            document.getElementById('chart-acr-maint-txt').innerText = acrMaintPct > 15 ? acrMaintCo2.toFixed(0) : "";
+
+            const elKeimUp = document.getElementById('chart-keim-up');
+            elKeimUp.style.height = keimUpPct + '%';
+            document.getElementById('chart-keim-up-txt').innerText = keimUpPct > 15 ? keimUpfrontCo2.toFixed(0) : "";
+
+            const elKeimMaint = document.getElementById('chart-keim-maint');
+            elKeimMaint.style.height = keimMaintPct + '%';
+            document.getElementById('chart-keim-maint-txt').innerText = keimMaintPct > 15 ? keimMaintCo2.toFixed(0) : "";
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            calculate();
+        };
+    </script>
+</body>
+</html>
