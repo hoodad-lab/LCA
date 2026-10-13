@@ -56,6 +56,22 @@
             #hero-3d canvas { width:100% !important; height:100% !important; display:block; }
         .tilt { transition: transform .25s ease, box-shadow .25s ease; transform-style: preserve-3d; will-change: transform; }
         @media print { #hero-3d { display:none !important; } .tilt { transform:none !important; } }
+        .in-short { max-width: 46rem; margin: 14px auto 0; background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; border-radius:14px; padding:10px 14px; font-size:14px; line-height:1.5; text-align:left; }
+        .in-short span { display:inline-block; background:#059669; color:#fff; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; border-radius:999px; padding:2px 8px; margin-right:8px; vertical-align:1px; }
+        .tech-title { font-size:12px; color:#94a3b8; font-weight:700; letter-spacing:.04em; margin-top:-6px; }
+        .step { display:flex; gap:12px; align-items:flex-start; background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:14px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+        .step-n { flex:none; width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#10b981,#047857); color:#fff; font-weight:900; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 14px -6px rgba(4,120,87,.6); transform:perspective(200px) rotateX(12deg) rotateY(-12deg); }
+        .step-t { font-weight:800; color:#0f172a; font-size:15px; } .step-d { font-size:13px; color:#64748b; margin-top:2px; }
+        #jump a { flex:none; font-size:12px; font-weight:700; color:#047857; background:#fff; border:1px solid #a7f3d0; border-radius:999px; padding:6px 12px; white-space:nowrap; transition:background .2s; }
+        #jump a:hover { background:#ecfdf5; }
+        #jump::-webkit-scrollbar { display:none; }
+        html { scroll-behavior:smooth; } body { overflow-x:clip; } main { overflow-x:clip; }
+        #wall-3d canvas, #plastic-3d canvas { width:100% !important; height:100% !important; display:block; }
+        #wall-3d { cursor:grab; touch-action:pan-y; }
+        .js-reveal .reveal { opacity:0; transform:perspective(1200px) rotateX(10deg) translateY(40px); transform-origin:50% 0; transition:opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+        .js-reveal .reveal.in { opacity:1; transform:none; }
+        @media (prefers-reduced-motion: reduce) { .js-reveal .reveal { opacity:1; transform:none; transition:none; } }
+        @media print { #steps, #jump, #wall-3d, .wall3d-card, #plastic-3d { display:none !important; } .reveal { opacity:1 !important; transform:none !important; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans selection:bg-emerald-200 overflow-x-hidden pb-10">
@@ -88,15 +104,24 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 bg-slate-50">
         
         <!-- INTRO (Hidden in PDF) -->
-        <div id="main-intro" class="mb-6 sm:mb-8 max-w-4xl">
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Life Cycle Assessment (LCA) Projection</h2>
-            <p class="text-sm sm:text-lg text-slate-600 leading-relaxed">
-                <strong>See how much carbon and money a KEIM silicate finish saves over the life of a building.</strong> Paint once and repaint less: the calculator follows the <strong>EN 15804</strong> method and compares the upfront embodied carbon (Modules A1-A5) and the carbon of repainting (Module B2 maintenance) for KEIM silicate paint against standard polymer dispersion (acrylic) paint over the life of the building. Carbon figures come from the current 2025 EN 15804+A2 EPDs (valid to 2030).
-            </p>
+        <div id="main-intro" class="mb-6 sm:mb-8">
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">How much carbon and money does KEIM save?</h2>
+            <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-4xl">KEIM silicate paint lasts much longer than acrylic, so a building is repainted far less often. This calculator shows what that saves in <strong>carbon</strong> and <strong>repaint costs</strong> over the life of your building.</p>
+            <p class="text-xs text-slate-400 mt-2 max-w-4xl">Life Cycle Assessment projection to EN 15804: upfront carbon (A1-A5) plus repainting (B2), using the 2025 EN 15804+A2 EPDs (valid to 2030).</p>
+
+            <div id="steps" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-6">
+                <div class="step"><span class="step-n">1</span><div><p class="step-t">Enter your project</p><p class="step-d">Exterior or interior, the area and how many years to compare.</p></div></div>
+                <div class="step"><span class="step-n">2</span><div><p class="step-t">Set the repaint cycle</p><p class="step-d">How often each paint is redone. Change it to suit the site.</p></div></div>
+                <div class="step"><span class="step-n">3</span><div><p class="step-t">See the saving</p><p class="step-d">Carbon and dollars saved, then download the report.</p></div></div>
+            </div>
+
+            <nav id="jump" class="flex gap-2 mt-5 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Jump to section">
+                <a href="#sec-calc">Calculator</a><a href="#sec-targets">Green targets</a><a href="#sec-roles">By role</a><a href="#sec-science">Why it lasts</a><a href="#sec-plastic">Microplastics</a><a href="#sec-ingredients">What's in the can</a><a href="#sec-cooling">Keeping cool</a><a href="#sec-standards">Standards</a>
+            </nav>
         </div>
 
         <!-- DASHBOARD & CALCULATOR -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 sm:mb-16">
+        <div id="sec-calc" class="scroll-mt-4 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 sm:mb-16">
             
             <!-- Controls (Left Sidebar - Hidden in PDF) -->
             <div id="controls-section" class="lg:col-span-4 space-y-6">
@@ -379,10 +404,10 @@
         </div>
 
         <!-- ALIGNMENT WITH MACRO-ENVIRONMENTAL FRAMEWORKS -->
-        <div class="mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
+        <div id="sec-targets" class="reveal scroll-mt-4 mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
             <div class="text-center mb-10 sm:mb-12">
                 <span class="bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 inline-block shadow-sm">ESD Specification Alignment</span>
-                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Meeting Global Sustainability Targets</h2>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Help with your green building targets</h2><p class="tech-title">Meeting Global Sustainability Targets</p><p class="in-short"><span>In short</span>Fewer repaints and a mineral, recyclable finish support Net Zero, Passivhaus and circular-economy goals.</p>
                 <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">How specifying inorganic silicate technology directly satisfies the requirements of Australia’s most rigorous architectural, carbon, and circularity frameworks.</p>
             </div>
 
@@ -457,9 +482,9 @@
         </div>
 
         <!-- PERFORMANCE MATRIX TABS -->
-        <div class="mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
+        <div id="sec-roles" class="reveal scroll-mt-4 mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
             <div class="text-center mb-8">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Performance Metrics by Discipline</h2>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">What it means for you</h2><p class="tech-title">Performance Metrics by Discipline</p><p class="in-short"><span>In short</span>Pick your role, owner, architect or sustainability consultant, to see the benefits that matter to you.</p>
                 <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">Evaluating the structural, aesthetic, and financial impact of inorganic silicate systems across specific architectural and engineering disciplines.</p>
             </div>
 
@@ -506,10 +531,19 @@
         </div>
 
         <!-- THE SCIENCE OF SILICIFICATION -->
-        <div class="border-t-2 border-slate-100 pt-12 sm:pt-16 break-inside-avoid">
+        <div id="sec-science" class="reveal scroll-mt-4 border-t-2 border-slate-100 pt-12 sm:pt-16 break-inside-avoid">
             <div class="text-center mb-10 sm:mb-12">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Scientific Cross-Section: Mode of Degradation vs. Silicification</h2>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Why acrylic peels and KEIM doesn&rsquo;t</h2><p class="tech-title">Scientific Cross-Section: Mode of Degradation vs. Silicification</p><p class="in-short"><span>In short</span>Acrylic sits on the wall as a plastic skin that can trap moisture, blister and peel. KEIM&rsquo;s silicate binder bonds chemically into the mineral surface, so there is no skin to fail.</p>
                 <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">A comparative structural analysis of synthetic polymer film-forming binders versus inorganic potassium silicate binders.</p>
+            </div>
+
+            <div class="wall3d-card bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                <div id="wall-3d" class="relative w-full h-[300px] sm:h-[380px] bg-gradient-to-b from-slate-50 to-white" aria-hidden="true"></div>
+                <div class="grid grid-cols-2 border-t border-slate-100 text-center">
+                    <div class="p-4 sm:p-5 border-r border-slate-100"><p class="text-xs sm:text-sm font-black text-slate-700 uppercase tracking-wider">Acrylic</p><p class="text-xs sm:text-sm text-slate-500 mt-1">A plastic skin <strong>sits on top</strong>. Moisture gets trapped, it blisters and peels.</p></div>
+                    <div class="p-4 sm:p-5"><p class="text-xs sm:text-sm font-black text-emerald-700 uppercase tracking-wider">KEIM silicate</p><p class="text-xs sm:text-sm text-slate-500 mt-1">Silicate <strong>bonds into</strong> the stone. Nothing to peel, and the wall can breathe.</p></div>
+                </div>
+                <p class="text-[10px] text-slate-400 text-center pb-3 hidden sm:block">Drag to turn the wall</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-16 print-grid-2">
@@ -608,7 +642,8 @@
         </div>
 
         <!-- MICROPLASTICS CRISIS -> POLYMER DEGRADATION -->
-        <div class="bg-slate-900 rounded-3xl p-8 sm:p-12 mb-16 relative overflow-hidden shadow-2xl border border-slate-700 break-inside-avoid">
+        <div id="sec-plastic" class="reveal scroll-mt-4 bg-slate-900 rounded-3xl p-8 sm:p-12 mb-16 relative overflow-hidden shadow-2xl border border-slate-700 break-inside-avoid">
+            <div id="plastic-3d" class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
             <div class="absolute top-0 right-0 opacity-5"><i class="fa-solid fa-layer-group text-[300px] text-slate-300 transform translate-x-1/4 -translate-y-1/4"></i></div>
             
             <div class="relative z-10">
@@ -618,7 +653,7 @@
                     </div>
                     <div>
                         <h2 class="text-slate-400 font-bold uppercase tracking-widest text-xs">Environmental Risk Mitigation</h2>
-                        <h3 class="text-3xl font-black text-white">Polymer Matrix Degradation</h3>
+                        <h3 class="text-2xl sm:text-3xl font-black text-white">Acrylic sheds plastic as it weathers</h3><p class="text-xs text-slate-500 mt-1">Polymer matrix degradation</p>
                     </div>
                 </div>
 
@@ -650,10 +685,10 @@
         </div>
 
         <!-- CHEMICAL COMPOSITION & TOXICITY -->
-        <div class="mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
+        <div id="sec-ingredients" class="reveal scroll-mt-4 mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
             <div class="text-center mb-10 sm:mb-12">
                 <span class="bg-red-50 text-red-700 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 inline-block shadow-sm">Material Health & Toxicity</span>
-                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Chemical Composition Comparison</h2>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">What&rsquo;s in the can</h2><p class="tech-title">Chemical Composition Comparison</p><p class="in-short"><span>In short</span>KEIM is made from mineral binders and earth pigments. Acrylic relies on plastic binders and extra additives.</p>
                 <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">A transparent breakdown of the fundamental constituents found in inorganic silicate systems versus synthetic acrylic formulations.</p>
             </div>
 
@@ -707,10 +742,10 @@
         </div>
 
         <!-- THERMAL DYNAMICS -->
-        <div class="mb-16 break-inside-avoid">
+        <div id="sec-cooling" class="reveal scroll-mt-4 mb-16 break-inside-avoid">
             <div class="text-center mb-10 sm:mb-12">
                 <span class="bg-slate-200 text-slate-800 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-4 inline-block shadow-sm">Thermal Dynamics & Facade Performance</span>
-                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Passive Solar Reflectance vs. Active Vegetated Systems</h2>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Keeping facades cool</h2><p class="tech-title">Passive Solar Reflectance vs. Active Vegetated Systems</p><p class="in-short"><span>In short</span>A mineral facade reflects heat with no pumps, water or upkeep. Green walls cool too, but need constant maintenance.</p>
                 <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">Evaluating the engineering feasibility, maintenance burdens, and actual thermal performance of modern facade cooling methodologies.</p>
             </div>
 
@@ -766,9 +801,9 @@
         </div>
 
         <!-- REGULATORY COMPLIANCE -->
-        <div class="border-t-2 border-slate-100 pt-12 sm:pt-16 mb-16 break-inside-avoid">
+        <div id="sec-standards" class="reveal scroll-mt-4 border-t-2 border-slate-100 pt-12 sm:pt-16 mb-16 break-inside-avoid">
             <div class="text-center mb-10 sm:mb-12">
-                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Regulatory & Technical Compliance</h2>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Standards and test results</h2><p class="tech-title">Regulatory & Technical Compliance</p><p class="in-short"><span>In short</span>The independent tests and classifications behind the claims on this page.</p>
                 <p class="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">Silicate coating systems conform to rigorous standards for life safety, structural physics, and material stability.</p>
             </div>
 
@@ -1118,6 +1153,142 @@
             el.addEventListener('pointerleave', () => { el.style.transform = ''; el.style.boxShadow = ''; });
         });
     })();
+    </script>
+
+    <script>
+    // ---- 3D scroll reveal for sections ----
+    (function () {
+        if (!('IntersectionObserver' in window)) return;
+        if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.documentElement.classList.add('js-reveal');
+        const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+        window.addEventListener('beforeprint', () => document.querySelectorAll('.reveal').forEach(el => el.classList.add('in')));
+    })();
+
+    function keimScene(host, build) {
+        if (!host || !window.THREE) return;
+        let renderer;
+        try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); } catch (e) { return; }
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        host.appendChild(renderer.domElement);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+        const api = build(scene, camera, host) || {};
+        function size() {
+            const w = host.clientWidth || 1, h = host.clientHeight || 1;
+            renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+            api.resize && api.resize(w, h);
+        }
+        size(); window.addEventListener('resize', size);
+        const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let visible = false, t0 = performance.now();
+        new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(host);
+        function frame(now) { requestAnimationFrame(frame); if (!visible) return; api.tick && api.tick((now - t0) / 1000); renderer.render(scene, camera); }
+        if (reduce) { api.tick && api.tick(2); renderer.render(scene, camera); } else requestAnimationFrame(frame);
+    }
+
+    // ---- Wall cross-section: acrylic film peeling vs KEIM crystals bonded in ----
+    keimScene(document.getElementById('wall-3d'), (scene, camera, host) => {
+        camera.position.set(0, 3.3, 7.6); camera.lookAt(0, 0, 0);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        const sun = new THREE.DirectionalLight(0xffffff, 0.9); sun.position.set(3, 7, 5); scene.add(sun);
+        const fill = new THREE.DirectionalLight(0xa7f3d0, 0.4); fill.position.set(-5, 2, -3); scene.add(fill);
+        const root = new THREE.Group(); scene.add(root);
+        const W = 2.6, H = 1.2, D = 1.6;
+
+        // two masonry blocks
+        const stone = new THREE.MeshStandardMaterial({ color: 0xb8bcc2, roughness: 0.95, flatShading: true });
+        const stoneK = new THREE.MeshStandardMaterial({ color: 0xc4c7cc, roughness: 0.95, flatShading: true, transparent: true, opacity: 0.82 });
+        const left = new THREE.Group(), right = new THREE.Group();
+        left.position.x = -1.7; right.position.x = 1.7; root.add(left, right);
+        left.add(new THREE.Mesh(new THREE.BoxGeometry(W, H, D, 6, 3, 4), stone));
+        right.add(new THREE.Mesh(new THREE.BoxGeometry(W, H, D, 6, 3, 4), stoneK));
+        const edges = new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.5 });
+        [left, right].forEach(g => g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(W, H, D)), edges)));
+
+        // acrylic film on top, curling up at one corner, with blisters
+        const filmGeo = new THREE.PlaneGeometry(W, D, 30, 18); filmGeo.rotateX(-Math.PI / 2);
+        const base = filmGeo.attributes.position.array.slice();
+        const film = new THREE.Mesh(filmGeo, new THREE.MeshStandardMaterial({ color: 0xe2a8b8, roughness: 0.4, metalness: 0.05, side: THREE.DoubleSide, transparent: true, opacity: 0.92 }));
+        film.position.y = H / 2 + 0.02; left.add(film);
+        const blisters = [];
+        const bm = new THREE.MeshStandardMaterial({ color: 0xeab4c2, roughness: 0.35, transparent: true, opacity: 0.95 });
+        [[-0.7, -0.3], [-0.2, 0.4], [-0.9, 0.45], [0.1, -0.45]].forEach(([x, z], i) => {
+            const b = new THREE.Mesh(new THREE.SphereGeometry(0.16 + i * 0.03, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), bm);
+            b.position.set(x, H / 2 + 0.02, z); b.userData.p = i * 1.3; left.add(b); blisters.push(b);
+        });
+        // moisture droplets trapped under the film
+        const drops = new THREE.Group(); left.add(drops);
+        const dm = new THREE.MeshStandardMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.8, roughness: 0.1 });
+        for (let i = 0; i < 14; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), dm); d.userData = { x: (Math.random() - 0.5) * 2.2, z: (Math.random() - 0.5) * 1.3, s: 0.3 + Math.random() * 0.5, o: Math.random() }; drops.add(d); }
+
+        // KEIM: thin mineral layer + silicate crystals grown into the stone, vapour escaping
+        const layer = new THREE.Mesh(new THREE.BoxGeometry(W, 0.03, D), new THREE.MeshStandardMaterial({ color: 0x10b981, transparent: true, opacity: 0.35 }));
+        layer.position.y = H / 2 + 0.015; right.add(layer);
+        const cm = new THREE.MeshStandardMaterial({ color: 0x34d399, emissive: 0x065f46, emissiveIntensity: 0.6, flatShading: true, transparent: true, opacity: 0.9 });
+        const crystals = [];
+        for (let i = 0; i < 46; i++) {
+            const c = new THREE.Mesh(new THREE.OctahedronGeometry(0.06 + Math.random() * 0.07, 0), cm);
+            c.position.set((Math.random() - 0.5) * (W - 0.2), H / 2 - Math.random() * 0.32, (Math.random() - 0.5) * (D - 0.2));
+            c.scale.y = 1.4 + Math.random(); c.rotation.set(Math.random(), Math.random() * 3, Math.random());
+            c.userData.p = Math.random() * 6; right.add(c); crystals.push(c);
+        }
+        const vap = new THREE.Group(); right.add(vap);
+        const vm = new THREE.MeshBasicMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.5 });
+        for (let i = 0; i < 16; i++) { const v = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), vm); v.userData = { x: (Math.random() - 0.5) * 2.2, z: (Math.random() - 0.5) * 1.3, s: 0.25 + Math.random() * 0.35, o: Math.random() }; vap.add(v); }
+
+        // drag to turn
+        let drag = false, lx = 0, rotY = -0.35, target = -0.35, auto = true;
+        host.addEventListener('pointerdown', e => { drag = true; auto = false; lx = e.clientX; host.style.cursor = 'grabbing'; });
+        window.addEventListener('pointerup', () => { drag = false; host.style.cursor = ''; });
+        window.addEventListener('pointermove', e => { if (!drag) return; target += (e.clientX - lx) * 0.01; lx = e.clientX; });
+
+        return {
+            resize: (w, h) => {
+                // fit both blocks to the width, but never closer than the height allows
+                const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+                const dist = Math.max(4.4, 3.5 / (t * (w / h)));
+                camera.position.set(0, dist * 0.42, dist); camera.lookAt(0, 0.15, 0);
+            },
+            tick: (t) => {
+                if (auto) target = -0.35 + Math.sin(t * 0.25) * 0.35;
+                rotY += (target - rotY) * 0.08; root.rotation.y = rotY;
+                // film curl: lifts from the right-front corner, breathing
+                const a = filmGeo.attributes.position.array, lift = 0.55 + 0.25 * Math.sin(t * 0.8);
+                for (let i = 0; i < a.length; i += 3) {
+                    const x = base[i], z = base[i + 2];
+                    const u = Math.max(0, (x + z * 0.6 - 0.35) / 1.4);
+                    a[i + 1] = base[i + 1] + u * u * lift;
+                    a[i] = base[i] - u * u * lift * 0.25;
+                }
+                filmGeo.attributes.position.needsUpdate = true; filmGeo.computeVertexNormals();
+                blisters.forEach(b => { const k = 0.75 + 0.25 * Math.sin(t * 1.2 + b.userData.p); b.scale.set(1, k, 1); });
+                drops.children.forEach(d => { const u = d.userData, ph = (t * u.s + u.o) % 1; d.position.set(u.x, -H / 2 + 0.1 + ph * (H - 0.14), u.z); d.visible = ph < 0.97; });
+                crystals.forEach(c => { c.rotation.y += 0.004; c.material.emissiveIntensity = 0.5 + 0.2 * Math.sin(t * 1.5); });
+                vap.children.forEach(v => { const u = v.userData, ph = (t * u.s + u.o) % 1; v.position.set(u.x, -H / 2 + 0.1 + ph * (H + 1.0), u.z); v.material.opacity = 0.55 * (1 - ph); });
+            }
+        };
+    });
+
+    // ---- Microplastics: particles shedding and drifting down ----
+    keimScene(document.getElementById('plastic-3d'), (scene, camera) => {
+        camera.position.set(0, 0, 10);
+        const N = 500, pos = new Float32Array(N * 3), spd = new Float32Array(N);
+        for (let i = 0; i < N; i++) { pos[i * 3] = (Math.random() - 0.5) * 22; pos[i * 3 + 1] = (Math.random() - 0.5) * 12; pos[i * 3 + 2] = (Math.random() - 0.5) * 6; spd[i] = 0.2 + Math.random() * 0.6; }
+        const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const pts = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xf0abfc, size: 0.07, transparent: true, opacity: 0.55, depthWrite: false }));
+        scene.add(pts);
+        const shards = [], sm = new THREE.MeshBasicMaterial({ color: 0xcbd5e1, transparent: true, opacity: 0.18, side: THREE.DoubleSide, wireframe: true });
+        for (let i = 0; i < 9; i++) { const m = new THREE.Mesh(new THREE.TetrahedronGeometry(0.3 + Math.random() * 0.4, 0), sm); m.position.set(2 + Math.random() * 7, (Math.random() - 0.5) * 8, -1); m.userData.s = 0.1 + Math.random() * 0.2; scene.add(m); shards.push(m); }
+        let last = 0;
+        return { tick: (t) => {
+            const dt = Math.min(0.05, t - last); last = t;
+            for (let i = 0; i < N; i++) { pos[i * 3 + 1] -= spd[i] * dt; pos[i * 3] += Math.sin(t * 0.5 + i) * 0.002; if (pos[i * 3 + 1] < -6) pos[i * 3 + 1] = 6; }
+            g.attributes.position.needsUpdate = true;
+            shards.forEach(m => { m.rotation.x += m.userData.s * 0.02; m.rotation.y += m.userData.s * 0.03; m.position.y -= m.userData.s * dt; if (m.position.y < -5) m.position.y = 5; });
+        } };
+    });
     </script>
 </body>
 </html>
