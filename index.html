@@ -52,7 +52,12 @@
         }
             .seg:last-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
         .tl-dot { position:absolute; top:50%; width:22px; height:22px; margin-left:-11px; transform:translateY(-50%); border-radius:9999px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; box-shadow:0 1px 3px rgba(0,0,0,.2); }
-        #tl-acr .tl-dot { background:#475569; } #tl-keim .tl-dot { background:#059669; }
+        .tl-acr .tl-dot { background:#475569; } .tl-keim .tl-dot { background:#059669; }
+        .scope-btn { flex:1; padding:10px 4px; font-size:13px; font-weight:700; border-radius:8px; color:#64748b; border:1px solid transparent; transition:all .2s; }
+        .scope-btn.on { background:#fff; color:#047857; border-color:#e2e8f0; box-shadow:0 1px 3px rgba(0,0,0,.1); }
+        .part-btn { flex:1; text-align:left; background:#fff; border:2px solid #d1fae5; border-radius:10px; padding:8px 10px; transition:all .2s; }
+        .part-btn.on { border-color:#059669; box-shadow:0 4px 12px -6px rgba(5,150,105,.6); }
+        .pb-t { display:block; font-weight:800; font-size:13px; color:#065f46; } .pb-s { display:block; font-size:11px; color:#64748b; margin-top:1px; }
             #hero-3d canvas { width:100% !important; height:100% !important; display:block; }
         .tilt { transition: transform .25s ease, box-shadow .25s ease; transform-style: preserve-3d; will-change: transform; }
         @media print { #hero-3d { display:none !important; } .tilt { transform:none !important; } }
@@ -110,7 +115,7 @@
             <p class="text-xs text-slate-400 mt-2 max-w-4xl">Life Cycle Assessment projection to EN 15804: upfront carbon (A1-A5) plus repainting (B2), using the 2025 EN 15804+A2 EPDs (valid to 2030).</p>
 
             <div id="steps" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-6">
-                <div class="step"><span class="step-n">1</span><div><p class="step-t">Enter your project</p><p class="step-d">Exterior or interior, the area and how many years to compare.</p></div></div>
+                <div class="step"><span class="step-n">1</span><div><p class="step-t">Enter your project</p><p class="step-d">Exterior, interior or the whole project, the area and how many years to compare.</p></div></div>
                 <div class="step"><span class="step-n">2</span><div><p class="step-t">Set the repaint cycle</p><p class="step-d">How often each paint is redone. Change it to suit the site.</p></div></div>
                 <div class="step"><span class="step-n">3</span><div><p class="step-t">See the saving</p><p class="step-d">Carbon and dollars saved, then download the report.</p></div></div>
             </div>
@@ -134,14 +139,23 @@
                     <div class="mb-6">
                         <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider">Application Scope</label>
                         <div class="flex rounded-xl overflow-hidden border border-slate-200 p-1 bg-slate-100 shadow-inner">
-                            <button id="btn-exterior" onclick="setScope('exterior')" class="flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-white shadow text-emerald-700 border border-slate-200">Exterior Facade</button>
-                            <button id="btn-interior" onclick="setScope('interior')" class="flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 border border-transparent">Interior Surfaces</button>
+                            <button id="btn-exterior" onclick="setScope('exterior')" class="scope-btn on">Exterior</button>
+                            <button id="btn-interior" onclick="setScope('interior')" class="scope-btn">Interior</button>
+                            <button id="btn-both" onclick="setScope('both')" class="scope-btn">Whole project</button>
+                        </div>
+                        <div id="part-edit" class="hidden mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                            <p class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-2">Now editing</p>
+                            <div class="flex gap-2">
+                                <button id="edit-exterior" onclick="setEditPart('exterior')" class="part-btn on"><span class="pb-t">Exterior</span><span id="sum-exterior" class="pb-s"></span></button>
+                                <button id="edit-interior" onclick="setEditPart('interior')" class="part-btn"><span class="pb-t">Interior</span><span id="sum-interior" class="pb-s"></span></button>
+                            </div>
+                            <p class="text-[11px] text-emerald-700 mt-2">Tap Exterior or Interior, then set its area, repaint cycle and rate below. The results add both together.</p>
                         </div>
                     </div>
 
                     <!-- Area Input -->
                     <div class="mb-6">
-                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Area to paint (m²)</label>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider"><span id="area-label">Area to paint (m²)</span></label>
                         <input type="range" id="area-slider" min="100" max="20000" step="100" value="2500" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 mt-3" oninput="updateInputs('area', this.value)" />
                         <div class="mt-4 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
                             <input type="number" id="area-input" value="2500" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="updateInputs('area', this.value)" />
@@ -235,7 +249,7 @@
                             </div>
                         </div>
                         <p class="text-sm sm:text-base text-emerald-50 max-w-2xl font-medium mt-2">
-                            That is <strong class="text-white bg-emerald-500/30 px-2 py-0.5 rounded shadow-sm"><span id="out-total-co2">0</span> kg of CO₂e</strong> saved over <span id="out-design-life">60</span> years compared with acrylic paint, because KEIM needs <strong class="text-white"><span id="out-fewer-hero">0</span> fewer repaints</strong>.
+                            That is <strong class="text-white bg-emerald-500/30 px-2 py-0.5 rounded shadow-sm"><span id="out-total-co2">0</span> kg of CO₂e</strong> saved over <span id="out-design-life">60</span> years compared with acrylic paint, because KEIM needs <strong class="text-white"><span id="out-fewer-hero">0</span></strong>.
                         </p>
                     </div>
 
@@ -312,7 +326,7 @@
                 <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 break-inside-avoid">
                     <div class="flex items-center"><div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mr-3"><i class="fa-solid fa-dollar-sign"></i></div>
                         <div><p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide">Repaint cost avoided</p>
-                        <p class="text-xs text-slate-500"><span id="out-fewer">0</span> fewer repaints × <span id="out-cost-area">0</span> m² × $<span id="out-cost-rate">0</span>/m² (today's dollars)</p></div></div>
+                        <p id="cost-breakdown" class="text-xs text-slate-500"></p></div></div>
                     <p class="text-2xl sm:text-3xl font-black text-slate-900">$<span id="out-cost">0</span></p>
                 </div>
 
@@ -362,11 +376,7 @@
                     <!-- Paint job timeline -->
                     <div class="mt-6">
                         <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">When each paint job happens</p>
-                        <div class="space-y-3">
-                            <div class="flex items-center gap-3"><span class="w-20 sm:w-24 text-xs font-bold text-slate-600 shrink-0">Acrylic</span><div id="tl-acr" class="tl relative flex-1 h-7 bg-slate-100 rounded-full"></div></div>
-                            <div class="flex items-center gap-3"><span class="w-20 sm:w-24 text-xs font-bold text-emerald-700 shrink-0">KEIM</span><div id="tl-keim" class="tl relative flex-1 h-7 bg-emerald-50 rounded-full"></div></div>
-                            <div class="flex items-center gap-3"><span class="w-20 sm:w-24 shrink-0"></span><div class="flex-1 flex justify-between text-[10px] text-slate-400 font-bold px-1"><span>Year 0</span><span>Year <span id="tl-end">60</span></span></div></div>
-                        </div>
+                        <div id="tl-rows" class="space-y-3"></div>
                     </div>
                     <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col text-xs text-slate-500">
                         <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>How this is worked out:</strong> Both paints get the <strong>same carbon per coat</strong>, taken from the 2025 EN 15804+A2 EPDs below. Each paint job is 2 coats at 0.25 kg/m² per coat. <em>Upfront (A1-A5)</em> is the first paint job; <em>Repaints (B2)</em> are the jobs needed to cover the rest of the design life. The saving comes only from repainting less often, set by the "Repaint every" sliders.</p>
@@ -848,8 +858,8 @@
     <!-- LOGIC SCRIPT -->
     <script type="text/javascript">
         // State
-        let currentScope = 'exterior';
-        let currentArea = 2500;
+        let currentScope = 'exterior';      // 'exterior' | 'interior' | 'both'
+        let editPart = 'exterior';          // which part the inputs are editing
         let currentLife = 60;
 
         // Carbon per kg of paint, A1-A5 (EN 15804+A2), same value for both systems per coat
@@ -858,44 +868,55 @@
         const KG_PER_COAT = 0.25;   // kg/m2 per coat (EPD range 0.1-0.5)
         const COATS = 2;
         const DENSITY = 1.4;        // kg/L, for litres and VOC
-        const metrics = {
-            exterior: { gwp: 2.78 + 0.0671 + 0.0379, rate: 65, keimInt: 30, acrInt: 10, acrVoc: 45, keimVoc: 0 },
-            interior: { gwp: 2.54 + 0.0671 + 0.0379, rate: 30, keimInt: 20, acrInt: 7,  acrVoc: 30, keimVoc: 0 }
-        };
         const BINDER_SHARE = 0.20;  // polymer dispersion share of acrylic paint (EPD range 3-35%)
-        let keimInt = metrics.exterior.keimInt, acrInt = metrics.exterior.acrInt, costRate = 65;
+        const metrics = {
+            exterior: { gwp: 2.78 + 0.0671 + 0.0379, acrVoc: 45, keimVoc: 0 },
+            interior: { gwp: 2.54 + 0.0671 + 0.0379, acrVoc: 30, keimVoc: 0 }
+        };
+        const parts = {
+            exterior: { area: 2500, keimInt: 30, acrInt: 10, rate: 65 },
+            interior: { area: 2500, keimInt: 20, acrInt: 7,  rate: 30 }
+        };
+        const NOTES = {
+            exterior: 'Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.',
+            interior: 'Default: typical interior repaint, $25-35/m² incl. labour. Enter your own rate.'
+        };
+        const fmt = n => Math.round(n).toLocaleString();
 
+        function loadPart() {
+            const p = parts[editPart];
+            document.getElementById('area-slider').value = Math.min(p.area, 20000);
+            document.getElementById('area-input').value = p.area;
+            document.getElementById('keim-int').value = p.keimInt; document.getElementById('keim-int-val').innerText = p.keimInt;
+            document.getElementById('acr-int').value = p.acrInt; document.getElementById('acr-int-val').innerText = p.acrInt;
+            document.getElementById('cost-input').value = p.rate;
+            document.getElementById('cost-note').innerText = NOTES[editPart];
+            document.getElementById('area-label').innerText = currentScope === 'both' ? (editPart === 'exterior' ? 'Exterior area (m²)' : 'Interior area (m²)') : 'Area to paint (m²)';
+        }
+        function updateSummary() {
+            ['exterior', 'interior'].forEach(k => {
+                const p = parts[k];
+                document.getElementById('sum-' + k).innerText = fmt(p.area) + ' m² · $' + p.rate + '/m²';
+                document.getElementById('edit-' + k).classList.toggle('on', editPart === k);
+            });
+        }
         function setInterval2(which, v) {
             v = Number(v); if (!(v > 0)) return;
-            if (which === 'keim') { keimInt = v; document.getElementById('keim-int-val').innerText = v; }
-            else { acrInt = v; document.getElementById('acr-int-val').innerText = v; }
+            if (which === 'keim') { parts[editPart].keimInt = v; document.getElementById('keim-int-val').innerText = v; }
+            else { parts[editPart].acrInt = v; document.getElementById('acr-int-val').innerText = v; }
             calculate();
         }
-        function setCost(v) { v = Number(v); if (v >= 0) { costRate = v; calculate(); } }
-        function syncIntervals() {
-            const m = metrics[currentScope];
-            keimInt = m.keimInt; acrInt = m.acrInt;
-            costRate = m.rate; document.getElementById('cost-input').value = m.rate;
-            document.getElementById('cost-note').innerText = currentScope === 'interior'
-                ? 'Default: typical interior repaint, $25-35/m² incl. labour. Enter your own rate.'
-                : 'Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.';
-            document.getElementById('keim-int').value = keimInt; document.getElementById('keim-int-val').innerText = keimInt;
-            document.getElementById('acr-int').value = acrInt; document.getElementById('acr-int-val').innerText = acrInt;
-        }
+        function setCost(v) { v = Number(v); if (v >= 0) { parts[editPart].rate = v; calculate(); } }
 
         // UI Interactions
         function setScope(scope) {
             currentScope = scope;
-            if(scope === 'exterior') {
-                document.getElementById('btn-exterior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-white shadow text-emerald-700 border border-slate-200";
-                document.getElementById('btn-interior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 border border-transparent";
-            } else {
-                document.getElementById('btn-interior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-white shadow text-emerald-700 border border-slate-200";
-                document.getElementById('btn-exterior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 border border-transparent";
-            }
-            syncIntervals();
-            calculate();
+            if (scope !== 'both') editPart = scope;
+            ['exterior', 'interior', 'both'].forEach(k => document.getElementById('btn-' + k).classList.toggle('on', k === scope));
+            document.getElementById('part-edit').classList.toggle('hidden', scope !== 'both');
+            loadPart(); calculate();
         }
+        function setEditPart(k) { editPart = k; loadPart(); calculate(); }
 
         function updateInputs(type, val) {
             let num = Number(val);
@@ -903,8 +924,8 @@
             const typing = document.activeElement && document.activeElement.type === 'number';
             if(type === 'area') {
                 num = Math.min(num, 1000000);
-                currentArea = num;
-                document.getElementById('area-slider').value = num;
+                parts[editPart].area = num;
+                document.getElementById('area-slider').value = Math.min(num, 20000);
                 if (!typing) document.getElementById('area-input').value = num;
             } else {
                 num = Math.min(num, 150);
@@ -930,8 +951,9 @@
         // PDF Generation via High-Fidelity Native Browser Print
         function generatePDF() {
             // Update the print summary text before triggering dialog
-            document.getElementById('print-scope').innerText = currentScope;
-            document.getElementById('print-area').innerText = currentArea;
+            const both = currentScope === 'both';
+            document.getElementById('print-scope').innerText = both ? 'Exterior + interior' : currentScope;
+            document.getElementById('print-area').innerText = both ? fmt(parts.exterior.area) + ' + ' + fmt(parts.interior.area) : fmt(parts[currentScope].area);
             document.getElementById('print-life').innerText = currentLife;
             
             // The browser's native print dialog will handle the rest beautifully 
@@ -940,49 +962,58 @@
         }
 
         // Calculation Engine
-        function calculate() {
-            const cm = metrics[currentScope];
-
-            const jobKg = currentArea * KG_PER_COAT * COATS;          // kg of paint per paint job (same for both)
-            const keimCycles = Math.max(0, Math.ceil(currentLife / keimInt) - 1);
-            const acrCycles = Math.max(0, Math.ceil(currentLife / acrInt) - 1);
-
-            const keimTotalKg = jobKg * (1 + keimCycles);
-            const acrTotalKg = jobKg * (1 + acrCycles);
-            const keimTotalLitres = keimTotalKg / DENSITY;
-            const acrTotalLitres = acrTotalKg / DENSITY;
-
-            const keimUpfrontCo2 = jobKg * cm.gwp;
-            const acrUpfrontCo2 = jobKg * cm.gwp;
-            const keimMaintCo2 = keimUpfrontCo2 * keimCycles;
-            const acrMaintCo2 = acrUpfrontCo2 * acrCycles;
-
-            const keimTotalCo2 = keimUpfrontCo2 + keimMaintCo2;
-            const acrTotalCo2 = acrUpfrontCo2 + acrMaintCo2;
-
-            const keimTotalVoc = (keimTotalLitres * cm.keimVoc) / 1000;
-            const acrTotalVoc = (acrTotalLitres * cm.acrVoc) / 1000;
-
-            const totalCo2Saved = Math.max(0, acrTotalCo2 - keimTotalCo2);
-            const acrMicroplastics = acrTotalKg * BINDER_SHARE;
-
-            const fewer = Math.max(0, acrCycles - keimCycles);
-            document.getElementById('out-fewer-hero').innerText = fewer;
-            document.getElementById('out-life-hero').innerText = currentLife;
-            document.getElementById('jobs-acr').innerText = acrCycles + 1;
-            document.getElementById('jobs-keim').innerText = keimCycles + 1;
-            document.getElementById('tl-end').innerText = currentLife;
-            const drawTl = (id, n, every) => {
-                let h = '';
-                for (let k = 0; k <= n; k++) { const pct = 4 + (k * every / currentLife) * 92; h += '<span class="tl-dot" style="left:' + pct + '%" title="Year ' + (k * every) + '"><i class="fa-solid fa-paint-roller"></i></span>'; }
-                document.getElementById(id).innerHTML = h;
+        function partCalc(k) {
+            const cm = metrics[k], p = parts[k];
+            const jobKg = p.area * KG_PER_COAT * COATS;           // kg of paint per paint job (same for both paints)
+            const keimCycles = Math.max(0, Math.ceil(currentLife / p.keimInt) - 1);
+            const acrCycles = Math.max(0, Math.ceil(currentLife / p.acrInt) - 1);
+            const keimKg = jobKg * (1 + keimCycles), acrKg = jobKg * (1 + acrCycles);
+            const up = jobKg * cm.gwp;
+            return {
+                k, p, keimCycles, acrCycles, fewer: Math.max(0, acrCycles - keimCycles),
+                keimUp: up, acrUp: up, keimMaint: up * keimCycles, acrMaint: up * acrCycles,
+                keimL: keimKg / DENSITY, acrL: acrKg / DENSITY,
+                keimVoc: keimKg / DENSITY * cm.keimVoc / 1000, acrVoc: acrKg / DENSITY * cm.acrVoc / 1000,
+                micro: acrKg * BINDER_SHARE,
+                cost: Math.max(0, acrCycles - keimCycles) * p.area * p.rate
             };
-            drawTl('tl-acr', acrCycles, acrInt);
-            drawTl('tl-keim', keimCycles, keimInt);
-            document.getElementById('out-fewer').innerText = fewer;
-            document.getElementById('out-cost-area').innerText = currentArea.toLocaleString();
-            document.getElementById('out-cost-rate').innerText = costRate;
-            document.getElementById('out-cost').innerText = (fewer * currentArea * costRate).toLocaleString(undefined, { maximumFractionDigits: 0 });
+        }
+
+        // Calculation Engine
+        function calculate() {
+            const keys = currentScope === 'both' ? ['exterior', 'interior'] : [currentScope];
+            const R = keys.map(partCalc), both = keys.length > 1;
+            const sum = f => R.reduce((t, r) => t + r[f], 0);
+            const keimUpfrontCo2 = sum('keimUp'), acrUpfrontCo2 = sum('acrUp');
+            const keimMaintCo2 = sum('keimMaint'), acrMaintCo2 = sum('acrMaint');
+            const keimTotalCo2 = keimUpfrontCo2 + keimMaintCo2, acrTotalCo2 = acrUpfrontCo2 + acrMaintCo2;
+            const keimTotalLitres = sum('keimL'), acrTotalLitres = sum('acrL');
+            const keimTotalVoc = sum('keimVoc'), acrTotalVoc = sum('acrVoc');
+            const totalCo2Saved = Math.max(0, acrTotalCo2 - keimTotalCo2);
+            const acrMicroplastics = sum('micro');
+            const fewer = sum('fewer');
+            const per = (f, add) => both ? R.map(r => r[f] + (add || 0)).join(' + ') : String(R[0][f] + (add || 0));
+
+            updateSummary();
+            document.getElementById('out-fewer-hero').innerText = fewer + ' fewer repaints' + (both ? ' (' + R[0].fewer + ' outside, ' + R[1].fewer + ' inside)' : '');
+            document.getElementById('out-life-hero').innerText = currentLife;
+            document.getElementById('jobs-acr').innerText = per('acrCycles', 1);
+            document.getElementById('jobs-keim').innerText = per('keimCycles', 1);
+
+            // timeline: one pair of rows per part
+            const dots = (n, every) => { let h = ''; for (let j = 0; j <= n; j++) { const pct = 4 + (j * every / currentLife) * 92; h += '<span class="tl-dot" style="left:' + pct + '%" title="Year ' + (j * every) + '"><i class="fa-solid fa-paint-roller"></i></span>'; } return h; };
+            let rows = '';
+            R.forEach(r => {
+                const tag = both ? (r.k === 'exterior' ? ' outside' : ' inside') : '';
+                rows += '<div class="flex items-center gap-3"><span class="w-24 sm:w-28 text-xs font-bold text-slate-600 shrink-0">Acrylic' + tag + '</span><div class="tl tl-acr relative flex-1 h-7 bg-slate-100 rounded-full">' + dots(r.acrCycles, r.p.acrInt) + '</div></div>';
+                rows += '<div class="flex items-center gap-3"><span class="w-24 sm:w-28 text-xs font-bold text-emerald-700 shrink-0">KEIM' + tag + '</span><div class="tl tl-keim relative flex-1 h-7 bg-emerald-50 rounded-full">' + dots(r.keimCycles, r.p.keimInt) + '</div></div>';
+            });
+            rows += '<div class="flex items-center gap-3"><span class="w-24 sm:w-28 shrink-0"></span><div class="flex-1 flex justify-between text-[10px] text-slate-400 font-bold px-1"><span>Year 0</span><span>Year ' + currentLife + '</span></div></div>';
+            document.getElementById('tl-rows').innerHTML = rows;
+
+            // cost line
+            document.getElementById('cost-breakdown').innerText = R.map(r => (both ? (r.k === 'exterior' ? 'Outside: ' : 'Inside: ') : '') + r.fewer + ' fewer repaints × ' + fmt(r.p.area) + ' m² × $' + r.p.rate + '/m²').join('   ·   ') + ' (today\'s dollars)';
+            document.getElementById('out-cost').innerText = fmt(sum('cost'));
 
             // Update DOM
             const pct = acrTotalCo2 > 0 ? ((totalCo2Saved / acrTotalCo2) * 100).toFixed(0) : 0;
