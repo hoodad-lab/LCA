@@ -177,9 +177,9 @@
                     <!-- Repaint intervals -->
                     <div class="mt-6 mb-2 pt-5 border-t border-slate-200">
                         <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Repaint every (years)</label>
-                        <p class="text-[11px] text-slate-500 mb-3">Change these to suit the site and exposure.</p>
-                        <div class="flex items-center justify-between mb-1"><span class="text-sm font-bold text-emerald-700">KEIM silicate</span><span class="text-lg font-black text-slate-900"><span id="keim-int-val">30</span> yrs</span></div>
-                        <input type="range" id="keim-int" min="10" max="60" step="5" value="30" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="setInterval2('keim', this.value)" />
+                        <p id="int-note" class="text-[11px] text-slate-500 mb-3"></p>
+                        <div class="flex items-center justify-between mb-1"><span class="text-sm font-bold text-emerald-700">KEIM silicate</span><span class="text-lg font-black text-slate-900"><span id="keim-int-val">25</span> yrs</span></div>
+                        <input type="range" id="keim-int" min="5" max="60" step="1" value="25" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="setInterval2('keim', this.value)" />
                         <div class="flex items-center justify-between mt-4 mb-1"><span class="text-sm font-bold text-slate-600">Acrylic</span><span class="text-lg font-black text-slate-900"><span id="acr-int-val">10</span> yrs</span></div>
                         <input type="range" id="acr-int" min="5" max="25" step="1" value="10" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-500" oninput="setInterval2('acr', this.value)" />
                     </div>
@@ -379,7 +379,7 @@
                         <div id="tl-rows" class="space-y-3"></div>
                     </div>
                     <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col text-xs text-slate-500">
-                        <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>How this is worked out:</strong> Both paints get the <strong>same carbon per coat</strong>, taken from the 2025 EN 15804+A2 EPDs below. Each paint job is 2 coats at 0.25 kg/m² per coat. <em>Upfront (A1-A5)</em> is the first paint job; <em>Repaints (B2)</em> are the jobs needed to cover the rest of the design life. The saving comes only from repainting less often, set by the "Repaint every" sliders.</p>
+                        <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>How this is worked out:</strong> Both paints get the <strong>same carbon per coat</strong>, taken from the 2025 EN 15804+A2 EPDs below. Each paint job is 2 coats at 0.25 kg/m² per coat. <em>Upfront (A1-A5)</em> is the first paint job; <em>Repaints (B2)</em> are the jobs needed to cover the rest of the design life. The saving comes only from repainting less often, set by the "Repaint every" sliders. KEIM defaults follow the KEIM Australia warranty (25 years exterior, 7-10 years interior), so the result is conservative.</p>
                         <p class="text-[10px] italic text-slate-400 border-t border-slate-200 pt-2 mt-1">Disclaimer: This is a projection, not a project LCA. The EPDs are association (VdL) model EPDs that declare worst-case values for a whole product group, not KEIM product-specific EPDs. Repaint intervals depend on substrate, exposure and maintenance; litres use an assumed density of 1.4 kg/L; VOC and binder figures for acrylic are typical values. For certified project documentation, use the EPD certificates themselves.</p>
                     </div>
                 </div>
@@ -874,12 +874,16 @@
             interior: { gwp: 2.54 + 0.0671 + 0.0379, acrVoc: 30, keimVoc: 0 }
         };
         const parts = {
-            exterior: { area: 2500, keimInt: 30, acrInt: 10, rate: 65 },
-            interior: { area: 2500, keimInt: 20, acrInt: 7,  rate: 30 }
+            exterior: { area: 2500, keimInt: 25, acrInt: 10, rate: 65 },
+            interior: { area: 2500, keimInt: 10, acrInt: 7,  rate: 30 }
         };
         const NOTES = {
             exterior: 'Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.',
             interior: 'Default: typical interior repaint, $25-35/m² incl. labour. Enter your own rate.'
+        };
+        const INT_NOTES = {
+            exterior: 'KEIM default = the KEIM Australia 25-year exterior warranty, with no repaint needed in that time. Real life is often longer: the EPD notes up to 50 years. Acrylic = a typical repaint cycle. Change both to suit the site.',
+            interior: 'KEIM default = the 7-10 year interior warranty. With good care it can last up to 20 years. Acrylic = a typical repaint cycle. Change both to suit the site.'
         };
         const fmt = n => Math.round(n).toLocaleString();
 
@@ -891,6 +895,7 @@
             document.getElementById('acr-int').value = p.acrInt; document.getElementById('acr-int-val').innerText = p.acrInt;
             document.getElementById('cost-input').value = p.rate;
             document.getElementById('cost-note').innerText = NOTES[editPart];
+            document.getElementById('int-note').innerText = INT_NOTES[editPart];
             document.getElementById('area-label').innerText = currentScope === 'both' ? (editPart === 'exterior' ? 'Exterior area (m²)' : 'Interior area (m²)') : 'Area to paint (m²)';
         }
         function updateSummary() {
@@ -1087,7 +1092,7 @@
 
         // Initialize on load
         window.onload = () => {
-            calculate();
+            loadPart(); calculate();
         };
     </script>
 
