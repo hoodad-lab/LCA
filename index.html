@@ -143,10 +143,10 @@
                         <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Repaint cost ($/m², incl. labour &amp; access)</label>
                         <div class="mt-2 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
                             <span class="text-sm font-bold text-slate-500 px-3">$</span>
-                            <input type="number" id="cost-input" value="30" min="0" step="1" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="setCost(this.value)" />
+                            <input type="number" id="cost-input" value="65" min="0" step="1" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="setCost(this.value)" />
                             <span class="text-sm font-bold text-slate-500 px-3">per m²</span>
                         </div>
-                        <p class="text-[11px] text-slate-500 mt-2">Enter your own rate. Used only for the cost line.</p>
+                        <p class="text-[11px] text-slate-500 mt-2">Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.</p>
                     </div>
 
                     <!-- PDF Download Button -->
@@ -813,7 +813,7 @@
             interior: { gwp: 2.54 + 0.0671 + 0.0379, keimInt: 20, acrInt: 7,  acrVoc: 30, keimVoc: 0 }
         };
         const BINDER_SHARE = 0.20;  // polymer dispersion share of acrylic paint (EPD range 3-35%)
-        let keimInt = metrics.exterior.keimInt, acrInt = metrics.exterior.acrInt, costRate = 30;
+        let keimInt = metrics.exterior.keimInt, acrInt = metrics.exterior.acrInt, costRate = 65;
 
         function setInterval2(which, v) {
             v = Number(v); if (!(v > 0)) return;
