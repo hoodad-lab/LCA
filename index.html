@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KEIM Australia | LCA & Performance Modeling Tool</title>
+    <title>KEIM Australia | LCA & Performance Modelling Tool</title>
     
     <!-- Tailwind CSS for Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -59,7 +59,7 @@
             <div class="flex items-center space-x-3">
                 <div class="flex flex-col">
                     <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">KEIM Australia</h1>
-                    <p class="text-[10px] sm:text-xs text-emerald-700 uppercase tracking-widest font-bold leading-tight">LCA & Performance Modeling</p>
+                    <p class="text-[10px] sm:text-xs text-emerald-700 uppercase tracking-widest font-bold leading-tight">LCA & Performance Modelling</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2 sm:space-x-4">
@@ -84,7 +84,7 @@
         <div id="main-intro" class="mb-6 sm:mb-8 max-w-4xl">
             <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Life Cycle Assessment (LCA) Projection</h2>
             <p class="text-sm sm:text-lg text-slate-600 leading-relaxed">
-                This tool models projected carbon data in accordance with <strong>EN 15804 methodology</strong>. It compares the upfront embodied carbon (Modules A1-A5) and operational maintenance requirements (Modules B1-B7) of inorganic silicate binders against standard polymer dispersions over a specified Reference Service Life (RSL).
+                This tool models projected carbon data in accordance with <strong>EN 15804 methodology</strong>. It compares the upfront embodied carbon (Modules A1-A5) and the carbon of repainting (Module B2 maintenance) for KEIM silicate paint against standard polymer dispersion (acrylic) paint over the life of the building. Carbon figures come from the current 2025 EN 15804+A2 EPDs (valid to 2030).
             </p>
         </div>
 
@@ -125,6 +125,28 @@
                             <input type="number" id="life-input" value="60" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="updateInputs('life', this.value)" />
                             <span class="text-sm font-bold text-slate-500 px-3">Years</span>
                         </div>
+                    </div>
+
+
+                    <!-- Repaint intervals -->
+                    <div class="mt-6 mb-2 pt-5 border-t border-slate-200">
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Repaint every (years)</label>
+                        <p class="text-[11px] text-slate-500 mb-3">Change these to suit the site and exposure.</p>
+                        <div class="flex items-center justify-between mb-1"><span class="text-sm font-bold text-emerald-700">KEIM silicate</span><span class="text-lg font-black text-slate-900"><span id="keim-int-val">30</span> yrs</span></div>
+                        <input type="range" id="keim-int" min="10" max="60" step="5" value="30" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="setInterval2('keim', this.value)" />
+                        <div class="flex items-center justify-between mt-4 mb-1"><span class="text-sm font-bold text-slate-600">Acrylic</span><span class="text-lg font-black text-slate-900"><span id="acr-int-val">10</span> yrs</span></div>
+                        <input type="range" id="acr-int" min="5" max="25" step="1" value="10" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-500" oninput="setInterval2('acr', this.value)" />
+                    </div>
+
+                    <!-- Repaint cost -->
+                    <div class="mt-6 mb-2">
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Repaint cost ($/m², incl. labour &amp; access)</label>
+                        <div class="mt-2 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
+                            <span class="text-sm font-bold text-slate-500 px-3">$</span>
+                            <input type="number" id="cost-input" value="30" min="0" step="1" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="setCost(this.value)" />
+                            <span class="text-sm font-bold text-slate-500 px-3">per m²</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-2">Enter your own rate. Used only for the cost line.</p>
                     </div>
 
                     <!-- PDF Download Button -->
@@ -255,6 +277,15 @@
                     </div>
                 </div>
 
+
+                <!-- Cost line -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 break-inside-avoid">
+                    <div class="flex items-center"><div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mr-3"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div><p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide">Repaint cost avoided</p>
+                        <p class="text-xs text-slate-500"><span id="out-fewer">0</span> fewer repaints × <span id="out-cost-area">0</span> m² × $<span id="out-cost-rate">0</span>/m² (today's dollars)</p></div></div>
+                    <p class="text-2xl sm:text-3xl font-black text-slate-900">$<span id="out-cost">0</span></p>
+                </div>
+
                 <!-- Stacked Carbon Chart -->
                 <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 mt-6 break-inside-avoid">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 print-flex-row">
@@ -263,7 +294,7 @@
                         </h3>
                         <div class="flex items-center space-x-4 mt-4 sm:mt-0 text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider">
                             <div class="flex items-center"><div class="w-3 h-3 rounded bg-emerald-500 mr-1.5"></div> Upfront (A1-A5)</div>
-                            <div class="flex items-center"><div class="w-3 h-3 rounded bg-slate-800 mr-1.5"></div> Maintenance (B1-B7)</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded bg-slate-800 mr-1.5"></div> Repaints (B2)</div>
                         </div>
                     </div>
                     
@@ -298,9 +329,36 @@
                     </div>
 
                     <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col text-xs text-slate-500">
-                        <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>Methodology Note:</strong> Modeling relies on parameters established by <strong>EN 15804</strong> for Life Cycle Assessments. <em>Upfront Carbon (A1-A5)</em> reflects raw material extraction, transport, and manufacturing data. <em>Maintenance Carbon (B1-B7)</em> illustrates compounding embodied carbon triggered by operational recoating when standard Reference Service Lifespan (RSL) limits are reached.</p>
-                        <p class="text-[10px] italic text-slate-400 border-t border-slate-200 pt-2 mt-1">Disclaimer: The quantitative metrics (GWP/CO₂e, VOCs, lifespans) generated by this tool are based on representative, aggregated baseline data drawn from industry-standard Environmental Product Declarations (EPDs) for silicate and acrylic systems. Actual project performance will vary depending on specific substrate conditions, environmental exposure, and precise product formulation specified. For certified project documentation, please refer to product-specific EPD certificates.</p>
+                        <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>How this is worked out:</strong> Both paints get the <strong>same carbon per coat</strong>, taken from the 2025 EN 15804+A2 EPDs below. Each paint job is 2 coats at 0.25 kg/m² per coat. <em>Upfront (A1-A5)</em> is the first paint job; <em>Repaints (B2)</em> are the jobs needed to cover the rest of the design life. The saving comes only from repainting less often, set by the "Repaint every" sliders.</p>
+                        <p class="text-[10px] italic text-slate-400 border-t border-slate-200 pt-2 mt-1">Disclaimer: This is a projection, not a project LCA. The EPDs are association (VdL) model EPDs that declare worst-case values for a whole product group, not KEIM product-specific EPDs. Repaint intervals depend on substrate, exposure and maintenance; litres use an assumed density of 1.4 kg/L; VOC and binder figures for acrylic are typical values. For certified project documentation, use the EPD certificates themselves.</p>
                     </div>
+                </div>
+
+                <!-- Data used -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 mt-6 break-inside-avoid">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center mb-4"><i class="fa-solid fa-database mr-2 text-emerald-600"></i> Data used</h3>
+                    <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead><tr class="text-slate-500 uppercase tracking-wider text-[10px] sm:text-xs border-b border-slate-200"><th class="py-2 pr-3">Used for</th><th class="py-2 pr-3">EPD</th><th class="py-2 text-right">kg CO₂e per kg (A1-A5)</th></tr></thead>
+                        <tbody class="text-slate-700">
+                            <tr class="border-b border-slate-100"><td class="py-2 pr-3">Exterior (facade paint)</td><td class="py-2 pr-3">EPD-VDL-20240620-IBN1-EN<br/><span class="text-slate-400">Dispersion-based facade paints (covers silicate &amp; silicone types)</span></td><td class="py-2 text-right font-bold">2.89</td></tr>
+                            <tr><td class="py-2 pr-3">Interior (wall paint)</td><td class="py-2 pr-3">EPD-VDL-20240617-IBN1-EN<br/><span class="text-slate-400">Interior wall paints, wet-abrasion class 1</span></td><td class="py-2 text-right font-bold">2.65</td></tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-3">Programme operator: IBU (Institut Bauen und Umwelt), declaration holder VdL (German Paint and Printing Ink Association). Issued 03.06.2025, valid to 02.06.2030. A1-A3 production + A4 transport + A5 application. The facade EPD gives a reference service life of 25 years (BBSR average) and notes that up to 50 years can be achieved.</p>
+                </div>
+
+                <!-- Australian context -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 mt-6 break-inside-avoid">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center mb-4"><i class="fa-solid fa-earth-oceania mr-2 text-emerald-600"></i> Using this in Australia</h3>
+                    <ul class="space-y-3 text-xs sm:text-sm text-slate-600">
+                        <li><strong class="text-slate-800">NABERS Embodied Carbon</strong> – voluntary rating of a new building's upfront carbon. It prefers product EPDs to default factors, so the EPDs above can be used.</li>
+                        <li><strong class="text-slate-800">Green Star Buildings</strong> – rewards lower upfront carbon and whole-of-life thinking. Fewer repaints is a whole-of-life (B2) saving.</li>
+                        <li><strong class="text-slate-800">NSW planning (Sustainable Buildings SEPP)</strong> – new developments must measure and report embodied emissions.</li>
+                        <li><strong class="text-slate-800">National Construction Code</strong> – embodied carbon is not mandatory in the NCC yet; check the ABCB for the latest position.</li>
+                    </ul>
+                    <p class="text-xs text-slate-500 mt-4 bg-slate-50 p-3 rounded-lg border border-slate-200"><strong>Be honest about where the saving is:</strong> per coat, the EPD carbon is the same for both paints, so an upfront-only (A1-A5) assessment will show little difference. The saving appears over the building's life, because KEIM is repainted less often.</p>
                 </div>
             </div>
         </div>
@@ -350,7 +408,7 @@
                     <ul class="space-y-4">
                         <li class="flex items-start">
                             <i class="fa-solid fa-wind text-blue-500 mr-3 mt-1 shrink-0"></i>
-                            <div><span class="text-sm font-bold text-slate-800">Vapor Permeability:</span> <span class="text-sm text-slate-500">A Class V1 (high) vapour permeability, Sd &lt; 0.14 m to EN ISO 7783, allows structural vapor to diffuse freely, entirely preventing interstitial condensation and mold in highly sealed envelopes.</span></div>
+                            <div><span class="text-sm font-bold text-slate-800">Vapour Permeability:</span> <span class="text-sm text-slate-500">A Class V1 (high) vapour permeability, Sd &lt; 0.14 m to EN ISO 7783, allows structural vapour to diffuse freely, entirely preventing interstitial condensation and mould in highly sealed envelopes.</span></div>
                         </li>
                         <li class="flex items-start">
                             <i class="fa-solid fa-lungs text-blue-500 mr-3 mt-1 shrink-0"></i>
@@ -405,7 +463,7 @@
 
                 <div class="p-6 sm:p-8 relative min-h-[250px]">
                     <div id="tab-owner" class="tab-content active">
-                        <h3 class="text-xl font-black text-slate-900 mb-3">Lifecycle Costing (LCC) Optimization</h3>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">Lifecycle Costing (LCC) Optimisation</h3>
                         <p class="text-slate-600 mb-6 leading-relaxed">The primary financial liability of a facade coating is not the initial material supply (Module A1-A3), but the operational expenditure (OPEX) during the Use Phase (Module B2). Repainting cycles mandate significant logistical outlays including scaffolding, site management, and operational downtime.</p>
                         <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 print-grid-2">
                             <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Extended Reference Service Life (RSL)</strong> By chemically bonding to the substrate (silicification), the coating achieves an RSL that aligns with the structural lifespan of the masonry asset.</li>
@@ -417,7 +475,7 @@
                         <p class="text-slate-600 mb-6 leading-relaxed">Silicate systems do not form a macro-molecular film. They penetrate the substrate, preserving the natural materiality, texture, and acoustic properties of concrete, render, and brick while delivering a flat-matte finish.</p>
                         <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 print-grid-2">
                             <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Absolute UV Stability (Class A1)</strong> Utilizing exclusively inorganic earth pigments ensures resistance to photochemical degradation, maintaining design intent over decades.</li>
-                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">High Permeability (Low Sd-Value)</strong> Prevents osmotic blistering by permitting structural moisture vapor to pass freely, which is critical for both modern off-form concrete and heritage masonry.</li>
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">High Permeability (Low Sd-Value)</strong> Prevents osmotic blistering by permitting structural moisture vapour to pass freely, which is critical for both modern off-form concrete and heritage masonry.</li>
                         </ul>
                     </div>
                     <div id="tab-sus" class="tab-content">
@@ -475,13 +533,13 @@
                                 <text x="10" y="75">Synthetic Polymer Film</text>
                                 <text x="215" y="65" fill="#ef4444">Adhesion Failure (Blistering)</text>
                                 <text x="10" y="120" fill="#64748b">Masonry Substrate</text>
-                                <text x="235" y="130" fill="#3b82f6">Osmotic / Vapor Pressure</text>
+                                <text x="235" y="130" fill="#3b82f6">Osmotic / Vapour Pressure</text>
                             </g>
                         </svg>
                     </div>
                     <div class="mt-6 space-y-3 flex-grow">
                         <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-slate-200 pl-3"><strong>Mechanism:</strong> Macro-molecular polymer resins cure to form a dense, continuous thermoplastic film over the substrate surface.</p>
-                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-slate-200 pl-3"><strong>Mode of Degradation:</strong> The high Sd-value of the polymer film impedes vapor diffusion. Subsequent condensation creates osmotic pressure that overcomes mechanical surface adhesion, leading to blistering, flaking, and structural exposure.</p>
+                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-slate-200 pl-3"><strong>Mode of Degradation:</strong> The high Sd-value of the polymer film impedes vapour diffusion. Subsequent condensation creates osmotic pressure that overcomes mechanical surface adhesion, leading to blistering, flaking, and structural exposure.</p>
                     </div>
                 </div>
 
@@ -522,13 +580,13 @@
                                 <text x="10" y="70" fill="#047857">Inorganic Pigments (UV Stable)</text>
                                 <text x="215" y="115" fill="#047857">Silicification Zone (Chemical Bond)</text>
                                 <text x="10" y="140" fill="#64748b">Masonry Substrate</text>
-                                <text x="215" y="55" fill="#3b82f6">Unhindered Vapor Diffusion</text>
+                                <text x="215" y="55" fill="#3b82f6">Unhindered Vapour Diffusion</text>
                             </g>
                         </svg>
                     </div>
                     <div class="mt-6 space-y-3 flex-grow">
                         <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-emerald-200 pl-3"><strong>Mechanism:</strong> Liquid potassium silicate undergoes a reactive chemical crystallization process (silicification) with calcium carbonate/quartz present in the masonry substrate.</p>
-                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-emerald-200 pl-3"><strong>Performance Vector:</strong> Because no distinct interfacial film is formed, mechanical adhesion failure is physically precluded. An ultra-low Sd-value permits unhindered vapor diffusion, establishing a balanced moisture equilibrium within the structural wall.</p>
+                        <p class="text-sm text-slate-600 leading-relaxed border-l-2 border-emerald-200 pl-3"><strong>Performance Vector:</strong> Because no distinct interfacial film is formed, mechanical adhesion failure is physically precluded. An ultra-low Sd-value permits unhindered vapour diffusion, establishing a balanced moisture equilibrium within the structural wall.</p>
                     </div>
                 </div>
             </div>
@@ -676,7 +734,7 @@
                         <li class="flex items-start">
                             <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0 mr-4 mt-1"><i class="fa-solid fa-temperature-half"></i></div>
                             <div>
-                                <strong class="block text-blue-900 mb-1">Total Solar Reflectance (TSR) Optimization</strong>
+                                <strong class="block text-blue-900 mb-1">Total Solar Reflectance (TSR) Optimisation</strong>
                                 <p class="text-sm text-blue-800/80 leading-relaxed">Inorganic pigments inherently reflect high levels of Near-Infrared (NIR) radiation. Specialized formulations (e.g., KEIM Coolit) expand this capability to dark architectural shades, passively mitigating thermal loading.</p>
                             </div>
                         </li>
@@ -684,7 +742,7 @@
                             <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0 mr-4 mt-1"><i class="fa-solid fa-wind"></i></div>
                             <div>
                                 <strong class="block text-blue-900 mb-1">Substrate Desiccation</strong>
-                                <p class="text-sm text-blue-800/80 leading-relaxed">Unrestricted vapor permeability ensures the structural masonry remains continuously dry, optimizing the substrate's natural thermal resistance and reducing HVAC load requirements.</p>
+                                <p class="text-sm text-blue-800/80 leading-relaxed">Unrestricted vapour permeability ensures the structural masonry remains continuously dry, optimising the substrate's natural thermal resistance and reducing HVAC load requirements.</p>
                             </div>
                         </li>
                     </ul>
@@ -709,14 +767,14 @@
                 <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 relative overflow-hidden group">
                     <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-wind text-xl"></i></div>
                     <h3 class="text-lg font-black text-slate-900 mb-2">ISO 7783</h3>
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Water Vapor Transmission</h4>
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Water Vapour Transmission</h4>
                     <p class="text-sm text-slate-600 leading-relaxed">Class V1 (high) vapour permeability to EN 1062-1 / EN ISO 7783 (Sd &lt; 0.14 m). Guarantees unhindered capillary transpiration, preventing interstitial condensation and associated concrete spalling or render delamination.</p>
                 </div>
                 <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 relative overflow-hidden group">
                     <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-sun text-xl"></i></div>
                     <h3 class="text-lg font-black text-slate-900 mb-2">BFS Leaflet 26</h3>
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Photochemical Stability</h4>
-                    <p class="text-sm text-slate-600 leading-relaxed">Class A1 categorization. The exclusion of organic compounds and exclusive use of mineral pigments eliminates susceptibility to UV degradation, chalking, and color fading.</p>
+                    <p class="text-sm text-slate-600 leading-relaxed">Class A1 categorisation. The exclusion of organic compounds and exclusive use of mineral pigments eliminates susceptibility to UV degradation, chalking, and colour fading.</p>
                 </div>
             </div>
         </div>
@@ -744,33 +802,32 @@
         let currentArea = 2500;
         let currentLife = 60;
 
-        // Constants - Updated to reflect realistic, defensible generic EPD baseline data
+        // Carbon per kg of paint, A1-A5 (EN 15804+A2), same value for both systems per coat
+        // Exterior: EPD-VDL-20240620-IBN1-EN  A1-A3 2.78 + A4 0.0671 + A5 0.0379
+        // Interior: EPD-VDL-20240617-IBN1-EN  A1-A3 2.54 + A4 0.0671 + A5 0.0379
+        const KG_PER_COAT = 0.25;   // kg/m2 per coat (EPD range 0.1-0.5)
+        const COATS = 2;
+        const DENSITY = 1.4;        // kg/L, for litres and VOC
         const metrics = {
-            exterior: { 
-                keimLifespan: 60,   // KEIM exterior longevity aligned with structural lifespan
-                keimCo2: 1.1,       // kg CO2e per Litre
-                keimVoc: 0,         // g/L
-                keimCov: 6,         // Coverage m2/L per coat (average 2-coat system)
-                keimCoats: 2, 
-                acrLifespan: 10,    // Standard acrylic exterior recoat cycle
-                acrCo2: 3.2,        // kg CO2e per Litre (higher impact formulation)
-                acrVoc: 45,         // g/L average
-                acrCov: 7, 
-                acrCoats: 2 
-            },
-            interior: { 
-                keimLifespan: 40,   // Interior lifespan (often limited by structural remodeling cycles)
-                keimCo2: 0.9,       // Lower impact interior formulation
-                keimVoc: 0, 
-                keimCov: 7, 
-                keimCoats: 2, 
-                acrLifespan: 7,     // Typical commercial interior recoat cycle
-                acrCo2: 2.8, 
-                acrVoc: 30, 
-                acrCov: 8, 
-                acrCoats: 2 
-            }
+            exterior: { gwp: 2.78 + 0.0671 + 0.0379, keimInt: 30, acrInt: 10, acrVoc: 45, keimVoc: 0 },
+            interior: { gwp: 2.54 + 0.0671 + 0.0379, keimInt: 20, acrInt: 7,  acrVoc: 30, keimVoc: 0 }
         };
+        const BINDER_SHARE = 0.20;  // polymer dispersion share of acrylic paint (EPD range 3-35%)
+        let keimInt = metrics.exterior.keimInt, acrInt = metrics.exterior.acrInt, costRate = 30;
+
+        function setInterval2(which, v) {
+            v = Number(v); if (!(v > 0)) return;
+            if (which === 'keim') { keimInt = v; document.getElementById('keim-int-val').innerText = v; }
+            else { acrInt = v; document.getElementById('acr-int-val').innerText = v; }
+            calculate();
+        }
+        function setCost(v) { v = Number(v); if (v >= 0) { costRate = v; calculate(); } }
+        function syncIntervals() {
+            const m = metrics[currentScope];
+            keimInt = m.keimInt; acrInt = m.acrInt;
+            document.getElementById('keim-int').value = keimInt; document.getElementById('keim-int-val').innerText = keimInt;
+            document.getElementById('acr-int').value = acrInt; document.getElementById('acr-int-val').innerText = acrInt;
+        }
 
         // UI Interactions
         function setScope(scope) {
@@ -782,6 +839,7 @@
                 document.getElementById('btn-interior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all bg-white shadow text-emerald-700 border border-slate-200";
                 document.getElementById('btn-exterior').className = "flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 border border-transparent";
             }
+            syncIntervals();
             calculate();
         }
 
@@ -830,21 +888,20 @@
         // Calculation Engine
         function calculate() {
             const cm = metrics[currentScope];
-            
-            const keimInitialLitres = (currentArea / cm.keimCov) * cm.keimCoats;
-            const acrInitialLitres = (currentArea / cm.acrCov) * cm.acrCoats;
 
-            const keimCycles = Math.max(0, Math.ceil(currentLife / cm.keimLifespan) - 1);
-            const acrCycles = Math.max(0, Math.ceil(currentLife / cm.acrLifespan) - 1);
+            const jobKg = currentArea * KG_PER_COAT * COATS;          // kg of paint per paint job (same for both)
+            const keimCycles = Math.max(0, Math.ceil(currentLife / keimInt) - 1);
+            const acrCycles = Math.max(0, Math.ceil(currentLife / acrInt) - 1);
 
-            const keimTotalLitres = keimInitialLitres * (1 + keimCycles);
-            const acrTotalLitres = acrInitialLitres * (1 + acrCycles);
+            const keimTotalKg = jobKg * (1 + keimCycles);
+            const acrTotalKg = jobKg * (1 + acrCycles);
+            const keimTotalLitres = keimTotalKg / DENSITY;
+            const acrTotalLitres = acrTotalKg / DENSITY;
 
-            const keimUpfrontCo2 = keimInitialLitres * cm.keimCo2;
-            const acrUpfrontCo2 = acrInitialLitres * cm.acrCo2;
-
-            const keimMaintCo2 = (keimTotalLitres - keimInitialLitres) * cm.keimCo2;
-            const acrMaintCo2 = (acrTotalLitres - acrInitialLitres) * cm.acrCo2;
+            const keimUpfrontCo2 = jobKg * cm.gwp;
+            const acrUpfrontCo2 = jobKg * cm.gwp;
+            const keimMaintCo2 = keimUpfrontCo2 * keimCycles;
+            const acrMaintCo2 = acrUpfrontCo2 * acrCycles;
 
             const keimTotalCo2 = keimUpfrontCo2 + keimMaintCo2;
             const acrTotalCo2 = acrUpfrontCo2 + acrMaintCo2;
@@ -853,18 +910,24 @@
             const acrTotalVoc = (acrTotalLitres * cm.acrVoc) / 1000;
 
             const totalCo2Saved = Math.max(0, acrTotalCo2 - keimTotalCo2);
-            const acrMicroplastics = acrTotalLitres * 0.25;
+            const acrMicroplastics = acrTotalKg * BINDER_SHARE;
+
+            const fewer = Math.max(0, acrCycles - keimCycles);
+            document.getElementById('out-fewer').innerText = fewer;
+            document.getElementById('out-cost-area').innerText = currentArea.toLocaleString();
+            document.getElementById('out-cost-rate').innerText = costRate;
+            document.getElementById('out-cost').innerText = (fewer * currentArea * costRate).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
             // Update DOM
             const pct = acrTotalCo2 > 0 ? ((totalCo2Saved / acrTotalCo2) * 100).toFixed(0) : 0;
             document.getElementById('out-co2-percent').innerText = pct;
-            document.getElementById('out-total-co2').innerText = totalCo2Saved.toFixed(0);
-            document.getElementById('out-total-co2-sub').innerText = totalCo2Saved.toFixed(0);
+            document.getElementById('out-total-co2').innerText = totalCo2Saved.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            document.getElementById('out-total-co2-sub').innerText = totalCo2Saved.toLocaleString(undefined, { maximumFractionDigits: 0 });
             document.getElementById('out-design-life').innerText = currentLife;
 
             // Micro Metrics
-            document.getElementById('out-paint').innerText = (acrTotalLitres - keimTotalLitres).toFixed(0);
-            document.getElementById('out-repaints').innerText = (acrCycles - keimCycles);
+            document.getElementById('out-paint').innerText = Math.max(0, acrTotalLitres - keimTotalLitres).toLocaleString(undefined, { maximumFractionDigits: 0 });
+            document.getElementById('out-repaints').innerText = fewer;
             document.getElementById('out-vocs').innerText = (acrTotalVoc - keimTotalVoc).toFixed(1);
             
             const microEl1 = document.getElementById('out-micro');
