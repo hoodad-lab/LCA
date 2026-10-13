@@ -178,7 +178,7 @@
                             <input type="number" id="cost-input" value="65" min="0" step="1" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="setCost(this.value)" />
                             <span class="text-sm font-bold text-slate-500 px-3">per m²</span>
                         </div>
-                        <p class="text-[11px] text-slate-500 mt-2">Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.</p>
+                        <p id="cost-note" class="text-[11px] text-slate-500 mt-2">Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.</p>
                     </div>
 
                     <!-- PDF Download Button -->
@@ -859,8 +859,8 @@
         const COATS = 2;
         const DENSITY = 1.4;        // kg/L, for litres and VOC
         const metrics = {
-            exterior: { gwp: 2.78 + 0.0671 + 0.0379, keimInt: 30, acrInt: 10, acrVoc: 45, keimVoc: 0 },
-            interior: { gwp: 2.54 + 0.0671 + 0.0379, keimInt: 20, acrInt: 7,  acrVoc: 30, keimVoc: 0 }
+            exterior: { gwp: 2.78 + 0.0671 + 0.0379, rate: 65, keimInt: 30, acrInt: 10, acrVoc: 45, keimVoc: 0 },
+            interior: { gwp: 2.54 + 0.0671 + 0.0379, rate: 30, keimInt: 20, acrInt: 7,  acrVoc: 30, keimVoc: 0 }
         };
         const BINDER_SHARE = 0.20;  // polymer dispersion share of acrylic paint (EPD range 3-35%)
         let keimInt = metrics.exterior.keimInt, acrInt = metrics.exterior.acrInt, costRate = 65;
@@ -875,6 +875,10 @@
         function syncIntervals() {
             const m = metrics[currentScope];
             keimInt = m.keimInt; acrInt = m.acrInt;
+            costRate = m.rate; document.getElementById('cost-input').value = m.rate;
+            document.getElementById('cost-note').innerText = currentScope === 'interior'
+                ? 'Default: typical interior repaint, $25-35/m² incl. labour. Enter your own rate.'
+                : 'Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.';
             document.getElementById('keim-int').value = keimInt; document.getElementById('keim-int-val').innerText = keimInt;
             document.getElementById('acr-int').value = acrInt; document.getElementById('acr-int-val').innerText = acrInt;
         }
