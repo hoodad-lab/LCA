@@ -9,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -52,6 +53,9 @@
             .seg:last-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
         .tl-dot { position:absolute; top:50%; width:22px; height:22px; margin-left:-11px; transform:translateY(-50%); border-radius:9999px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; box-shadow:0 1px 3px rgba(0,0,0,.2); }
         #tl-acr .tl-dot { background:#475569; } #tl-keim .tl-dot { background:#059669; }
+            #hero-3d canvas { width:100% !important; height:100% !important; display:block; }
+        .tilt { transition: transform .25s ease, box-shadow .25s ease; transform-style: preserve-3d; will-change: transform; }
+        @media print { #hero-3d { display:none !important; } .tilt { transform:none !important; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans selection:bg-emerald-200 overflow-x-hidden pb-10">
@@ -191,9 +195,7 @@
 
                 <!-- Main Metric Card -->
                 <div class="bg-gradient-to-br from-emerald-600 to-emerald-900 rounded-2xl p-6 sm:p-8 shadow-lg text-white relative overflow-hidden flex flex-col justify-center break-inside-avoid">
-                    <div class="absolute top-0 right-0 p-4 sm:p-8 opacity-10 pointer-events-none">
-                        <i class="fa-solid fa-leaf text-[120px] sm:text-[200px]"></i>
-                    </div>
+                    <div id="hero-3d" class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
                     
                     <div class="relative z-10 border-b border-emerald-500/30 pb-6 mb-6">
                         <div class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-400/20 border border-emerald-400/30 text-emerald-100 text-[10px] sm:text-xs font-black tracking-widest uppercase mb-4 sm:mb-6">
@@ -224,7 +226,7 @@
                                 </div>
                             </div>
                             <div class="bg-emerald-800/50 rounded-xl p-4 border border-emerald-500/30 backdrop-blur-sm flex items-center">
-                                <i class="fa-solid fa-house-chimney-bolt text-3xl text-emerald-400 mr-4 shrink-0 w-8 text-center"></i>
+                                <i class="fa-solid fa-house-chimney text-3xl text-emerald-400 mr-4 shrink-0 w-8 text-center"></i>
                                 <div>
                                     <p class="text-lg sm:text-xl font-black text-white"><span id="out-home-val">0</span> <span id="out-home-unit">Years</span></p>
                                     <p class="text-[10px] sm:text-xs text-emerald-200 leading-tight mt-0.5">Energy for avg. AU household.<br/><span class="opacity-75">(grid baseline: 5 tonnes CO₂/yr)</span></p>
@@ -1017,6 +1019,105 @@
         window.onload = () => {
             calculate();
         };
+    </script>
+
+    <script>
+    // ---- 3D silicate crystals in the result card (Three.js) ----
+    (function () {
+        const host = document.getElementById('hero-3d');
+        if (!host || !window.THREE) return;
+        const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let renderer;
+        try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); } catch (e) { return; }
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        host.appendChild(renderer.domElement);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+        camera.position.set(0, 0, 14);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+        const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(4, 6, 8); scene.add(key);
+        const rim = new THREE.DirectionalLight(0x6ee7b7, 0.7); rim.position.set(-6, -3, 4); scene.add(rim);
+
+        const group = new THREE.Group(); scene.add(group);
+        const geoms = [new THREE.OctahedronGeometry(1, 0), new THREE.IcosahedronGeometry(1, 0), new THREE.TetrahedronGeometry(1, 0)];
+        const mats = [
+            new THREE.MeshStandardMaterial({ color: 0xd1fae5, flatShading: true, transparent: true, opacity: 0.55, roughness: 0.35, metalness: 0.1 }),
+            new THREE.MeshStandardMaterial({ color: 0x34d399, flatShading: true, transparent: true, opacity: 0.45, roughness: 0.4 }),
+            new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true, transparent: true, opacity: 0.25, roughness: 0.2 })
+        ];
+        const wire = new THREE.LineBasicMaterial({ color: 0xa7f3d0, transparent: true, opacity: 0.35 });
+        const crystals = [];
+        for (let i = 0; i < 12; i++) {
+            const g = geoms[i % geoms.length];
+            const m = new THREE.Mesh(g, mats[i % mats.length]);
+            const sc = 0.3 + Math.random() * 0.7;
+            m.userData1 = [sc, sc * (1 + Math.random() * 0.6), sc];
+            m.userData0 = { nx: Math.random(), ny: Math.random(), z: (Math.random() - 0.5) * 3 };
+            m.rotation.set(Math.random() * 3, Math.random() * 3, 0);
+            m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g), wire));
+            m.userData = { s: 0.15 + Math.random() * 0.35, f: Math.random() * 6.28, y: 0 };
+            group.add(m); crystals.push(m);
+        }
+        let mx = 0, my = 0;
+        window.addEventListener('pointermove', e => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; }, { passive: true });
+
+        function size() {
+            const w = host.clientWidth || 1, h = host.clientHeight || 1;
+            renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+            // keep crystals on the right side, clear of the big number; fewer on phones
+            // place crystals in the upper-right of the card, inside the visible area
+            const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
+            const halfW = halfH * camera.aspect, small = w < 640;
+            crystals.forEach((c, i) => {
+                const d = c.userData0;
+                c.visible = !small || i % 2 === 0;
+                // desktop: right-hand third; phone: top-right corner beside the big number
+                const fx = small ? 0.62 + d.nx * 0.3 : 0.72 + d.nx * 0.24;
+                const fy = small ? 0.72 + d.ny * 0.22 : 0.05 + d.ny * 0.85;
+                c.position.x = (fx * 2 - 1) * halfW;
+                c.userData.y = (fy * 2 - 1) * halfH;
+                c.position.y = c.userData.y; c.position.z = d.z;
+                const k = small ? 0.55 : 1, b = c.userData1;
+                c.scale.set(b[0] * k, b[1] * k, b[2] * k);
+            });
+        }
+        size(); window.addEventListener('resize', size);
+
+        let visible = true, t0 = performance.now();
+        if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(host);
+        function frame(now) {
+            requestAnimationFrame(frame);
+            if (!visible) return;
+            const t = (now - t0) / 1000;
+            crystals.forEach(c => {
+                c.rotation.x += 0.003 * c.userData.s * 10 * 0.2;
+                c.rotation.y += 0.004 * c.userData.s * 10 * 0.2;
+                c.position.y = c.userData.y + Math.sin(t * c.userData.s + c.userData.f) * 0.35;
+            });
+            group.rotation.y += (mx * 0.5 - group.rotation.y) * 0.05;
+            group.rotation.x += (my * 0.3 - group.rotation.x) * 0.05;
+            renderer.render(scene, camera);
+        }
+        if (reduce) renderer.render(scene, camera); else requestAnimationFrame(frame);
+    })();
+
+    // ---- gentle 3D tilt on cards (mouse only) ----
+    (function () {
+        if (!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches)) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.querySelectorAll('main .rounded-2xl, main .rounded-3xl, section .rounded-2xl, section .rounded-3xl').forEach(el => {
+            if (el.closest('#controls-section') || el.querySelector('input') || el.offsetWidth < 200) return;
+            el.classList.add('tilt');
+            el.addEventListener('pointermove', e => {
+                const r = el.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+                const k = Math.max(1, 3 - r.width / 600); // big cards tilt less
+                el.style.transform = `perspective(1000px) rotateX(${(-y * k).toFixed(2)}deg) rotateY(${(x * k).toFixed(2)}deg) translateZ(0)`;
+                el.style.boxShadow = '0 18px 40px -18px rgba(6,78,59,.35)';
+            });
+            el.addEventListener('pointerleave', () => { el.style.transform = ''; el.style.boxShadow = ''; });
+        });
+    })();
     </script>
 </body>
 </html>
