@@ -49,6 +49,9 @@
             /* Prevent awkward page breaks inside cards */
             .break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
         }
+            .seg:last-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        .tl-dot { position:absolute; top:50%; width:22px; height:22px; margin-left:-11px; transform:translateY(-50%); border-radius:9999px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+        #tl-acr .tl-dot { background:#475569; } #tl-keim .tl-dot { background:#059669; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans selection:bg-emerald-200 overflow-x-hidden pb-10">
@@ -84,7 +87,7 @@
         <div id="main-intro" class="mb-6 sm:mb-8 max-w-4xl">
             <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Life Cycle Assessment (LCA) Projection</h2>
             <p class="text-sm sm:text-lg text-slate-600 leading-relaxed">
-                This tool models projected carbon data in accordance with <strong>EN 15804 methodology</strong>. It compares the upfront embodied carbon (Modules A1-A5) and the carbon of repainting (Module B2 maintenance) for KEIM silicate paint against standard polymer dispersion (acrylic) paint over the life of the building. Carbon figures come from the current 2025 EN 15804+A2 EPDs (valid to 2030).
+                <strong>See how much carbon and money a KEIM silicate finish saves over the life of a building.</strong> Paint once and repaint less: the calculator follows the <strong>EN 15804</strong> method and compares the upfront embodied carbon (Modules A1-A5) and the carbon of repainting (Module B2 maintenance) for KEIM silicate paint against standard polymer dispersion (acrylic) paint over the life of the building. Carbon figures come from the current 2025 EN 15804+A2 EPDs (valid to 2030).
             </p>
         </div>
 
@@ -109,7 +112,7 @@
 
                     <!-- Area Input -->
                     <div class="mb-6">
-                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Gross Surface Area (m²)</label>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Area to paint (m²)</label>
                         <input type="range" id="area-slider" min="100" max="20000" step="100" value="2500" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 mt-3" oninput="updateInputs('area', this.value)" />
                         <div class="mt-4 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
                             <input type="number" id="area-input" value="2500" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="updateInputs('area', this.value)" />
@@ -119,7 +122,7 @@
 
                     <!-- Lifespan Input -->
                     <div class="mb-2">
-                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Reference Service Life (RSL)</label>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Building life (years)</label><p class="text-[11px] text-slate-500">How long you want to compare over.</p>
                         <input type="range" id="life-slider" min="10" max="100" step="5" value="60" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 mt-3" oninput="updateInputs('life', this.value)" />
                         <div class="mt-4 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
                             <input type="number" id="life-input" value="60" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="updateInputs('life', this.value)" />
@@ -140,7 +143,7 @@
 
                     <!-- Repaint cost -->
                     <div class="mt-6 mb-2">
-                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Repaint cost ($/m², incl. labour &amp; access)</label>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Repaint cost ($/m², incl. labour)</label>
                         <div class="mt-2 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
                             <span class="text-sm font-bold text-slate-500 px-3">$</span>
                             <input type="number" id="cost-input" value="65" min="0" step="1" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="setCost(this.value)" />
@@ -189,7 +192,7 @@
                 <!-- Main Metric Card -->
                 <div class="bg-gradient-to-br from-emerald-600 to-emerald-900 rounded-2xl p-6 sm:p-8 shadow-lg text-white relative overflow-hidden flex flex-col justify-center break-inside-avoid">
                     <div class="absolute top-0 right-0 p-4 sm:p-8 opacity-10 pointer-events-none">
-                        <i class="fa-solid fa-chart-line text-[200px]"></i>
+                        <i class="fa-solid fa-leaf text-[120px] sm:text-[200px]"></i>
                     </div>
                     
                     <div class="relative z-10 border-b border-emerald-500/30 pb-6 mb-6">
@@ -201,17 +204,17 @@
                                 <span id="out-co2-percent">0</span><span class="text-4xl sm:text-6xl text-emerald-300">%</span>
                             </h2>
                             <div class="pb-2 sm:pb-4 text-emerald-100 font-bold text-sm sm:text-lg uppercase tracking-widest mt-2 md:mt-0">
-                                Total Lifecycle<br/>CO₂e Variance
+                                less carbon<br/>over <span id="out-life-hero">60</span> years
                             </div>
                         </div>
                         <p class="text-sm sm:text-base text-emerald-50 max-w-2xl font-medium mt-2">
-                            A projected net reduction of <strong class="text-white bg-emerald-500/30 px-2 py-0.5 rounded shadow-sm"><span id="out-total-co2">0</span> kg of CO₂e</strong> emissions over the selected <span id="out-design-life">60</span>-year design life versus polymer dispersions.
+                            That is <strong class="text-white bg-emerald-500/30 px-2 py-0.5 rounded shadow-sm"><span id="out-total-co2">0</span> kg of CO₂e</strong> saved over <span id="out-design-life">60</span> years compared with acrylic paint, because KEIM needs <strong class="text-white"><span id="out-fewer-hero">0</span> fewer repaints</strong>.
                         </p>
                     </div>
 
                     <!-- Tangible Impact Equivalencies -->
                     <div class="relative z-10">
-                        <p class="text-[10px] sm:text-xs font-bold text-emerald-300 uppercase tracking-widest mb-4">ESG Reporting Equivalencies for <span id="out-total-co2-sub">0</span> kg CO₂e:</p>
+                        <p class="text-[10px] sm:text-xs font-bold text-emerald-300 uppercase tracking-widest mb-4">What <span id="out-total-co2-sub">0</span> kg CO₂e looks like:</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 print-grid-2">
                             <div class="bg-emerald-800/50 rounded-xl p-4 border border-emerald-500/30 backdrop-blur-sm flex items-center">
                                 <i class="fa-solid fa-car text-3xl text-emerald-400 mr-4 shrink-0 w-8 text-center"></i>
@@ -251,28 +254,28 @@
                         <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-fill-drip text-sm"></i></div></div>
                         <div>
                             <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-paint">0</span> <span class="text-sm sm:text-lg text-slate-400">L</span></p>
-                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Material Vol. Reduction</p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Less paint used</p><p class="text-[10px] text-slate-400 mt-0.5">litres, whole life</p>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
                         <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-arrows-spin text-sm"></i></div></div>
                         <div>
-                            <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-repaints">0</span> <span class="text-sm sm:text-lg text-slate-400">Cycles</span></p>
-                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">LCA Phase B2 Avoided</p>
+                            <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-repaints">0</span> <span class="text-sm sm:text-lg text-slate-400">jobs</span></p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Fewer repaints</p><p class="text-[10px] text-slate-400 mt-0.5">LCA module B2</p>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
                         <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-wind text-sm"></i></div></div>
                         <div>
                             <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-vocs">0</span> <span class="text-sm sm:text-lg text-slate-400">kg</span></p>
-                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">VOCs Prevented</p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Fewer VOCs</p><p class="text-[10px] text-slate-400 mt-0.5">solvent emissions</p>
                         </div>
                     </div>
                     <div class="bg-slate-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
                         <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-cubes text-sm"></i></div></div>
                         <div>
                             <p class="text-xl sm:text-2xl font-black text-slate-700"><span id="out-micro">0</span> <span class="text-sm sm:text-lg text-slate-400">kg</span></p>
-                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Polymer Binder Mass</p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Plastic binder in acrylic</p><p class="text-[10px] text-slate-400 mt-0.5">kg, whole life</p>
                         </div>
                     </div>
                 </div>
@@ -290,10 +293,10 @@
                 <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 mt-6 break-inside-avoid">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 print-flex-row">
                         <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
-                            <i class="fa-solid fa-chart-column mr-2 text-emerald-600"></i> Life Cycle Carbon Profile
+                            <i class="fa-solid fa-chart-column mr-2 text-emerald-600"></i> Carbon over the building life <span class="text-xs font-bold text-slate-400 ml-2">kg CO₂e</span>
                         </h3>
                         <div class="flex items-center space-x-4 mt-4 sm:mt-0 text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider">
-                            <div class="flex items-center"><div class="w-3 h-3 rounded bg-emerald-500 mr-1.5"></div> Upfront (A1-A5)</div>
+                            <div class="flex items-center"><div class="w-3 h-3 rounded bg-emerald-500 mr-1.5"></div> First paint job (A1-A5)</div>
                             <div class="flex items-center"><div class="w-3 h-3 rounded bg-slate-800 mr-1.5"></div> Repaints (B2)</div>
                         </div>
                     </div>
@@ -302,32 +305,42 @@
                         <!-- Acrylic Bar -->
                         <div class="flex-1 flex flex-col items-center group h-full justify-end relative">
                             <div id="chart-acr-total" class="absolute -top-8 text-lg sm:text-xl font-black text-slate-700 transition-transform group-hover:-translate-y-1">0</div>
-                            <div class="w-full max-w-[80px] sm:max-w-[120px] flex flex-col-reverse h-full justify-start rounded-t-xl overflow-hidden shadow-sm border border-slate-200 border-b-0">
-                                <div id="chart-acr-up" class="bg-slate-400 w-full transition-all duration-700 flex items-center justify-center border-t border-slate-500/30">
+                            <div class="w-full max-w-[80px] sm:max-w-[120px] flex flex-col-reverse h-full justify-start">
+                                <div id="chart-acr-up" class="seg bg-slate-400 w-full transition-all duration-700 flex items-center justify-center border-t border-slate-500/30">
                                     <span id="chart-acr-up-txt" class="text-white text-[10px] sm:text-xs font-bold"></span>
                                 </div>
-                                <div id="chart-acr-maint" class="bg-slate-700 w-full transition-all duration-700 flex items-center justify-center">
+                                <div id="chart-acr-maint" class="seg bg-slate-700 w-full transition-all duration-700 flex items-center justify-center">
                                     <span id="chart-acr-maint-txt" class="text-slate-200 text-[10px] sm:text-xs font-bold"></span>
                                 </div>
                             </div>
-                            <div class="mt-3 font-black text-slate-800 text-center uppercase tracking-wider text-[10px] sm:text-xs leading-tight">Polymer<br/>Dispersion</div>
+                            <div class="mt-3 font-black text-slate-800 text-center uppercase tracking-wider text-[10px] sm:text-xs leading-tight">Acrylic paint</div><div class="text-[11px] sm:text-xs text-slate-500 font-bold mt-1"><span id="jobs-acr">0</span> paint jobs</div>
                         </div>
 
                         <!-- Keim Bar -->
                         <div class="flex-1 flex flex-col items-center group h-full justify-end relative">
                             <div id="chart-keim-total" class="absolute -top-8 text-lg sm:text-xl font-black text-emerald-600 transition-transform group-hover:-translate-y-1">0</div>
-                            <div class="w-full max-w-[80px] sm:max-w-[120px] flex flex-col-reverse h-full justify-start rounded-t-xl overflow-hidden shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                                <div id="chart-keim-up" class="bg-emerald-500 w-full transition-all duration-700 flex items-center justify-center border-t border-emerald-400/30">
+                            <div class="w-full max-w-[80px] sm:max-w-[120px] flex flex-col-reverse h-full justify-start">
+                                <div id="chart-keim-up" class="seg bg-emerald-500 w-full transition-all duration-700 flex items-center justify-center border-t border-emerald-400/30">
                                     <span id="chart-keim-up-txt" class="text-white text-[10px] sm:text-xs font-bold"></span>
                                 </div>
-                                <div id="chart-keim-maint" class="bg-emerald-900 w-full transition-all duration-700 flex items-center justify-center">
+                                <div id="chart-keim-maint" class="seg bg-emerald-900 w-full transition-all duration-700 flex items-center justify-center">
                                     <span id="chart-keim-maint-txt" class="text-emerald-100 text-[10px] sm:text-xs font-bold"></span>
                                 </div>
                             </div>
-                            <div class="mt-3 font-black text-emerald-700 text-center uppercase tracking-wider text-[10px] sm:text-xs leading-tight">Inorganic<br/>Silicate</div>
+                            <div class="mt-3 font-black text-emerald-700 text-center uppercase tracking-wider text-[10px] sm:text-xs leading-tight">KEIM silicate</div><div class="text-[11px] sm:text-xs text-emerald-700 font-bold mt-1"><span id="jobs-keim">0</span> paint jobs</div>
                         </div>
                     </div>
 
+
+                    <!-- Paint job timeline -->
+                    <div class="mt-6">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">When each paint job happens</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3"><span class="w-20 sm:w-24 text-xs font-bold text-slate-600 shrink-0">Acrylic</span><div id="tl-acr" class="tl relative flex-1 h-7 bg-slate-100 rounded-full"></div></div>
+                            <div class="flex items-center gap-3"><span class="w-20 sm:w-24 text-xs font-bold text-emerald-700 shrink-0">KEIM</span><div id="tl-keim" class="tl relative flex-1 h-7 bg-emerald-50 rounded-full"></div></div>
+                            <div class="flex items-center gap-3"><span class="w-20 sm:w-24 shrink-0"></span><div class="flex-1 flex justify-between text-[10px] text-slate-400 font-bold px-1"><span>Year 0</span><span>Year <span id="tl-end">60</span></span></div></div>
+                        </div>
+                    </div>
                     <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col text-xs text-slate-500">
                         <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>How this is worked out:</strong> Both paints get the <strong>same carbon per coat</strong>, taken from the 2025 EN 15804+A2 EPDs below. Each paint job is 2 coats at 0.25 kg/m² per coat. <em>Upfront (A1-A5)</em> is the first paint job; <em>Repaints (B2)</em> are the jobs needed to cover the rest of the design life. The saving comes only from repainting less often, set by the "Repaint every" sliders.</p>
                         <p class="text-[10px] italic text-slate-400 border-t border-slate-200 pt-2 mt-1">Disclaimer: This is a projection, not a project LCA. The EPDs are association (VdL) model EPDs that declare worst-case values for a whole product group, not KEIM product-specific EPDs. Repaint intervals depend on substrate, exposure and maintenance; litres use an assumed density of 1.4 kg/L; VOC and binder figures for acrylic are typical values. For certified project documentation, use the EPD certificates themselves.</p>
@@ -339,7 +352,7 @@
                     <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center mb-4"><i class="fa-solid fa-database mr-2 text-emerald-600"></i> Data used</h3>
                     <div class="overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm text-left">
-                        <thead><tr class="text-slate-500 uppercase tracking-wider text-[10px] sm:text-xs border-b border-slate-200"><th class="py-2 pr-3">Used for</th><th class="py-2 pr-3">EPD</th><th class="py-2 text-right">kg CO₂e per kg (A1-A5)</th></tr></thead>
+                        <thead><tr class="text-slate-500 uppercase tracking-wider text-[10px] sm:text-xs border-b border-slate-200"><th class="py-2 pr-3">Used for</th><th class="py-2 pr-3">EPD</th><th class="py-2 text-right">kg CO₂e/kg</th></tr></thead>
                         <tbody class="text-slate-700">
                             <tr class="border-b border-slate-100"><td class="py-2 pr-3">Exterior (facade paint)</td><td class="py-2 pr-3">EPD-VDL-20240620-IBN1-EN<br/><span class="text-slate-400">Dispersion-based facade paints (covers silicate &amp; silicone types)</span></td><td class="py-2 text-right font-bold">2.89</td></tr>
                             <tr><td class="py-2 pr-3">Interior (wall paint)</td><td class="py-2 pr-3">EPD-VDL-20240617-IBN1-EN<br/><span class="text-slate-400">Interior wall paints, wet-abrasion class 1</span></td><td class="py-2 text-right font-bold">2.65</td></tr>
@@ -913,6 +926,18 @@
             const acrMicroplastics = acrTotalKg * BINDER_SHARE;
 
             const fewer = Math.max(0, acrCycles - keimCycles);
+            document.getElementById('out-fewer-hero').innerText = fewer;
+            document.getElementById('out-life-hero').innerText = currentLife;
+            document.getElementById('jobs-acr').innerText = acrCycles + 1;
+            document.getElementById('jobs-keim').innerText = keimCycles + 1;
+            document.getElementById('tl-end').innerText = currentLife;
+            const drawTl = (id, n, every) => {
+                let h = '';
+                for (let k = 0; k <= n; k++) { const pct = 4 + (k * every / currentLife) * 92; h += '<span class="tl-dot" style="left:' + pct + '%" title="Year ' + (k * every) + '"><i class="fa-solid fa-paint-roller"></i></span>'; }
+                document.getElementById(id).innerHTML = h;
+            };
+            drawTl('tl-acr', acrCycles, acrInt);
+            drawTl('tl-keim', keimCycles, keimInt);
             document.getElementById('out-fewer').innerText = fewer;
             document.getElementById('out-cost-area').innerText = currentArea.toLocaleString();
             document.getElementById('out-cost-rate').innerText = costRate;
@@ -973,19 +998,19 @@
 
             const elAcrUp = document.getElementById('chart-acr-up');
             elAcrUp.style.height = acrUpPct + '%';
-            document.getElementById('chart-acr-up-txt').innerText = acrUpPct > 15 ? acrUpfrontCo2.toFixed(0) : "";
+            document.getElementById('chart-acr-up-txt').innerText = acrUpPct > 15 ? acrUpfrontCo2.toLocaleString(undefined,{maximumFractionDigits:0}) : "";
 
             const elAcrMaint = document.getElementById('chart-acr-maint');
             elAcrMaint.style.height = acrMaintPct + '%';
-            document.getElementById('chart-acr-maint-txt').innerText = acrMaintPct > 15 ? acrMaintCo2.toFixed(0) : "";
+            document.getElementById('chart-acr-maint-txt').innerText = acrMaintPct > 15 ? acrMaintCo2.toLocaleString(undefined,{maximumFractionDigits:0}) : "";
 
             const elKeimUp = document.getElementById('chart-keim-up');
             elKeimUp.style.height = keimUpPct + '%';
-            document.getElementById('chart-keim-up-txt').innerText = keimUpPct > 15 ? keimUpfrontCo2.toFixed(0) : "";
+            document.getElementById('chart-keim-up-txt').innerText = keimUpPct > 15 ? keimUpfrontCo2.toLocaleString(undefined,{maximumFractionDigits:0}) : "";
 
             const elKeimMaint = document.getElementById('chart-keim-maint');
             elKeimMaint.style.height = keimMaintPct + '%';
-            document.getElementById('chart-keim-maint-txt').innerText = keimMaintPct > 15 ? keimMaintCo2.toFixed(0) : "";
+            document.getElementById('chart-keim-maint-txt').innerText = keimMaintPct > 15 ? keimMaintCo2.toLocaleString(undefined,{maximumFractionDigits:0}) : "";
         }
 
         // Initialize on load
