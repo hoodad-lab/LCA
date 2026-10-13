@@ -623,7 +623,7 @@
                             <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Ethyl acrylate</li>
                             <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Propylene Glycol</li>
                             <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Glycol ether</li>
-                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Triethylimene</li>
+                            <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Triethylamine</li>
                             <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Formaldehyde</li>
                             <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Plastic softeners</li>
                             <li class="flex items-start text-slate-600 text-sm font-medium"><i class="fa-solid fa-xmark text-red-400 mt-0.5 mr-2 shrink-0"></i> Phthalates</li>
@@ -787,14 +787,18 @@
 
         function updateInputs(type, val) {
             let num = Number(val);
+            if (!(num > 0)) return;   // ignore an empty / zero box while typing — keep the last result
+            const typing = document.activeElement && document.activeElement.type === 'number';
             if(type === 'area') {
+                num = Math.min(num, 1000000);
                 currentArea = num;
                 document.getElementById('area-slider').value = num;
-                document.getElementById('area-input').value = num;
+                if (!typing) document.getElementById('area-input').value = num;
             } else {
+                num = Math.min(num, 150);
                 currentLife = num;
                 document.getElementById('life-slider').value = num;
-                document.getElementById('life-input').value = num;
+                if (!typing) document.getElementById('life-input').value = num;
             }
             calculate();
         }
