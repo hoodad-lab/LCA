@@ -11,6 +11,7 @@
     <!-- FontAwesome for Icons -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -979,17 +980,93 @@
             });
         }
 
-        // PDF Generation via High-Fidelity Native Browser Print
+        // PDF report: built in the browser and downloaded as a file (works inside the website embed and on phones)
         function generatePDF() {
-            // Update the print summary text before triggering dialog
-            const both = currentScope === 'both';
-            document.getElementById('print-scope').innerText = both ? 'Exterior + interior' : currentScope;
-            document.getElementById('print-area').innerText = both ? fmt(parts.exterior.area) + ' + ' + fmt(parts.interior.area) : fmt(parts[currentScope].area);
-            document.getElementById('print-life').innerText = currentLife;
-            
-            // The browser's native print dialog will handle the rest beautifully 
-            // via our robust @media print CSS rules (ensuring landscape + perfect grids).
-            window.print();
+            if (!window.jspdf) { window.print(); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+            const keys = currentScope === 'both' ? ['exterior', 'interior'] : [currentScope];
+            const R = keys.map(partCalc), both = keys.length > 1;
+            const sum = f => R.reduce((t, r) => t + r[f], 0);
+            const keimCo2 = sum('keimUp') + sum('keimMaint'), acrCo2 = sum('acrUp') + sum('acrMaint');
+            const saved = Math.max(0, acrCo2 - keimCo2), pct = acrCo2 > 0 ? Math.round(saved / acrCo2 * 100) : 0;
+            const n = v => Math.round(v).toLocaleString('en-AU');
+            const W = 210, M = 16; let y = 0;
+            const red = [206, 17, 11], ink = [15, 23, 42], grey = [100, 116, 139], green = [4, 120, 87];
+
+            // header
+            doc.setFillColor(...red); doc.rect(0, 0, W, 26, 'F');
+            doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+            doc.text('KEIM Australia', M, 12);
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+            doc.text('Life Cycle Assessment projection: KEIM silicate vs acrylic paint', M, 19);
+            doc.text(new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }), W - M, 19, { align: 'right' });
+            y = 38;
+
+            // project
+            doc.setTextColor(...ink); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Project', M, y); y += 7;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+            R.forEach(r => {
+                const lab = r.k === 'exterior' ? 'Exterior' : 'Interior';
+                doc.text(`${lab}: ${n(r.p.area)} m2  |  KEIM repainted every ${r.p.keimInt} years, acrylic every ${r.p.acrInt} years  |  repaint cost $${r.p.rate}/m2`, M, y); y += 6;
+            });
+            doc.text(`Building life compared: ${currentLife} years`, M, y); y += 10;
+
+            // headline tiles
+            const tile = (x, w, big, small, col) => {
+                doc.setFillColor(...col); doc.roundedRect(x, y, w, 30, 3, 3, 'F');
+                doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.text(big, x + 6, y + 14);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.text(doc.splitTextToSize(small, w - 12), x + 6, y + 22);
+            };
+            const tw = (W - 2 * M - 8) / 3;
+            tile(M, tw, pct + '%', 'less carbon over ' + currentLife + ' years', green);
+            tile(M + tw + 4, tw, n(saved) + ' kg', 'CO2e saved', [5, 150, 105]);
+            tile(M + 2 * (tw + 4), tw, '$' + n(sum('cost')), 'repaint cost avoided (today\'s dollars)', ink);
+            y += 40;
+
+            // comparison table
+            doc.setTextColor(...ink); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Comparison', M, y); y += 4;
+            const rows = [
+                ['', 'Acrylic', 'KEIM'],
+                ['Paint jobs over ' + currentLife + ' years', R.map(r => r.acrCycles + 1).join(' + '), R.map(r => r.keimCycles + 1).join(' + ')],
+                ['Carbon, upfront (A1-A5), kg CO2e', n(sum('acrUp')), n(sum('keimUp'))],
+                ['Carbon, repainting (B2), kg CO2e', n(sum('acrMaint')), n(sum('keimMaint'))],
+                ['Carbon, total, kg CO2e', n(acrCo2), n(keimCo2)],
+                ['Paint used, litres', n(sum('acrL')), n(sum('keimL'))],
+            ];
+            doc.setFontSize(10);
+            rows.forEach((row, i) => {
+                y += 7;
+                if (i === 0) { doc.setFillColor(241, 245, 249); doc.rect(M, y - 5, W - 2 * M, 7, 'F'); doc.setFont('helvetica', 'bold'); }
+                else doc.setFont('helvetica', i === 4 ? 'bold' : 'normal');
+                doc.setTextColor(...ink);
+                doc.text(row[0], M + 2, y);
+                doc.text(row[1], 140, y, { align: 'right' });
+                doc.setTextColor(...(i === 0 ? ink : green)); doc.text(row[2], W - M - 2, y, { align: 'right' });
+                doc.setDrawColor(226, 232, 240); doc.line(M, y + 2, W - M, y + 2);
+            });
+            y += 9;
+            doc.setTextColor(...grey); doc.setFontSize(9);
+            doc.text(doc.splitTextToSize(R.map(r => (both ? (r.k === 'exterior' ? 'Outside: ' : 'Inside: ') : '') + r.fewer + ' fewer repaints x ' + n(r.p.area) + ' m2 x $' + r.p.rate + '/m2').join('   |   ') + ' = $' + n(sum('cost')) + ' avoided.', W - 2 * M), M, y);
+            y += 12;
+
+            // basis
+            doc.setTextColor(...ink); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('How this is worked out', M, y); y += 6;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...grey);
+            const basis = [
+                'Both paints are given the same carbon per kg of paint, taken from the 2025 EN 15804+A2 association EPDs: EPD-VDL-20240620-IBN1-EN (facade paints, 2.885 kg CO2e/kg, A1-A5) and EPD-VDL-20240617-IBN1-EN (interior wall paints, class 1, 2.645 kg CO2e/kg). Both are valid to 2030.',
+                'Each paint job is two coats. The saving comes only from repainting less often, set by the repaint intervals above. KEIM defaults follow the KEIM Australia warranty: 25 years exterior; interior typically 7-10 years.',
+                'KEIM Soldalit and KEIM Innostar are Cradle to Cradle Certified® Full Scope Silver (Version 5.0).',
+                'This is a projection, not a project-specific LCA. Association EPDs give average values across products; actual results depend on the substrate, exposure and maintenance. For certified documentation, use the EPDs and certificates themselves.',
+            ];
+            basis.forEach(t => { const l = doc.splitTextToSize(t, W - 2 * M); doc.text(l, M, y); y += l.length * 4.4 + 2; });
+
+            // footer
+            doc.setDrawColor(...red); doc.line(M, 282, W - M, 282);
+            doc.setFontSize(8.5); doc.setTextColor(...grey);
+            doc.text('KEIM Australia | 7/19 McCauley St, Matraville NSW 2036 | (02) 9748 7160 | info@keim.com.au | keim.com.au', W / 2, 287, { align: 'center' });
+
+            doc.save('KEIM-LCA-Report-' + new Date().toISOString().slice(0, 10) + '.pdf');
         }
 
         // Calculation Engine
