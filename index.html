@@ -208,6 +208,8 @@
 
                     <!-- PDF Download Button -->
                     <div class="mt-8 pt-6 border-t border-slate-200">
+                        <label for="report-project" class="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-wider">Project name <span class="normal-case font-medium text-slate-400">(optional, for the report)</span></label>
+                        <input type="text" id="report-project" maxlength="60" placeholder="e.g. Bondi Beach apartments" class="w-full mb-3 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
                         <button onclick="generatePDF()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all flex items-center justify-center transform active:scale-95">
                             <i class="fa-solid fa-file-pdf mr-2"></i> Download Full Report
                         </button>
@@ -980,9 +982,19 @@
             });
         }
 
+        const REPORT_HDR = 'data:image/png;base64,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27/5G3//93/3xS/82cVveH2lUsnzfPPmzXnePsRJyuWp9Xq3qhR5u2jn7XarnbeKvF3k7Zi3Y57HYt9XWdQnSZKurmnlz7IC0ERnzhmz6sQTa12VaAXDJxERzTzOfxIR0axxc4eHEG7++jcuv/SSpUuXAg5HCC/816MTsUq18xd3h8ji3t4rL7/08kve+tTT62+55Za1ax7Zu3d48eL00N1curvry5Yt6enp6+/v7+qqL122dOmSJX19fX19fVmWdXf31GoVAAJ8/7bb/+3f/peqpmk23bff6YY6dQ9S97JXylEsF3TiqlVZpdJutdxdjlrVJyIiomlh/iQiolkjomUA2rJlyy3//h+/81u/Hk0cE0tDy2nSI8uiE1szJzXSBGCAunsIeuZLTv/0pz6xefPmer0eY0zTKdt1mtm5577mf/z3/97d3dPd3a16qLR2z89+XhRFCKG7e1r1hwCUrVAOW7f26C7QXbykv1JJW81m2cQFzghKREQzh+tviYhoZk1q9blv7tHx7Vu/s3VgSDrNNo9iKLLJq3rLsGdmJ554Ytnkc6qnlUd2d3evWrWqp6cbMLPCvbNz0t3LXaYTYixEJE2TaQ5+zZo1O3bswOHerLuL4IDX+mV0d3cvX77crEiSyfVv+fMAERHNBF5viIhoxomXKXRi9i+EZOvWLTfddJMKxjPhUUlc+51k8lLb9evX33333YfuQVIebBbdO6Vi3X080Dpg7ubeybciamZ9ff3757op3XnnXTfceGMI4dD5U1XzvGi38+mcczoqWXbKySfHGGd22ykRERHA/ElERDPNpfO13xJZEeit3/nuhuc2qsDhDgH0ENepcgayKIpJc4MG2P5hbuIkAkR3MzMzV9Wv3vT1+x948BDDLLdciohqUE1UVTUpv0TKraVBRMvbAPbsHTYghIlOKgbEAwoqlUMtI/eekbGbb/n39RueEZFoxficqo9Pr3phRXQD8LVvfPNn990/cYb950LdrBhPwtMKlEFk5QnLrYjuNrH4Vo9O2iciIjoM5k8iIpp9AsmydMeOHV/72s3u5RZOOWycKreJTspj8ryOLTL54LLij6o89fSGb3/7O7t37yni9CcB9zvz86sW5UXhQG9vT5pOrq2w3/nLqV0RMffBoR0DA0P/9C//UsQoosC+RbblDRUNqnf/9J6/+W9/t2btYxPvd/+c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';
         // PDF report: built in the browser and downloaded as a file (works inside the website embed and on phones)
-        function generatePDF() {
+        function rptImg(src, w, h) {
+            return new Promise(res => {
+                const im = new Image();
+                im.onload = () => { try { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h); res(c.toDataURL('image/png')); } catch (e) { res(null); } };
+                im.onerror = () => res(null); im.src = src;
+            });
+        }
+        async function generatePDF() {
             if (!window.jspdf) { window.print(); return; }
+            const c2cEl = document.querySelector('img.c2c-logo');
+            const c2c = c2cEl ? await rptImg(c2cEl.src, 270, 371) : null;
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: 'a4' });
             const keys = currentScope === 'both' ? ['exterior', 'interior'] : [currentScope];
@@ -990,83 +1002,277 @@
             const sum = f => R.reduce((t, r) => t + r[f], 0);
             const keimCo2 = sum('keimUp') + sum('keimMaint'), acrCo2 = sum('acrUp') + sum('acrMaint');
             const saved = Math.max(0, acrCo2 - keimCo2), pct = acrCo2 > 0 ? Math.round(saved / acrCo2 * 100) : 0;
+            const fewer = sum('fewer'), costSaved = sum('cost'), litresSaved = Math.max(0, sum('acrL') - sum('keimL'));
+            const L = currentLife;
             const n = v => Math.round(v).toLocaleString('en-AU');
-            const W = 210, M = 16; let y = 0;
-            const red = [206, 17, 11], ink = [15, 23, 42], grey = [100, 116, 139], green = [4, 120, 87];
+            const usd = v => '$' + n(v);
+            const short = v => v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + 'M' : v >= 1e4 ? Math.round(v / 1e3) + 'k' : v >= 1e3 ? (v / 1e3).toFixed(1).replace('.0', '') + 'k' : String(Math.round(v));
+            const projEl = document.getElementById('report-project');
+            const project = projEl && projEl.value.trim() ? projEl.value.trim() : '';
+            const dateStr = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+            const scopeLab = both ? 'Exterior and interior' : (keys[0] === 'exterior' ? 'Exterior' : 'Interior');
+            const W = 210, H = 297, M = 15;
 
-            // header
-            doc.setFillColor(...red); doc.rect(0, 0, W, 26, 'F');
-            doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
-            doc.text('KEIM Australia', M, 12);
-            doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-            doc.text('Life Cycle Assessment projection: KEIM silicate vs acrylic paint', M, 19);
-            doc.text(new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }), W - M, 19, { align: 'right' });
-            y = 38;
+            // palette
+            const KEIM = [4, 120, 87], KEIM_L = [209, 250, 229], KEIM_M = [52, 168, 120];
+            const ACR = [100, 116, 139], ACR_L = [226, 232, 240];
+            const INK = [15, 23, 42], GREY = [100, 116, 139], LINE = [226, 232, 240], RED = [213, 31, 36], DARK = [58, 60, 64];
 
-            // project
-            doc.setTextColor(...ink); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Project', M, y); y += 7;
-            doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-            R.forEach(r => {
-                const lab = r.k === 'exterior' ? 'Exterior' : 'Interior';
-                doc.text(`${lab}: ${n(r.p.area)} m2  |  KEIM repainted every ${r.p.keimInt} years, acrylic every ${r.p.acrInt} years  |  repaint cost $${r.p.rate}/m2`, M, y); y += 6;
-            });
-            doc.text(`Building life compared: ${currentLife} years`, M, y); y += 10;
-
-            // headline tiles
-            const tile = (x, w, big, small, col) => {
-                doc.setFillColor(...col); doc.roundedRect(x, y, w, 30, 3, 3, 'F');
-                doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(20); doc.text(big, x + 6, y + 14);
-                doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.text(doc.splitTextToSize(small, w - 12), x + 6, y + 22);
+            // helpers
+            const T = (s, x, y, o = {}) => {
+                doc.setFont('helvetica', o.bold ? 'bold' : 'normal'); doc.setFontSize(o.size || 10);
+                doc.setTextColor(...(o.color || INK));
+                doc.text(s, x, y, { align: o.align || 'left', maxWidth: o.max, lineHeightFactor: o.lh || 1.25 });
             };
-            const tw = (W - 2 * M - 8) / 3;
-            tile(M, tw, pct + '%', 'less carbon over ' + currentLife + ' years', green);
-            tile(M + tw + 4, tw, n(saved) + ' kg', 'CO2e saved', [5, 150, 105]);
-            tile(M + 2 * (tw + 4), tw, '$' + n(sum('cost')), 'repaint cost avoided (today\'s dollars)', ink);
-            y += 40;
+            const tw = (s, size, bold) => { doc.setFont('helvetica', bold ? 'bold' : 'normal'); doc.setFontSize(size); return doc.getTextWidth(s); };
+            // area unit with a real superscript 2
+            const m2 = (pre, x, y, o = {}) => {
+                const size = o.size || 10; T(pre + 'm', x, y, o);
+                const w = tw(pre + 'm', size, o.bold); T('2', x + w + 0.2, y - size * 0.13, { ...o, size: size * 0.62, align: 'left' });
+                return x + w + size * 0.2;
+            };
+            const poly = (pts, style) => {
+                const d = []; for (let i = 1; i < pts.length; i++) d.push([pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]]);
+                doc.lines(d, pts[0][0], pts[0][1], [1, 1], style, true);
+            };
+            const arc = (cx, cy, r, a0, a1) => {
+                const steps = Math.max(2, Math.ceil(Math.abs(a1 - a0) / 3)), pts = [];
+                for (let i = 0; i <= steps; i++) { const a = (a0 + (a1 - a0) * i / steps - 90) * Math.PI / 180; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+                for (let i = 1; i < pts.length; i++) doc.line(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
+            };
+            const niceMax = v => { if (v <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; };
+            const sectionTitle = (s, sub, y) => {
+                doc.setFillColor(...RED); doc.rect(M, y - 3.6, 1.2, 4.6, 'F');
+                T(s, M + 3.5, y, { size: 12.5, bold: true });
+                if (sub) T(sub, M + 3.5, y + 5, { size: 8.5, color: GREY });
+            };
+            const footer = (pg) => {
+                doc.setDrawColor(...LINE); doc.setLineWidth(0.3); doc.line(M, H - 14, W - M, H - 14);
+                T('KEIM Australia  |  7/19 McCauley St, Matraville NSW 2036  |  (02) 9748 7160  |  info@keim.com.au  |  keim.com.au', M, H - 9, { size: 7.5, color: GREY });
+                T('Page ' + pg + ' of 2', W - M, H - 9, { size: 7.5, color: GREY, align: 'right' });
+            };
 
-            // comparison table
-            doc.setTextColor(...ink); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Comparison', M, y); y += 4;
-            const rows = [
-                ['', 'Acrylic', 'KEIM'],
-                ['Paint jobs over ' + currentLife + ' years', R.map(r => r.acrCycles + 1).join(' + '), R.map(r => r.keimCycles + 1).join(' + ')],
-                ['Carbon, upfront (A1-A5), kg CO2e', n(sum('acrUp')), n(sum('keimUp'))],
-                ['Carbon, repainting (B2), kg CO2e', n(sum('acrMaint')), n(sum('keimMaint'))],
-                ['Carbon, total, kg CO2e', n(acrCo2), n(keimCo2)],
-                ['Paint used, litres', n(sum('acrL')), n(sum('keimL'))],
-            ];
-            doc.setFontSize(10);
-            rows.forEach((row, i) => {
-                y += 7;
-                if (i === 0) { doc.setFillColor(241, 245, 249); doc.rect(M, y - 5, W - 2 * M, 7, 'F'); doc.setFont('helvetica', 'bold'); }
-                else doc.setFont('helvetica', i === 4 ? 'bold' : 'normal');
-                doc.setTextColor(...ink);
-                doc.text(row[0], M + 2, y);
-                doc.text(row[1], 140, y, { align: 'right' });
-                doc.setTextColor(...(i === 0 ? ink : green)); doc.text(row[2], W - M - 2, y, { align: 'right' });
-                doc.setDrawColor(226, 232, 240); doc.line(M, y + 2, W - M, y + 2);
-            });
+            // job years per part
+            const jobs = (int, cycles) => { const a = []; for (let j = 0; j <= cycles; j++) a.push(j * int); return a; };
+            const sys = {
+                acr: R.map(r => ({ r, years: jobs(r.p.acrInt, r.acrCycles), kg: r.acrUp, spend: r.p.area * r.p.rate })),
+                keim: R.map(r => ({ r, years: jobs(r.p.keimInt, r.keimCycles), kg: r.keimUp, spend: r.p.area * r.p.rate }))
+            };
+            const cumCarbon = (s, t) => sys[s].reduce((tot, q) => tot + q.kg * q.years.filter(yr => yr <= t).length, 0);
+            const cumSpend = (s, t) => sys[s].reduce((tot, q) => tot + q.spend * q.years.filter(yr => yr > 0 && yr <= t).length, 0);
+            const events = s => [...new Set([0, ...sys[s].flatMap(q => q.years), L])].sort((a, b) => a - b);
+
+            // step chart: cumulative value over building life
+            function stepChart(x, y, w, h, fn, unitFmt, endLab) {
+                const top = Math.max(fn('acr', L), fn('keim', L)) * 1.01 || 1;
+                let step = 0, yMax = Infinity;
+                for (let k = 3; k <= 6; k++) { const st = niceMax(top / k), ym = st * Math.ceil(top / st); if (ym < yMax - 1e-9) { yMax = ym; step = st; } }
+                const nT = Math.round(yMax / step);
+                const px = t => x + (t / L) * w, py = v => y + h - (v / yMax) * h;
+                // grid + y labels
+                doc.setLineWidth(0.2); doc.setDrawColor(...LINE);
+                for (let i = 0; i <= nT; i++) { const v = step * i, yy = py(v); doc.line(x, yy, x + w, yy); T(unitFmt(v), x - 2, yy + 1, { size: 7, color: GREY, align: 'right' }); }
+                // x labels
+                const stepYrs = L <= 30 ? 5 : L <= 60 ? 10 : L <= 100 ? 20 : 25;
+                for (let t = 0; t <= L; t += stepYrs) T('Yr ' + t, px(t), y + h + 4.5, { size: 7, color: GREY, align: 'center' });
+                if (L % stepYrs) T('Yr ' + L, px(L), y + h + 4.5, { size: 7, color: GREY, align: 'center' });
+                const path = s => { const ev = events(s), pts = [[px(0), py(fn(s, 0))]]; for (let i = 1; i < ev.length; i++) { pts.push([px(ev[i]), py(fn(s, ev[i - 1]))]); pts.push([px(ev[i]), py(fn(s, ev[i]))]); } return pts; };
+                const pa = path('acr'), pk = path('keim');
+                doc.setFillColor(...ACR_L); poly([[px(0), py(0)], ...pa, [px(L), py(0)]], 'F');
+                doc.setFillColor(...KEIM_L); poly([[px(0), py(0)], ...pk, [px(L), py(0)]], 'F');
+                doc.setLineWidth(0.8); doc.setLineJoin('round');
+                doc.setDrawColor(...ACR); for (let i = 1; i < pa.length; i++) doc.line(pa[i - 1][0], pa[i - 1][1], pa[i][0], pa[i][1]);
+                doc.setDrawColor(...KEIM); for (let i = 1; i < pk.length; i++) doc.line(pk[i - 1][0], pk[i - 1][1], pk[i][0], pk[i][1]);
+                doc.setLineWidth(0.3); doc.setDrawColor(...INK); doc.line(x, y + h, x + w, y + h);
+                // end labels
+                const va = fn('acr', L), vk = fn('keim', L);
+                let ya = py(va), yk = py(vk); if (yk - ya < 7) yk = ya + 7;
+                T('Acrylic', x + w + 2, ya - 0.5, { size: 7.5, bold: true, color: ACR });
+                T(endLab(va), x + w + 2, ya + 3.2, { size: 7.5, color: ACR });
+                T('KEIM', x + w + 2, yk - 0.5, { size: 7.5, bold: true, color: KEIM });
+                T(endLab(vk), x + w + 2, yk + 3.2, { size: 7.5, color: KEIM });
+                // gap bracket
+                if (va > vk) {
+                    const bx = px(L) - 1.5;
+                    doc.setDrawColor(...RED); doc.setLineWidth(0.4); doc.line(bx, py(va) + 0.8, bx, py(vk) - 0.8);
+                    doc.line(bx - 1, py(va) + 0.8, bx + 1, py(va) + 0.8); doc.line(bx - 1, py(vk) - 0.8, bx + 1, py(vk) - 0.8);
+                }
+            }
+
+            /* ================= PAGE 1 ================= */
+            try { doc.addImage(REPORT_HDR, 'PNG', 0, 0, W, W * 184 / 1237); } catch (e) { doc.setFillColor(...DARK); doc.rect(0, 0, W, 31, 'F'); }
+            let y = 42;
+            T('LIFE CYCLE PROJECTION', M, y, { size: 8.5, bold: true, color: RED });
+            T(dateStr, W - M, y, { size: 8.5, color: GREY, align: 'right' });
             y += 9;
-            doc.setTextColor(...grey); doc.setFontSize(9);
-            doc.text(doc.splitTextToSize(R.map(r => (both ? (r.k === 'exterior' ? 'Outside: ' : 'Inside: ') : '') + r.fewer + ' fewer repaints x ' + n(r.p.area) + ' m2 x $' + r.p.rate + '/m2').join('   |   ') + ' = $' + n(sum('cost')) + ' avoided.', W - 2 * M), M, y);
-            y += 12;
+            T(project || 'KEIM mineral paint vs acrylic paint', M, y, { size: 21, bold: true });
+            y += 7;
+            const subParts = [scopeLab + ' painting', ...R.map(r => (both ? (r.k === 'exterior' ? 'outside ' : 'inside ') : '') + n(r.p.area)), L + '-year building life'];
+            // subtitle with m2 units
+            let sx = M; doc.setFontSize(10);
+            T(subParts[0] + '  |  ', sx, y, { color: GREY }); sx += tw(subParts[0] + '  |  ', 10);
+            R.forEach((r, i) => { sx = m2(subParts[1 + i] + ' ', sx, y, { color: GREY }); const sep = i < R.length - 1 ? ' + ' : '  |  '; T(sep, sx, y, { color: GREY }); sx += tw(sep, 10); });
+            T(subParts[subParts.length - 1] + (project ? '  |  KEIM vs acrylic' : ''), sx, y, { color: GREY });
+            y += 7;
 
-            // basis
-            doc.setTextColor(...ink); doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('How this is worked out', M, y); y += 6;
-            doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...grey);
-            const basis = [
-                'Both paints are given the same carbon per kg of paint, taken from the 2025 EN 15804+A2 association EPDs: EPD-VDL-20240620-IBN1-EN (facade paints, 2.885 kg CO2e/kg, A1-A5) and EPD-VDL-20240617-IBN1-EN (interior wall paints, class 1, 2.645 kg CO2e/kg). Both are valid to 2030.',
-                'Each paint job is two coats. The saving comes only from repainting less often, set by the repaint intervals above. KEIM defaults follow the KEIM Australia warranty: 25 years exterior; interior typically 7-10 years.',
-                'KEIM Soldalit and KEIM Innostar are Cradle to Cradle Certified® Full Scope Silver (Version 5.0).',
-                'This is a projection, not a project-specific LCA. Association EPDs give average values across products; actual results depend on the substrate, exposure and maintenance. For certified documentation, use the EPDs and certificates themselves.',
+            // hero panel
+            const hy = y, hh = 46;
+            doc.setFillColor(...KEIM); doc.roundedRect(M, hy, W - 2 * M, hh, 3, 3, 'F');
+            const cx = M + 26, cy = hy + hh / 2, rr = 16;
+            doc.setLineCap('round');
+            doc.setLineWidth(5); doc.setDrawColor(18, 140, 104); arc(cx, cy, rr, 0, 359.9);
+            doc.setDrawColor(255, 255, 255); if (pct > 0) arc(cx, cy, rr, 0, pct * 3.6);
+            doc.setLineCap('butt');
+            T(pct + '%', cx, cy + 2.5, { size: 17, bold: true, color: [255, 255, 255], align: 'center' });
+            T('less carbon', cx, cy + 7, { size: 6.5, color: [209, 250, 229], align: 'center' });
+            const hx = M + 52;
+            T('Over ' + L + ' years, KEIM cuts the paint carbon by ' + pct + '%', hx, hy + 13, { size: 14, bold: true, color: [255, 255, 255], max: W - M - hx - 6 });
+            T('Same carbon per paint job for both paints. KEIM simply needs repainting less often, so ' + (fewer === 1 ? '1 repaint is' : fewer + ' repaints are') + ' never done: no paint made, shipped or applied for ' + (fewer === 1 ? 'it' : 'them') + '.', hx, hy + 27, { size: 9, color: [209, 250, 229], max: W - M - hx - 8, lh: 1.35 });
+            y = hy + hh + 5;
+
+            // KPI tiles
+            const tiles = [
+                [n(saved), 'kg CO2e saved', 'over the building life'],
+                [String(fewer), fewer === 1 ? 'fewer repaint' : 'fewer repaints', both ? R[0].fewer + ' outside, ' + R[1].fewer + ' inside' : (R[0].acrCycles + ' vs ' + R[0].keimCycles + ' repaints')],
+                [usd(costSaved), 'repaint cost avoided', "in today's dollars"],
+                [n(litresSaved) + ' L', 'less paint used', 'litres never made or applied']
             ];
-            basis.forEach(t => { const l = doc.splitTextToSize(t, W - 2 * M); doc.text(l, M, y); y += l.length * 4.4 + 2; });
+            const tGap = 4, tW = (W - 2 * M - 3 * tGap) / 4, tH = 25;
+            tiles.forEach((t, i) => {
+                const tx = M + i * (tW + tGap);
+                doc.setFillColor(248, 250, 252); doc.setDrawColor(...LINE); doc.setLineWidth(0.3); doc.roundedRect(tx, y, tW, tH, 2.5, 2.5, 'FD');
+                doc.setFillColor(...KEIM); doc.rect(tx + 4, y + 4, 6, 0.9, 'F');
+                let fs = 16; while (tw(t[0], fs, true) > tW - 8 && fs > 9) fs -= 0.5;
+                T(t[0], tx + 4, y + 12.5, { size: fs, bold: true, color: KEIM });
+                T(t[1], tx + 4, y + 18, { size: 8, bold: true });
+                T(t[2], tx + 4, y + 22, { size: 7, color: GREY });
+            });
+            y += tH + 11;
 
-            // footer
-            doc.setDrawColor(...red); doc.line(M, 282, W - M, 282);
-            doc.setFontSize(8.5); doc.setTextColor(...grey);
-            doc.text('KEIM Australia | 7/19 McCauley St, Matraville NSW 2036 | (02) 9748 7160 | info@keim.com.au | keim.com.au', W / 2, 287, { align: 'center' });
+            // cumulative carbon chart
+            sectionTitle('Carbon builds up with every repaint', 'Cumulative kg CO2e from making, transporting and applying the paint (EN 15804 A1-A5, plus B2 repainting)', y);
+            y += 9;
+            const cH = both ? 52 : 64;
+            stepChart(M + 12, y, W - 2 * M - 34, cH, cumCarbon, short, v => n(v) + ' kg');
+            y += cH + 13;
 
-            doc.save('KEIM-LCA-Report-' + new Date().toISOString().slice(0, 10) + '.pdf');
+            // repaint timeline
+            sectionTitle('When each paint job happens', 'Each dot is a full two-coat paint job, starting with the first one at year 0', y);
+            y += 9;
+            const tlX = M + 30, tlW = W - 2 * M - 34;
+            const rowsTL = [];
+            R.forEach(r => {
+                const tag = both ? (r.k === 'exterior' ? ' outside' : ' inside') : '';
+                rowsTL.push(['Acrylic' + tag, jobs(r.p.acrInt, r.acrCycles), ACR, ACR_L]);
+                rowsTL.push(['KEIM' + tag, jobs(r.p.keimInt, r.keimCycles), KEIM, KEIM_L]);
+            });
+            const rowH = both ? 8.5 : 10.5;
+            rowsTL.forEach(([lab, yrs, col, colL]) => {
+                const ry = y + 3;
+                T(lab, M, ry + 1.2, { size: 8.5, bold: true, color: col });
+                T(yrs.length + (yrs.length === 1 ? ' job' : ' jobs'), M, ry + 4.6, { size: 6.5, color: GREY });
+                doc.setFillColor(...colL); doc.roundedRect(tlX, ry - 2, tlW, 4, 2, 2, 'F');
+                yrs.forEach(yr => {
+                    const dx = tlX + 2 + (yr / L) * (tlW - 4);
+                    doc.setFillColor(...col); doc.circle(dx, ry, 2.1, 'F');
+                    doc.setFillColor(255, 255, 255); doc.circle(dx, ry, 0.7, 'F');
+                    if (yrs.length <= 16) T(String(yr), dx, ry - 3.2, { size: 6, color: col, align: 'center' });
+                });
+                y += rowH;
+            });
+            T('Year 0', tlX, y + 2, { size: 7, color: GREY }); T('Year ' + L, tlX + tlW, y + 2, { size: 7, color: GREY, align: 'right' });
+            footer(1);
+
+            /* ================= PAGE 2 ================= */
+            doc.addPage();
+            doc.setFillColor(...DARK); doc.rect(0, 0, W, 12, 'F');
+            doc.setFillColor(...RED); doc.rect(0, 12, W, 0.8, 'F');
+            T('KEIM Australia  |  Life cycle projection' + (project ? '  |  ' + project : ''), M, 7.8, { size: 8.5, bold: true, color: [255, 255, 255] });
+            T(dateStr, W - M, 7.8, { size: 8.5, color: [203, 213, 225], align: 'right' });
+            y = 24;
+
+            // side-by-side bars
+            sectionTitle('Side by side over ' + L + ' years', 'Acrylic in grey, KEIM in green. Bars are scaled within each row.', y);
+            y += 10;
+            const acrSpend = R.reduce((t, r) => t + r.acrCycles * r.p.area * r.p.rate, 0), keimSpend = R.reduce((t, r) => t + r.keimCycles * r.p.area * r.p.rate, 0);
+            const bars = [
+                ['Total carbon', 'kg CO2e', [sum('acrUp'), sum('acrMaint')], [sum('keimUp'), sum('keimMaint')], v => n(v) + ' kg'],
+                ['Paint jobs', 'incl. the first', [sum('acrCycles') + R.length], [sum('keimCycles') + R.length], v => String(v)],
+                ['Paint used', 'litres', [sum('acrL')], [sum('keimL')], v => n(v) + ' L'],
+                ['Repaint spend', "today's dollars", [acrSpend], [keimSpend], usd],
+                ['VOC emissions', 'kg, estimate', [sum('acrVoc')], [sum('keimVoc')], v => v === 0 ? '0 kg' : v < 10 ? v.toFixed(1) + ' kg' : n(v) + ' kg'],
+                ['Plastic binder', 'kg put on the walls', [sum('micro')], [0], v => n(v) + ' kg']
+            ];
+            const bX = M + 36, bW = W - 2 * M - 36 - 26, bH = 4.2;
+            bars.forEach(([lab, unit, a, k, f], idx) => {
+                const ta = a.reduce((s, v) => s + v, 0), tk = k.reduce((s, v) => s + v, 0), mx = Math.max(ta, tk) || 1;
+                T(lab, M, y + 3.2, { size: 9, bold: true }); T(unit, M, y + 7.2, { size: 7, color: GREY });
+                const drawBar = (vals, by, col, colL, total) => {
+                    let bx = bX;
+                    vals.forEach((v, i) => { const wv = v / mx * bW; if (wv > 0) { doc.setFillColor(...(i === 0 ? col : colL)); doc.rect(bx, by, wv, bH, 'F'); } bx += wv; });
+                    if (total === 0) { doc.setFillColor(...col); doc.rect(bX, by, 0.8, bH, 'F'); bx = bX + 0.8; }
+                    T(f(total), bx + 2, by + bH - 1, { size: 8, bold: true, color: col });
+                };
+                drawBar(a, y, ACR, [148, 163, 184], ta);
+                drawBar(k, y + bH + 1.4, KEIM, KEIM_M, tk);
+                if (idx === 0) {
+                    // legend for the stacked carbon row
+                    const lx = bX, ly = y + 2 * bH + 5.5;
+                    doc.setFillColor(...ACR); doc.rect(lx, ly - 2.2, 3, 2.4, 'F'); doc.setFillColor(...KEIM); doc.rect(lx + 3, ly - 2.2, 3, 2.4, 'F');
+                    T('first paint job (A1-A5)', lx + 7.5, ly, { size: 6.8, color: GREY });
+                    const lx2 = lx + 7.5 + tw('first paint job (A1-A5)', 6.8) + 5;
+                    doc.setFillColor(148, 163, 184); doc.rect(lx2, ly - 2.2, 3, 2.4, 'F'); doc.setFillColor(...KEIM_M); doc.rect(lx2 + 3, ly - 2.2, 3, 2.4, 'F');
+                    T('repainting (B2)', lx2 + 7.5, ly, { size: 6.8, color: GREY });
+                    y += 4;
+                }
+                y += 2 * bH + 1.4 + 5;
+                if (idx < bars.length - 1) { doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.line(M, y - 3, W - M, y - 3); }
+            });
+            y += 3;
+
+            // cumulative spend chart
+            sectionTitle('Repaint spend over time', 'Cumulative cost of repainting (after the first paint job), at your rate per square metre, in today\'s dollars', y);
+            y += 9;
+            stepChart(M + 12, y, W - 2 * M - 34, 36, cumSpend, v => '$' + short(v), usd);
+            y += 36 + 12;
+
+            // inputs
+            sectionTitle('Your inputs', null, y);
+            y += 5;
+            const cols = ['', 'Area', 'KEIM repaint every', 'Acrylic repaint every', 'Repaint cost'];
+            const cX = [M, M + 34, M + 64, M + 106, M + 150];
+            doc.setFillColor(241, 245, 249); doc.rect(M, y, W - 2 * M, 6, 'F');
+            cols.forEach((c, i) => T(c, cX[i] + 2, y + 4.1, { size: 7.5, bold: true, color: GREY }));
+            y += 6;
+            R.forEach(r => {
+                y += 5.5;
+                T(r.k === 'exterior' ? 'Exterior' : 'Interior', cX[0] + 2, y, { size: 8.5, bold: true });
+                m2(n(r.p.area) + ' ', cX[1] + 2, y, { size: 8.5 });
+                T(r.p.keimInt + ' years', cX[2] + 2, y, { size: 8.5, color: KEIM, bold: true });
+                T(r.p.acrInt + ' years', cX[3] + 2, y, { size: 8.5 });
+                const ex = m2('$' + r.p.rate + ' per ', cX[4] + 2, y, { size: 8.5 });
+                doc.setDrawColor(...LINE); doc.line(M, y + 2, W - M, y + 2);
+            });
+            y += 6;
+            T('Building life ' + L + ' years  |  two coats per paint job  |  0.25 kg of paint per square metre per coat  |  1.4 kg per litre', M + 2, y, { size: 7.5, color: GREY });
+            y += 9;
+
+            // basis + C2C
+            sectionTitle('How this is worked out', null, y);
+            y += 6;
+            const logoW = 20, textW = W - 2 * M - (c2c ? logoW + 6 : 0);
+            const basis = [
+                'Carbon per kg of paint is the same for both paints, from the 2025 EN 15804+A2 association EPDs: EPD-VDL-20240620-IBN1-EN (facade paints, 2.885 kg CO2e/kg, A1-A5) and EPD-VDL-20240617-IBN1-EN (interior wall paints, class 1, 2.645 kg CO2e/kg). Both valid to 2030.',
+                'The saving comes only from repainting less often. KEIM defaults follow the KEIM Australia warranty: 25 years exterior, 7-10 years interior. VOC and plastic binder figures are estimates from typical acrylic formulations; KEIM silicate paints contain no plastic binder.',
+                'KEIM Soldalit and KEIM Innostar are Cradle to Cradle Certified® Full Scope Silver (Version 5.0). C2C is not part of the carbon numbers above.',
+                'This is a projection, not a project-specific LCA. Association EPDs give average values for whole product groups; real results depend on the substrate, exposure and maintenance. For certified documentation, use the EPDs and certificates themselves.'
+            ];
+            const by0 = y;
+            basis.forEach(t => { doc.setFontSize(7.8); const l = doc.splitTextToSize(t, textW); T(l, M, y, { size: 7.8, color: GREY, lh: 1.3 }); y += l.length * 3.6 + 1.6; });
+            if (c2c) { try { doc.addImage(c2c, 'PNG', W - M - logoW, by0 - 3, logoW, logoW * 371 / 270); } catch (e) {} }
+            footer(2);
+
+            doc.save('KEIM-LCA-Report-' + (project ? project.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' : '') + new Date().toISOString().slice(0, 10) + '.pdf');
         }
 
         // Calculation Engine
