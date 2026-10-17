@@ -132,7 +132,7 @@
             </div>
 
             <nav id="jump" class="flex gap-2 mt-5 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Jump to section">
-                <a href="#sec-calc">Calculator</a><a href="#sec-targets">Green targets</a><a href="#sec-roles">By role</a><a href="#sec-science">Why it lasts</a><a href="#sec-plastic">Microplastics</a><a href="#sec-ingredients">What's in the can</a><a href="#sec-cooling">Keeping cool</a><a href="#sec-standards">Standards</a>
+                <a href="#sec-calc">Calculator</a><a href="#sec-targets">Green targets</a><a href="#sec-certs">Certifications</a><a href="#sec-roles">By role</a><a href="#sec-science">Why it lasts</a><a href="#sec-plastic">Microplastics</a><a href="#sec-ingredients">What's in the can</a><a href="#sec-cooling">Keeping cool</a><a href="#sec-standards">Standards</a>
             </nav>
         </div>
 
@@ -490,7 +490,7 @@
                         </li>
                         <li class="flex items-start">
                             <i class="fa-solid fa-lungs text-blue-500 mr-3 mt-1 shrink-0"></i>
-                            <div><span class="text-sm font-bold text-slate-800">Pristine IAQ:</span> <span class="text-sm text-slate-500">Absolute zero VOCs, zero solvents, and zero synthetic biocides ensure the airtight interior environment remains perfectly healthy from day one.</span></div>
+                            <div><span class="text-sm font-bold text-slate-800">Pristine IAQ:</span> <span class="text-sm text-slate-500">Very low VOC content (KEIM Innostar 0&ndash;1 g/L, Technical Data Sheet) and emissions that meet the AgBB scheme (tested by T&Uuml;V S&Uuml;D, 2026) keep the air in a sealed interior clean from day one.</span></div>
                         </li>
                     </ul>
                 </div>
@@ -512,7 +512,7 @@
                         </li>
                         <li class="flex items-start">
                             <i class="fa-solid fa-recycle text-emerald-500 mr-3 mt-1 shrink-0"></i>
-                            <div><span class="text-sm font-bold text-slate-800">Closed-Loop End of Life:</span> <span class="text-sm text-slate-500">At demolition (Module C), KEIM-coated masonry is free of plastic films. It is crushed and re-enters the supply chain as clean aggregate fill.</span></div>
+                            <div><span class="text-sm font-bold text-slate-800">Closed-Loop End of Life:</span> <span class="text-sm text-slate-500">At demolition (Module C), KEIM-coated masonry carries no plastic skin: organic content is under 5% (Technical Data Sheets), so the masonry can be crushed and reused as aggregate fill.</span></div>
                         </li>
                     </ul>
                 </div>
@@ -520,6 +520,44 @@
         </div>
 
         <!-- PERFORMANCE MATRIX TABS -->
+        <!-- CERTIFICATION HELPER -->
+        <div id="sec-certs" class="reveal scroll-mt-4 mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
+            <div class="text-center mb-8">
+                <p class="text-xs sm:text-sm font-bold text-emerald-600 uppercase tracking-widest mb-2">Rating tools</p>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Certification helper</h2>
+                <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">Which credits KEIM can contribute to, and the document that proves it. Your ESD consultant or assessor makes the final call on every credit.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 mb-6" id="cert-tabs"></div>
+            <div class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-[11px] sm:text-xs font-bold text-slate-500 mb-6">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>Evidence ready</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Supports, consultant to confirm</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>Evidence requested from KEIM Germany</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>No KEIM advantage claimed</span>
+            </div>
+            <div id="cert-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+            <div class="mt-8 bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200">
+                <h3 class="text-lg font-black text-slate-900 mb-1">Evidence library</h3>
+                <p class="text-xs sm:text-sm text-slate-500 mb-4">What each product can show today. Ask KEIM Australia for copies: (02) 9748 7160, info@keim.com.au.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm min-w-[560px]" id="cert-evidence"></table>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900">Carbon by life cycle module (EN 15978)</h3>
+                        <p class="text-xs sm:text-sm text-slate-500">For your consultant&rsquo;s whole-building LCA. Uses the calculator settings above. Modules C and D are not modelled.</p>
+                    </div>
+                    <button onclick="downloadCSV()" class="shrink-0 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs px-4 py-2.5 rounded-lg"><i class="fa-solid fa-file-csv mr-1.5"></i>Download data (CSV)</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm min-w-[520px]" id="module-table"></table>
+                </div>
+            </div>
+        </div>
+
         <div id="sec-roles" class="reveal scroll-mt-4 mb-16 pt-8 border-t-2 border-slate-100 break-inside-avoid">
             <div class="text-center mb-8">
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">What it means for you</h2><p class="tech-title">Performance Metrics by Discipline</p><p class="in-short"><span>In short</span>Pick your role, owner, architect or sustainability consultant, to see the benefits that matter to you.</p>
@@ -560,8 +598,8 @@
                         <h3 class="text-xl font-black text-slate-900 mb-3">Green Star Buildings & New Green Star Fitouts</h3>
                         <p class="text-slate-600 mb-6 leading-relaxed">Achieving high ratings under the latest Green Star frameworks requires validated data and a shift towards circular, healthy materials. Inorganic silicates directly support the aggressive carbon and health targets of both base building and interior fitout tools.</p>
                         <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 print-grid-2">
-                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Green Star Buildings (v1.1)</strong> Targets the 'Positive' category by heavily lowering Whole Life Carbon (Upfront A1-A3 + Maintenance B2) and mitigating urban heat island effects (Passive TSR).</li>
-                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Green Star Fitouts</strong> Maximizes points in the 'Healthy' and 'Places' categories via absolute zero VOC emissions, zero biocides, and KEIM Mineral-Paints&rsquo; C2C Certified® Full Scope Silver certification (Material Health Gold, version 5.0).</li>
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Green Star Buildings (v1.1)</strong> The fewer repaints show up in whole-of-life carbon (maintenance, module B2), which the Impacts Disclosure credit reports over 60 years. The Upfront Carbon credit counts only A1&ndash;A5, so KEIM claims no advantage there. See the certification helper below.</li>
+                            <li class="bg-slate-50 p-4 rounded-xl border border-slate-100"><strong class="block text-emerald-700 mb-1">Green Star Fitouts</strong> Maximizes points in the 'Healthy' and 'Places' categories via very low VOC content (0&ndash;1 g/L for KEIM Innostar), AgBB-compliant emissions (T&Uuml;V S&Uuml;D, 2026) and KEIM Mineral-Paints&rsquo; C2C Certified® Full Scope Silver certification (Material Health Gold, version 5.0).</li>
                         </ul>
                     </div>
                 </div>
@@ -711,9 +749,9 @@
                         <div class="bg-slate-800 p-8 rounded-2xl border border-slate-600 text-center">
                             <p class="text-slate-400 font-black uppercase tracking-widest text-xs mb-2">Projected Polymer Binder Mass:</p>
                             <p class="text-5xl sm:text-6xl font-black text-white mb-2"><span id="out-micro-large">0</span> <span class="text-2xl text-slate-400">kg</span></p>
-                            <p class="text-sm text-slate-300 font-medium">Of dry polymer plastic will be introduced to the facade over the specified RSL if standard dispersions are specified.</p>
+                            <p class="text-sm text-slate-300 font-medium">Of dry polymer binder will be put on the facade over the building life if a standard acrylic is specified (estimate, 20% binder share).</p>
                             <div class="mt-8 pt-6 border-t border-slate-700">
-                                <p class="text-emerald-400 font-bold text-lg">Inorganic Silicates contain 0% plastic film.</p>
+                                <p class="text-emerald-400 font-bold text-lg">KEIM silicate paints: under 5% organic content, no plastic film.</p>
                                 <p class="text-xs text-slate-400 mt-2 uppercase tracking-wide">Pre-empt future compliance risks regarding microplastic shedding.</p>
                             </div>
                         </div>
@@ -745,7 +783,7 @@
                         
                         <div class="mt-12 bg-emerald-100/50 p-4 rounded-xl border border-emerald-200">
                             <p class="text-xs text-emerald-800 leading-relaxed font-medium">
-                                <i class="fa-solid fa-circle-info mr-1"></i> Formulated entirely from earth-abundant minerals. Free from solvents, preservatives, and volatile organic compounds (VOCs).
+                                <i class="fa-solid fa-circle-info mr-1"></i> Mineral binders, fillers and pigments, with under 5% organic content and 0&ndash;3 g/L VOC (Technical Data Sheets). Full composition declared under natureplus&reg;.
                             </p>
                         </div>
                     </div>
@@ -850,7 +888,7 @@
                     <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-fire text-xl"></i></div>
                     <h3 class="text-lg font-black text-slate-900 mb-2">AS 1530.1 & EN 13501-1</h3>
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Combustibility Profile</h4>
-                    <p class="text-sm text-slate-600 leading-relaxed">KEIM Soldalit is classified A2-s1,d0 to EN 13501-1: limited combustibility, very low smoke and no flaming droplets. The mineral binder contains no organic solvents or polymer resins to fuel a fire.</p>
+                    <p class="text-sm text-slate-600 leading-relaxed">KEIM Soldalit is classified A2-s1,d0 to EN 13501-1: limited combustibility, very low smoke and no flaming droplets. The mineral binder contains no organic solvents, and organic content is under 5%, leaving very little to fuel a fire.</p>
                 </div>
                 <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 relative overflow-hidden group">
                     <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-wind text-xl"></i></div>
@@ -862,7 +900,7 @@
                     <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fa-solid fa-sun text-xl"></i></div>
                     <h3 class="text-lg font-black text-slate-900 mb-2">BFS Leaflet 26</h3>
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Photochemical Stability</h4>
-                    <p class="text-sm text-slate-600 leading-relaxed">Class A1 categorisation. The exclusion of organic compounds and exclusive use of mineral pigments eliminates susceptibility to UV degradation, chalking, and colour fading.</p>
+                    <p class="text-sm text-slate-600 leading-relaxed">Class A1 categorisation. Purely inorganic pigments and a mineral binder (organic content under 5%) resist UV degradation, chalking and colour fading.</p>
                 </div>
             </div>
         </div>
@@ -898,9 +936,10 @@
         const COATS = 2;
         const DENSITY = 1.4;        // kg/L, for litres and VOC
         const BINDER_SHARE = 0.20;  // polymer dispersion share of acrylic paint (EPD range 3-35%)
+        const KEIM_ORGANIC_MAX = 0.05; // KEIM TDS: organic content < 5 % (upper bound)
         const metrics = {
-            exterior: { gwp: 2.78 + 0.0671 + 0.0379, acrVoc: 45, keimVoc: 0 },
-            interior: { gwp: 2.54 + 0.0671 + 0.0379, acrVoc: 30, keimVoc: 0 }
+            exterior: { gwp: 2.78 + 0.0671 + 0.0379, a13: 2.78, a4: 0.0671, a5: 0.0379, acrVoc: 45, keimVoc: 3 },   // KEIM Soldalit TDS: 0-3 g/L
+            interior: { gwp: 2.54 + 0.0671 + 0.0379, a13: 2.54, a4: 0.0671, a5: 0.0379, acrVoc: 30, keimVoc: 1 }    // KEIM Innostar TDS: 0-1 g/L
         };
         const parts = {
             exterior: { area: 2500, keimInt: 25, acrInt: 10, rate: 65 },
@@ -1049,7 +1088,7 @@
             const footer = (pg) => {
                 doc.setDrawColor(...LINE); doc.setLineWidth(0.3); doc.line(M, H - 14, W - M, H - 14);
                 T('KEIM Australia  |  7/19 McCauley St, Matraville NSW 2036  |  (02) 9748 7160  |  info@keim.com.au  |  keim.com.au', M, H - 9, { size: 7.5, color: GREY });
-                T('Page ' + pg + ' of 2', W - M, H - 9, { size: 7.5, color: GREY, align: 'right' });
+                T('Page ' + pg + ' of 3', W - M, H - 9, { size: 7.5, color: GREY, align: 'right' });
             };
 
             // job years per part
@@ -1200,8 +1239,8 @@
                 ['Paint jobs', 'incl. the first', [sum('acrCycles') + R.length], [sum('keimCycles') + R.length], v => String(v)],
                 ['Paint used', 'litres', [sum('acrL')], [sum('keimL')], v => n(v) + ' L'],
                 ['Repaint spend', "today's dollars", [acrSpend], [keimSpend], usd],
-                ['VOC emissions', 'kg, estimate', [sum('acrVoc')], [sum('keimVoc')], v => v === 0 ? '0 kg' : v < 10 ? v.toFixed(1) + ' kg' : n(v) + ' kg'],
-                ['Plastic binder', 'kg put on the walls', [sum('micro')], [0], v => n(v) + ' kg']
+                ['VOC in the paint', 'kg, from VOC content', [sum('acrVoc')], [sum('keimVoc')], v => v === 0 ? '0 kg' : v < 10 ? v.toFixed(1) + ' kg' : n(v) + ' kg'],
+                ['Organic / plastic', 'kg put on the walls', [sum('micro')], [sum('keimOrg')], v => n(v) + ' kg']
             ];
             const bX = M + 36, bW = W - 2 * M - 36 - 26, bH = 4.2;
             bars.forEach(([lab, unit, a, k, f], idx) => {
@@ -1263,7 +1302,7 @@
             const logoW = 20, textW = W - 2 * M - (c2c ? logoW + 6 : 0);
             const basis = [
                 'Carbon per kg of paint is the same for both paints, from the 2025 EN 15804+A2 association EPDs: EPD-VDL-20240620-IBN1-EN (facade paints, 2.885 kg CO2e/kg, A1-A5) and EPD-VDL-20240617-IBN1-EN (interior wall paints, class 1, 2.645 kg CO2e/kg). Both valid to 2030.',
-                'The saving comes only from repainting less often. KEIM defaults follow the KEIM Australia warranty: 25 years exterior, 7-10 years interior. VOC and plastic binder figures are estimates from typical acrylic formulations; KEIM silicate paints contain no plastic binder.',
+                'The saving comes only from repainting less often. KEIM defaults follow the KEIM Australia warranty: 25 years exterior, 7-10 years interior. VOC uses typical acrylic content (45 g/L exterior, 30 g/L interior) and the top of the KEIM range from the Technical Data Sheets (Soldalit 0-3 g/L, Innostar 0-1 g/L). Organic content: acrylic binder share estimated at 20%; KEIM shown at its upper limit of 5% (TDS: under 5%).',
                 'KEIM Soldalit and KEIM Innostar are Cradle to Cradle Certified® Full Scope Silver (Version 5.0). C2C is not part of the carbon numbers above.',
                 'This is a projection, not a project-specific LCA. Association EPDs give average values for whole product groups; real results depend on the substrate, exposure and maintenance. For certified documentation, use the EPDs and certificates themselves.'
             ];
@@ -1272,7 +1311,186 @@
             if (c2c) { try { doc.addImage(c2c, 'PNG', W - M - logoW, by0 - 3, logoW, logoW * 371 / 270); } catch (e) {} }
             footer(2);
 
+            /* ================= PAGE 3: certifications ================= */
+            doc.addPage();
+            doc.setFillColor(...DARK); doc.rect(0, 0, W, 12, 'F');
+            doc.setFillColor(...RED); doc.rect(0, 12, W, 0.8, 'F');
+            T('KEIM Australia  |  Life cycle projection' + (project ? '  |  ' + project : ''), M, 7.8, { size: 8.5, bold: true, color: [255, 255, 255] });
+            T(dateStr, W - M, 7.8, { size: 8.5, color: [203, 213, 225], align: 'right' });
+            y = 24;
+            sectionTitle('Where KEIM supports your rating', 'Credits KEIM can contribute to and the evidence. The ESD consultant or assessor makes the final call.', y);
+            y += 11;
+            // legend
+            let lx = M;
+            Object.values(CERT_STATUS).forEach(s => { doc.setFillColor(...s.rgb); doc.circle(lx + 1.3, y - 1, 1.3, 'F'); T(s.lab, lx + 4, y, { size: 7, color: GREY }); lx += 6 + tw(s.lab, 7) + 4; });
+            y += 6;
+            const colGap = 4, colW = (W - 2 * M - 2 * colGap) / 3, colTop = y;
+            let colBottom = y;
+            const strip = s => s.replace(/&reg;/g, '®').replace(/&ndash;/g, '-').replace(/&Uuml;/g, 'Ü').replace(/&rsquo;/g, "'").replace(/&amp;/g, '&');
+            Object.values(CERTS).forEach((cert, i) => {
+                const x0 = M + i * (colW + colGap); let yy = colTop;
+                doc.setFillColor(...KEIM); doc.roundedRect(x0, yy, colW, 11, 2, 2, 'F');
+                T(cert.name, x0 + 4, yy + 5, { size: 10, bold: true, color: [255, 255, 255] });
+                T(cert.ver, x0 + 4, yy + 9, { size: 7, color: [209, 250, 229] });
+                yy += 15;
+                cert.credits.forEach(cr => {
+                    const s = CERT_STATUS[cr.st];
+                    doc.setFillColor(...s.rgb); doc.circle(x0 + 1.6, yy - 1.1, 1.4, 'F');
+                    doc.setFontSize(8.2); const tl = doc.splitTextToSize(strip(cr.c), colW - 6);
+                    T(tl, x0 + 4.5, yy, { size: 8.2, bold: true, lh: 1.2 }); yy += tl.length * 3.5;
+                    T(s.lab, x0 + 4.5, yy, { size: 6.6, bold: true, color: s.rgb }); yy += 3.4;
+                    doc.setFontSize(6.9); const hl = doc.splitTextToSize(strip(cr.how), colW - 5);
+                    T(hl, x0 + 4.5, yy, { size: 6.9, color: GREY, lh: 1.25 }); yy += hl.length * 3 + 1;
+                    if (cr.ev) { const el = doc.splitTextToSize('Evidence: ' + strip(cr.ev), colW - 5); T(el, x0 + 4.5, yy, { size: 6.6, color: INK, lh: 1.25 }); yy += el.length * 2.9; }
+                    yy += 3.5;
+                });
+                colBottom = Math.max(colBottom, yy);
+            });
+            // column separators
+            doc.setDrawColor(...LINE); doc.setLineWidth(0.2);
+            for (let i = 1; i < 3; i++) { const sx2 = M + i * (colW + colGap) - colGap / 2; doc.line(sx2, colTop + 13, sx2, colBottom - 2); }
+            y = colBottom + 5;
+
+            // module table
+            sectionTitle('Carbon by life cycle module (EN 15978)', 'For the whole-building LCA. kg CO2e for your settings; modules C and D not modelled. CSV available on the calculator page.', y);
+            y += 9;
+            const md = moduleData();
+            const mc = [M + 2, M + 82, M + 114, M + 146, W - M - 2];
+            doc.setFillColor(241, 245, 249); doc.rect(M, y, W - 2 * M, 6, 'F');
+            T('Module', mc[0], y + 4.1, { size: 7.5, bold: true, color: GREY });
+            ['Acrylic', 'KEIM', 'Acrylic per m2', 'KEIM per m2'].forEach((h, i) => T(h, mc[i + 1], y + 4.1, { size: 7.5, bold: true, color: GREY, align: 'right' }));
+            y += 6;
+            let mA = 0, mK = 0;
+            const rowM = (lab, a, k, bold) => {
+                y += 5.2;
+                T(lab, mc[0], y, { size: 8.2, bold });
+                T(n(a), mc[1], y, { size: 8.2, bold, align: 'right' }); T(n(k), mc[2], y, { size: 8.2, bold: true, color: KEIM, align: 'right' });
+                T((a / md.area).toFixed(2), mc[3], y, { size: 8.2, bold, align: 'right' }); T((k / md.area).toFixed(2), mc[4], y, { size: 8.2, bold: true, color: KEIM, align: 'right' });
+                doc.setDrawColor(...LINE); doc.line(M, y + 1.8, W - M, y + 1.8);
+            };
+            MODULE_ROWS.forEach(([k, lab]) => { mA += md[k][0]; mK += md[k][1]; rowM(lab, md[k][0], md[k][1], false); });
+            rowM('Total, ' + L + ' years', mA, mK, true);
+            y += 10;
+
+            // evidence library
+            sectionTitle('Evidence library', 'Ask KEIM Australia for copies: (02) 9748 7160, info@keim.com.au', y);
+            y += 9;
+            const ec = [M + 2, M + 118, M + 146, M + 168];
+            doc.setFillColor(241, 245, 249); doc.rect(M, y, W - 2 * M, 6, 'F');
+            ['Evidence', 'Innostar', 'Soldalit', 'Innoprim'].forEach((h, i) => T(h, ec[i], y + 4.1, { size: 7.5, bold: true, color: GREY }));
+            y += 6;
+            EVIDENCE.forEach(r => {
+                doc.setFontSize(7.6); const l = doc.splitTextToSize(strip(r[0]), 112);
+                const rh = Math.max(5.2, l.length * 3.2 + 2);
+                T(l, ec[0], y + 3.8, { size: 7.6, lh: 1.2 });
+                [1, 2, 3].forEach(i => {
+                    const v = r[i];
+                    const txt = v === 'ready' ? 'Yes' : v === 'requested' ? 'Requested' : v ? strip(v) : '-';
+                    const col = v === 'ready' ? KEIM : v === 'requested' ? CERT_STATUS.requested.rgb : v ? INK : [203, 213, 225];
+                    T(txt, ec[i], y + 3.8, { size: 7.4, bold: !!v, color: col, max: 26 });
+                });
+                y += rh; doc.setDrawColor(...LINE); doc.line(M, y, W - M, y);
+            });
+            footer(3);
+
             doc.save('KEIM-LCA-Report-' + (project ? project.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' : '') + new Date().toISOString().slice(0, 10) + '.pdf');
+        }
+
+        // ---------- Certification helper ----------
+        // status: ready | confirm | requested | none
+        const CERT_STATUS = {
+            ready: { lab: 'Evidence ready', dot: 'bg-emerald-600', chip: 'bg-emerald-50 text-emerald-800 border-emerald-200', rgb: [4, 120, 87] },
+            confirm: { lab: 'Consultant to confirm', dot: 'bg-amber-500', chip: 'bg-amber-50 text-amber-800 border-amber-200', rgb: [217, 119, 6] },
+            requested: { lab: 'Requested from KEIM Germany', dot: 'bg-sky-600', chip: 'bg-sky-50 text-sky-800 border-sky-200', rgb: [2, 132, 199] },
+            none: { lab: 'No advantage claimed', dot: 'bg-slate-400', chip: 'bg-slate-50 text-slate-600 border-slate-200', rgb: [148, 163, 184] }
+        };
+        const CERTS = {
+            greenstar: {
+                name: 'Green Star Buildings', ver: 'v1.1 (GBCA)', credits: [
+                    { c: 'Impacts Disclosure', st: 'confirm', how: 'Whole-of-life LCA (modules A to D) over 60 years. This is where KEIM&rsquo;s fewer repaints (B2) count.', ev: 'EN 15804+A2 EPDs; the module table and CSV below for the consultant&rsquo;s LCA.' },
+                    { c: 'Upfront Carbon Reduction', st: 'none', how: 'Counts A1 to A5 only, so repainting is outside it. Per kg, the association EPD gives KEIM and acrylic the same carbon.', ev: 'A KEIM-specific EPD (requested) could change this.' },
+                    { c: 'Exposure to Toxins', st: 'ready', how: 'Paint VOC content limits. KEIM Innostar 0&ndash;1 g/L, Innoprim 0&ndash;1 g/L, Soldalit 0&ndash;3 g/L.', ev: 'Technical Data Sheets; T&Uuml;V S&Uuml;D AgBB letter for Innostar.' },
+                    { c: 'Responsible Finishes', st: 'confirm', how: 'Third-party product certification for finishes.', ev: 'C2C Certified&reg; Full Scope Silver v5.0, certificate 12367.' }
+                ]
+            },
+            well: {
+                name: 'WELL', ver: 'v2 (IWBI)', credits: [
+                    { c: 'X07 Materials Transparency', st: 'ready', how: 'C2C Material Health Gold counts for Part 1 and Part 3.', ev: 'C2C Certified&reg; Material Health Gold certificate.' },
+                    { c: 'X08 Materials Optimization', st: 'ready', how: 'C2C Silver or higher counts for Part 2 (third-party certified products).', ev: 'C2C Certified&reg; Full Scope Silver v5.0, certificate 12367.' },
+                    { c: 'X06 VOC Restrictions (interior)', st: 'confirm', how: 'Needs VOC content compliance plus emissions testing (AgBB is listed). Innostar meets the AgBB 2024 scheme. Content is 0&ndash;1 g/L; the assessor confirms the content standard.', ev: 'T&Uuml;V S&Uuml;D letter 26-K1317-1 (16 Jun 2026), report 26-N1907-2; Innostar TDS.' },
+                    { c: 'X06 for Soldalit', st: 'none', how: 'X06 covers interior wet-applied products. Soldalit is a facade paint.', ev: '' }
+                ]
+            },
+            leed: {
+                name: 'LEED', ver: 'v5 (USGBC)', credits: [
+                    { c: 'Building Product Selection and Procurement', st: 'confirm', how: 'Product transparency and optimisation through third-party certification.', ev: 'C2C Certified&reg; Full Scope Silver v5.0 and Material Health Gold.' },
+                    { c: 'Low-Emitting Materials', st: 'confirm', how: 'LEED usually asks for CDPH v1.2 emissions testing. Innostar has AgBB testing; check whether the project can use it.', ev: 'T&Uuml;V S&Uuml;D AgBB letter for Innostar.' },
+                    { c: 'Reduce Embodied Carbon', st: 'confirm', how: 'EPD-based. The association EPDs qualify as industry-wide EPDs; a KEIM-specific EPD would rate higher.', ev: 'EN 15804+A2 association EPDs. KEIM-specific EPD requested.' }
+                ]
+            }
+        };
+        const EVIDENCE = [
+            ['Cradle to Cradle Certified&reg; Full Scope Silver v5.0 (Material Health Gold, Circularity Silver), cert. 12367, EPEA', 'ready', 'ready', 'ready'],
+            ['natureplus&reg; certified, full composition declared', 'ready', 'ready', ''],
+            ['VOC content (Technical Data Sheet)', '0&ndash;1 g/L', '0&ndash;3 g/L', '0&ndash;1 g/L'],
+            ['Organic content (Technical Data Sheet)', 'under 5%', 'under 5%', 'under 5%'],
+            ['VOC emissions to AgBB 2024 (T&Uuml;V S&Uuml;D)', 'ready', 'requested', ''],
+            ['Fire: A2-s1,d0 to EN 13501-1', '', 'ready', ''],
+            ['EPD, EN 15804+A2', 'Association', 'Association', 'Association'],
+            ['KEIM-specific EPD (old one expired July 2024)', 'requested', 'requested', 'requested']
+        ];
+        let certTab = 'greenstar';
+        function renderCerts() {
+            const tabs = document.getElementById('cert-tabs'); if (!tabs) return;
+            tabs.innerHTML = Object.entries(CERTS).map(([k, v]) => '<button onclick="certTab=\'' + k + '\';renderCerts()" class="px-4 py-2 rounded-full text-xs sm:text-sm font-black border transition-colors ' + (k === certTab ? 'bg-emerald-700 text-white border-emerald-700' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50') + '">' + v.name + ' <span class="font-medium opacity-75">' + v.ver + '</span></button>').join('');
+            document.getElementById('cert-cards').innerHTML = CERTS[certTab].credits.map(x => {
+                const s = CERT_STATUS[x.st];
+                return '<div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200"><div class="flex items-start justify-between gap-3 mb-2"><h4 class="font-black text-slate-900 text-sm sm:text-base">' + x.c + '</h4><span class="shrink-0 inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-1 rounded-full border ' + s.chip + '"><span class="w-2 h-2 rounded-full ' + s.dot + '"></span>' + s.lab + '</span></div><p class="text-xs sm:text-sm text-slate-600">' + x.how + '</p>' + (x.ev ? '<p class="text-[11px] sm:text-xs text-slate-500 mt-2"><strong class="text-slate-700">Evidence:</strong> ' + x.ev + '</p>' : '') + '</div>';
+            }).join('');
+            const cell = v => {
+                if (v === 'ready') return '<span class="inline-flex items-center gap-1 text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> Yes</span>';
+                if (v === 'requested') return '<span class="inline-flex items-center gap-1 text-sky-700 font-bold"><i class="fa-solid fa-clock"></i> Requested</span>';
+                if (!v) return '<span class="text-slate-300">&ndash;</span>';
+                return '<span class="font-bold text-slate-800">' + v + '</span>';
+            };
+            document.getElementById('cert-evidence').innerHTML = '<thead><tr class="text-left text-slate-500 border-b border-slate-200"><th class="py-2 pr-3 font-bold">Evidence</th><th class="py-2 px-2 font-bold">Innostar</th><th class="py-2 px-2 font-bold">Soldalit</th><th class="py-2 px-2 font-bold">Innoprim</th></tr></thead><tbody>' +
+                EVIDENCE.map(r => '<tr class="border-b border-slate-100"><td class="py-2 pr-3 text-slate-700">' + r[0] + '</td><td class="py-2 px-2">' + cell(r[1]) + '</td><td class="py-2 px-2">' + cell(r[2]) + '</td><td class="py-2 px-2">' + cell(r[3]) + '</td></tr>').join('') + '</tbody>';
+        }
+        // EN 15978 module split for the current settings
+        function moduleData() {
+            const keys = currentScope === 'both' ? ['exterior', 'interior'] : [currentScope];
+            const out = { A13: [0, 0], A4: [0, 0], A5: [0, 0], B2: [0, 0], area: 0 };
+            keys.forEach(k => {
+                const cm = metrics[k], p = parts[k], r = partCalc(k), jobKg = p.area * KG_PER_COAT * COATS;
+                out.area += p.area;
+                out.A13[0] += jobKg * cm.a13; out.A13[1] += jobKg * cm.a13;
+                out.A4[0] += jobKg * cm.a4; out.A4[1] += jobKg * cm.a4;
+                out.A5[0] += jobKg * cm.a5; out.A5[1] += jobKg * cm.a5;
+                out.B2[0] += jobKg * cm.gwp * r.acrCycles; out.B2[1] += jobKg * cm.gwp * r.keimCycles;
+            });
+            return out;
+        }
+        const MODULE_ROWS = [['A13', 'A1-A3 Product (first paint job)'], ['A4', 'A4 Transport to site'], ['A5', 'A5 Installation'], ['B2', 'B2 Maintenance (repainting)']];
+        function renderModules() {
+            const el = document.getElementById('module-table'); if (!el) return;
+            const d = moduleData(), f = v => Math.round(v).toLocaleString('en-AU'), f2 = v => (v).toFixed(2);
+            let tA = 0, tK = 0;
+            let h = '<thead><tr class="text-left text-slate-500 border-b border-slate-300"><th class="py-2 pr-3 font-bold">Module</th><th class="py-2 px-2 font-bold text-right">Acrylic kg CO2e</th><th class="py-2 px-2 font-bold text-right">KEIM kg CO2e</th><th class="py-2 px-2 font-bold text-right">Acrylic per m&sup2;</th><th class="py-2 px-2 font-bold text-right">KEIM per m&sup2;</th></tr></thead><tbody>';
+            MODULE_ROWS.forEach(([k, lab]) => { tA += d[k][0]; tK += d[k][1]; h += '<tr class="border-b border-slate-200"><td class="py-2 pr-3 text-slate-700">' + lab + '</td><td class="py-2 px-2 text-right">' + f(d[k][0]) + '</td><td class="py-2 px-2 text-right text-emerald-700 font-bold">' + f(d[k][1]) + '</td><td class="py-2 px-2 text-right">' + f2(d[k][0] / d.area) + '</td><td class="py-2 px-2 text-right text-emerald-700 font-bold">' + f2(d[k][1] / d.area) + '</td></tr>'; });
+            h += '<tr class="font-black"><td class="py-2 pr-3">Total, ' + currentLife + ' years</td><td class="py-2 px-2 text-right">' + f(tA) + '</td><td class="py-2 px-2 text-right text-emerald-700">' + f(tK) + '</td><td class="py-2 px-2 text-right">' + f2(tA / d.area) + '</td><td class="py-2 px-2 text-right text-emerald-700">' + f2(tK / d.area) + '</td></tr></tbody>';
+            el.innerHTML = h;
+        }
+        function downloadCSV() {
+            const d = moduleData(), keys = currentScope === 'both' ? ['exterior', 'interior'] : [currentScope];
+            const rows = [['KEIM Australia life cycle projection', new Date().toISOString().slice(0, 10)], ['Building life (years)', currentLife], ['Scope', currentScope]];
+            keys.forEach(k => { const p = parts[k]; rows.push([k + ' area (m2)', p.area], [k + ' KEIM repaint interval (years)', p.keimInt], [k + ' acrylic repaint interval (years)', p.acrInt]); });
+            rows.push(['Paint per coat (kg/m2)', KG_PER_COAT], ['Coats per paint job', COATS], [], ['Module (EN 15978)', 'Acrylic kg CO2e', 'KEIM kg CO2e', 'Acrylic kg CO2e/m2', 'KEIM kg CO2e/m2']);
+            let tA = 0, tK = 0;
+            MODULE_ROWS.forEach(([k, lab]) => { tA += d[k][0]; tK += d[k][1]; rows.push([lab, d[k][0].toFixed(1), d[k][1].toFixed(1), (d[k][0] / d.area).toFixed(3), (d[k][1] / d.area).toFixed(3)]); });
+            rows.push(['Total', tA.toFixed(1), tK.toFixed(1), (tA / d.area).toFixed(3), (tK / d.area).toFixed(3)], [], ['Modules C and D not modelled'], ['Source: EPD-VDL-20240620-IBN1-EN (facade paints) and EPD-VDL-20240617-IBN1-EN (interior wall paints class 1), EN 15804+A2'], ['Projection only, not a project-specific LCA']);
+            const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+            a.download = 'KEIM-LCA-modules-' + new Date().toISOString().slice(0, 10) + '.csv'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
         }
 
         // Calculation Engine
@@ -1288,7 +1506,7 @@
                 keimUp: up, acrUp: up, keimMaint: up * keimCycles, acrMaint: up * acrCycles,
                 keimL: keimKg / DENSITY, acrL: acrKg / DENSITY,
                 keimVoc: keimKg / DENSITY * cm.keimVoc / 1000, acrVoc: acrKg / DENSITY * cm.acrVoc / 1000,
-                micro: acrKg * BINDER_SHARE,
+                micro: acrKg * BINDER_SHARE, keimOrg: keimKg * KEIM_ORGANIC_MAX,
                 cost: Math.max(0, acrCycles - keimCycles) * p.area * p.rate
             };
         }
@@ -1309,6 +1527,7 @@
             const per = (f, add) => both ? R.map(r => r[f] + (add || 0)).join(' + ') : String(R[0][f] + (add || 0));
 
             updateSummary();
+            renderModules();
             document.getElementById('out-fewer-hero').innerText = fewer + ' fewer repaints' + (both ? ' (' + R[0].fewer + ' outside, ' + R[1].fewer + ' inside)' : '');
             document.getElementById('out-life-hero').innerText = currentLife;
             document.getElementById('jobs-acr').innerText = per('acrCycles', 1);
@@ -1401,7 +1620,7 @@
 
         // Initialize on load
         window.onload = () => {
-            loadPart(); calculate();
+            loadPart(); calculate(); renderCerts();
         };
     </script>
 
