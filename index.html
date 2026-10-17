@@ -748,7 +748,7 @@
                         
                         <div class="mt-12 bg-emerald-100/50 p-4 rounded-xl border border-emerald-200">
                             <p class="text-xs text-emerald-800 leading-relaxed font-medium">
-                                <i class="fa-solid fa-circle-info mr-1"></i> Mineral binders, fillers and pigments, with under 5% organic content and 0&ndash;3 g/L VOC (Technical Data Sheets). Full composition declared under natureplus&reg;.
+                                <i class="fa-solid fa-circle-info mr-1"></i> Mineral binders, fillers and pigments, with under 5% organic content and 0&ndash;2 g/L VOC (data sheets). Full composition declared under natureplus&reg;.
                             </p>
                         </div>
                     </div>
@@ -905,7 +905,7 @@
         const BINDER_SHARE = 0.20;  // polymer dispersion share of acrylic paint (EPD range 3-35%)
         const KEIM_ORGANIC_MAX = 0.05; // KEIM TDS: organic content < 5 % (upper bound)
         const metrics = {
-            exterior: { gwp: 2.78 + 0.0671 + 0.0379, a13: 2.78, a4: 0.0671, a5: 0.0379, acrVoc: 45, keimVoc: 3 },   // KEIM Soldalit TDS: 0-3 g/L
+            exterior: { gwp: 2.78 + 0.0671 + 0.0379, a13: 2.78, a4: 0.0671, a5: 0.0379, acrVoc: 45, keimVoc: 2 },   // KEIM Soldalit sustainability data sheet 09/2026: 0-2 g/L
             interior: { gwp: 2.54 + 0.0671 + 0.0379, a13: 2.54, a4: 0.0671, a5: 0.0379, acrVoc: 30, keimVoc: 1 }    // KEIM Innostar TDS: 0-1 g/L
         };
         const parts = {
@@ -1271,7 +1271,7 @@
             const logoW = 20, textW = W - 2 * M - (c2c ? logoW + 6 : 0);
             const basis = [
                 'Carbon per kg of paint is the same for both paints, from the 2025 EN 15804+A2 association EPDs: EPD-VDL-20240620-IBN1-EN (facade paints, 2.885 kg CO2e/kg, A1-A5) and EPD-VDL-20240617-IBN1-EN (interior wall paints, class 1, 2.645 kg CO2e/kg). Both valid to 2030.',
-                'The saving comes from fewer coats (KEIM ' + COATS_KEIM + ' per job, typical acrylic ' + COATS_ACR + ': primer plus 2 top coats; Soldalit is self-priming) and from repainting less often. Each coat counted as about one day on site (drying and recoat time). KEIM defaults follow the KEIM Australia warranty: 25 years exterior, 7-10 years interior. VOC uses typical acrylic content (45 g/L exterior, 30 g/L interior) and the top of the KEIM range from the Technical Data Sheets (Soldalit 0-3 g/L, Innostar 0-1 g/L). Organic content: acrylic binder share estimated at 20%; KEIM shown at its upper limit of 5% (TDS: under 5%).',
+                'The saving comes from fewer coats (KEIM ' + COATS_KEIM + ' per job, typical acrylic ' + COATS_ACR + ': primer plus 2 top coats; Soldalit is self-priming) and from repainting less often. Each coat counted as about one day on site (drying and recoat time). KEIM defaults follow the KEIM Australia warranty: 25 years exterior, 7-10 years interior. VOC uses typical acrylic content (45 g/L exterior, 30 g/L interior) and the top of the KEIM range from the Technical Data Sheets (Soldalit 0-2 g/L, Innostar 0-1 g/L). Organic content: acrylic binder share estimated at 20%; KEIM shown at its upper limit of 5% (TDS: under 5%).',
                 'KEIM Soldalit and KEIM Innostar are Cradle to Cradle Certified® Full Scope Silver (Version 5.0). C2C is not part of the carbon numbers above.',
                 'This is a projection, not a project-specific LCA. Association EPDs give average values for whole product groups; real results depend on the substrate, exposure and maintenance. For certified documentation, use the EPDs and certificates themselves.'
             ];

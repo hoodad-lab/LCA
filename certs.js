@@ -10,7 +10,7 @@ const CERTS = {
         name: 'Green Star Buildings', ver: 'v1.1 (GBCA)', credits: [
             { c: 'Impacts Disclosure', st: 'confirm', how: 'Whole-of-life LCA (modules A to D) over 60 years. This is where KEIM&rsquo;s fewer repaints (B2) count.', ev: '' },
             { c: 'Upfront Carbon Reduction', st: 'confirm', how: 'Counts A1 to A5 only (the first paint job). KEIM&rsquo;s 2-coat system uses a third less paint than a typical 3-coat acrylic system, so less upfront carbon. Per kg, the association EPD gives both the same carbon.', ev: '' },
-            { c: 'Exposure to Toxins', st: 'ready', how: 'Cradle to Cradle Certified&reg; v5.0 is a listed certification scheme. VOC content is also far under the limits: Innostar 0&ndash;1 g/L (interior wall paint limit 16 g/L), Innoprim 0&ndash;1 g/L (primer limit 65 g/L), Soldalit 0&ndash;3 g/L.', ev: '' },
+            { c: 'Exposure to Toxins', st: 'ready', how: 'Cradle to Cradle Certified&reg; v5.0 is a listed certification scheme. VOC content is also far under the limits: Innostar 0&ndash;1 g/L (interior wall paint limit 16 g/L), Innoprim 0&ndash;1 g/L (primer limit 65 g/L), Soldalit 0&ndash;2 g/L (facade paint limit 40 g/L).', ev: '' },
             { c: 'Responsible Finishes', st: 'confirm', how: 'Third-party product certification for finishes.', ev: '' }
         ]
     },
