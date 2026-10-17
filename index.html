@@ -1295,7 +1295,7 @@
             y += 6;
             const colGap = 4, colW = (W - 2 * M - 2 * colGap) / 3, colTop = y;
             let colBottom = y;
-            const strip = s => s.replace(/&reg;/g, '®').replace(/&ndash;/g, '-').replace(/&Uuml;/g, 'Ü').replace(/&rsquo;/g, "'").replace(/&amp;/g, '&');
+            const strip = s => s.replace(/&reg;/g, '®').replace(/&ndash;/g, '-').replace(/&Uuml;/g, 'Ü').replace(/&rsquo;/g, "'").replace(/&micro;g\/m&sup3;/g, 'micrograms/m3').replace(/&sup2;/g, '2').replace(/&amp;/g, '&');
             Object.values(CERTS).forEach((cert, i) => {
                 const x0 = M + i * (colW + colGap); let yy = colTop;
                 doc.setFillColor(...KEIM); doc.roundedRect(x0, yy, colW, 11, 2, 2, 'F');
