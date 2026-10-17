@@ -194,6 +194,9 @@
                         <input type="range" id="keim-int" min="5" max="60" step="1" value="25" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="setInterval2('keim', this.value)" />
                         <div class="flex items-center justify-between mt-4 mb-1"><span class="text-sm font-bold text-slate-600">Acrylic</span><span class="text-lg font-black text-slate-900"><span id="acr-int-val">10</span> yrs</span></div>
                         <input type="range" id="acr-int" min="5" max="25" step="1" value="10" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-500" oninput="setInterval2('acr', this.value)" />
+                        <div class="flex items-center justify-between gap-2 mt-4 text-xs font-bold text-slate-600"><span class="uppercase tracking-wider text-slate-700 whitespace-nowrap">Coats/job</span>
+                            <span class="flex items-center gap-1.5"><span class="text-emerald-700">KEIM</span><select id="coats-keim" onchange="setCoats()" class="border border-slate-300 rounded-md px-1.5 py-1 bg-white text-slate-900"><option>1</option><option selected>2</option><option>3</option></select>
+                            <span class="ml-2">Acrylic</span><select id="coats-acr" onchange="setCoats()" class="border border-slate-300 rounded-md px-1.5 py-1 bg-white text-slate-900"><option>1</option><option>2</option><option selected>3</option><option>4</option></select></span></div>
                     </div>
 
                     <!-- Repaint cost -->
@@ -204,7 +207,7 @@
                             <input type="number" id="cost-input" value="65" min="0" step="1" class="w-24 text-center bg-transparent border-b-2 border-emerald-500 py-1 text-slate-900 font-black focus:outline-none focus:border-emerald-700 text-lg" oninput="setCost(this.value)" />
                             <span class="text-sm font-bold text-slate-500 px-3">per m²</span>
                         </div>
-                        <p id="cost-note" class="text-[11px] text-slate-500 mt-2">Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.</p>
+                        <p id="cost-note" class="text-[11px] text-slate-500 mt-2">Default: typical Sydney commercial exterior repaint, Oct 2026, incl. GST, excl. access. Enter your own.</p>
                     </div>
 
                     <!-- PDF Download Button -->
@@ -315,7 +318,7 @@
                         <div class="mb-4"><div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-arrows-spin text-sm"></i></div></div>
                         <div>
                             <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="out-repaints">0</span> <span class="text-sm sm:text-lg text-slate-400">jobs</span></p>
-                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Fewer repaints</p><p class="text-[10px] text-slate-400 mt-0.5">LCA module B2</p>
+                            <p class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide mt-1">Fewer repaints</p><p class="text-[10px] text-slate-400 mt-0.5"><span id="out-coats">0</span> fewer coats on site</p>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
@@ -407,8 +410,8 @@
                         <div id="tl-rows" class="space-y-3"></div>
                     </div>
                     <div class="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col text-xs text-slate-500">
-                        <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>How this is worked out:</strong> Both paints get the <strong>same carbon per coat</strong>, taken from the 2025 EN 15804+A2 EPDs below. Each paint job is 2 coats at 0.25 kg/m² per coat. <em>Upfront (A1-A5)</em> is the first paint job; <em>Repaints (B2)</em> are the jobs needed to cover the rest of the design life. The saving comes only from repainting less often, set by the "Repaint every" sliders. KEIM defaults follow the KEIM Australia warranty (25 years exterior, 7-10 years interior), so the result is conservative.</p>
-                        <p class="text-[10px] italic text-slate-400 border-t border-slate-200 pt-2 mt-1">Disclaimer: This is a projection, not a project LCA. The EPDs are association (VdL) model EPDs that declare worst-case values for a whole product group, not KEIM product-specific EPDs. Repaint intervals depend on substrate, exposure and maintenance; litres use an assumed density of 1.4 kg/L; VOC and binder figures for acrylic are typical values. For certified project documentation, use the EPD certificates themselves.</p>
+                        <p class="mb-2"><i class="fa-solid fa-circle-info mr-2 text-slate-400"></i><strong>How this is worked out:</strong> Both paints get the <strong>same carbon per kg</strong>, taken from the 2025 EN 15804+A2 EPDs below, at 0.25 kg/m² per coat. KEIM: 2 coats per job (Soldalit is self-priming). Typical acrylic: 3 (primer + 2 top coats), on new work and repaints. <em>Upfront (A1-A5)</em> is the first paint job; <em>Repaints (B2)</em> are the jobs needed to cover the rest of the design life. The saving comes from fewer coats per job and from repainting less often, set by the "Repaint every" sliders. KEIM defaults follow the KEIM Australia warranty (25 years exterior, 7-10 years interior), so the result is conservative.</p>
+                        <p class="text-[10px] italic text-slate-400 border-t border-slate-200 pt-2 mt-1">Disclaimer: A projection, not a project LCA. The EPDs are association (VdL) model EPDs with worst-case values for a product group, not KEIM-specific EPDs. Intervals depend on substrate, exposure and maintenance; litres assume 1.4 kg/L; acrylic VOC and binder are typical values. For certified documentation, use the EPDs themselves.</p>
                     </div>
                 </div>
 
@@ -895,7 +898,9 @@
         // Exterior: EPD-VDL-20240620-IBN1-EN  A1-A3 2.78 + A4 0.0671 + A5 0.0379
         // Interior: EPD-VDL-20240617-IBN1-EN  A1-A3 2.54 + A4 0.0671 + A5 0.0379
         const KG_PER_COAT = 0.25;   // kg/m2 per coat (EPD range 0.1-0.5)
-        const COATS = 2;
+        let COATS_KEIM = 2;   // KEIM system: Soldalit self-priming (primer coat + final coat); Innostar 2 coats
+        let COATS_ACR = 3;    // typical acrylic system: sealer/primer + 2 top coats, also on repaints
+        function setCoats() { COATS_KEIM = +document.getElementById('coats-keim').value; COATS_ACR = +document.getElementById('coats-acr').value; calculate(); }
         const DENSITY = 1.4;        // kg/L, for litres and VOC
         const BINDER_SHARE = 0.20;  // polymer dispersion share of acrylic paint (EPD range 3-35%)
         const KEIM_ORGANIC_MAX = 0.05; // KEIM TDS: organic content < 5 % (upper bound)
@@ -908,12 +913,12 @@
             interior: { area: 2500, keimInt: 10, acrInt: 7,  rate: 30 }
         };
         const NOTES = {
-            exterior: 'Default: Sydney typical commercial exterior repaint, Oct 2026, incl. GST, excl. access (whatsthedamage.com.au). Enter your own rate.',
+            exterior: 'Default: typical Sydney commercial exterior repaint, Oct 2026, incl. GST, excl. access. Enter your own.',
             interior: 'Default: typical interior repaint, $25-35/m² incl. labour. Enter your own rate.'
         };
         const INT_NOTES = {
-            exterior: 'KEIM default = the KEIM Australia 25-year exterior warranty, with no repaint needed in that time. Real life is often longer: the EPD notes up to 50 years. Acrylic = a typical repaint cycle. Change both to suit the site.',
-            interior: 'KEIM default = the 7-10 year interior warranty. With good care it can last up to 20 years. Acrylic = a typical repaint cycle. Change both to suit the site.'
+            exterior: 'KEIM default = the 25-year exterior warranty (often lasts longer). Acrylic = a typical cycle. Change both to suit the site.',
+            interior: 'KEIM default = the 7-10 year interior warranty (up to 20 with good care). Acrylic = a typical cycle. Change both to suit the site.'
         };
         const fmt = n => Math.round(n).toLocaleString();
 
@@ -1004,6 +1009,7 @@
             const keimCo2 = sum('keimUp') + sum('keimMaint'), acrCo2 = sum('acrUp') + sum('acrMaint');
             const saved = Math.max(0, acrCo2 - keimCo2), pct = acrCo2 > 0 ? Math.round(saved / acrCo2 * 100) : 0;
             const fewer = sum('fewer'), costSaved = sum('cost'), litresSaved = Math.max(0, sum('acrL') - sum('keimL'));
+            const coatsSaved = Math.max(0, sum('acrCoats') - sum('keimCoats'));
             const L = currentLife;
             const n = v => Math.round(v).toLocaleString('en-AU');
             const usd = v => '$' + n(v);
@@ -1128,7 +1134,7 @@
             T('less carbon', cx, cy + 7, { size: 6.5, color: [209, 250, 229], align: 'center' });
             const hx = M + 52;
             T('Over ' + L + ' years, KEIM cuts the paint carbon by ' + pct + '%', hx, hy + 13, { size: 14, bold: true, color: [255, 255, 255], max: W - M - hx - 6 });
-            T('Same carbon per paint job for both paints. KEIM simply needs repainting less often, so ' + (fewer === 1 ? '1 repaint is' : fewer + ' repaints are') + ' never done: no paint made, shipped or applied for ' + (fewer === 1 ? 'it' : 'them') + '.', hx, hy + 27, { size: 9, color: [209, 250, 229], max: W - M - hx - 8, lh: 1.35 });
+            T('KEIM needs ' + COATS_KEIM + ' coats where acrylic needs ' + COATS_ACR + ', and it needs repainting less often: ' + (fewer === 1 ? '1 repaint' : fewer + ' repaints') + ' and ' + coatsSaved + ' coats are never applied. That paint is never made, shipped or put on the wall.', hx, hy + 27, { size: 9, color: [209, 250, 229], max: W - M - hx - 8, lh: 1.35 });
             y = hy + hh + 5;
 
             // KPI tiles
@@ -1136,7 +1142,7 @@
                 [n(saved), 'kg CO2e saved', 'over the building life'],
                 [String(fewer), fewer === 1 ? 'fewer repaint' : 'fewer repaints', both ? R[0].fewer + ' outside, ' + R[1].fewer + ' inside' : (R[0].acrCycles + ' vs ' + R[0].keimCycles + ' repaints')],
                 [usd(costSaved), 'repaint cost avoided', "in today's dollars"],
-                [n(litresSaved) + ' L', 'less paint used', 'litres never made or applied']
+                [String(coatsSaved), 'fewer coats on site', 'about ' + coatsSaved + ' fewer days of painting']
             ];
             const tGap = 4, tW = (W - 2 * M - 3 * tGap) / 4, tH = 25;
             tiles.forEach((t, i) => {
@@ -1158,7 +1164,7 @@
             y += cH + 13;
 
             // repaint timeline
-            sectionTitle('When each paint job happens', 'Each dot is a full two-coat paint job, starting with the first one at year 0', y);
+            sectionTitle('When each paint job happens', 'Each dot is a full paint job (KEIM ' + COATS_KEIM + ' coats, acrylic ' + COATS_ACR + '), starting with the first one at year 0', y);
             y += 9;
             const tlX = M + 30, tlW = W - 2 * M - 34;
             const rowsTL = [];
@@ -1199,12 +1205,13 @@
             const bars = [
                 ['Total carbon', 'kg CO2e', [sum('acrUp'), sum('acrMaint')], [sum('keimUp'), sum('keimMaint')], v => n(v) + ' kg'],
                 ['Paint jobs', 'incl. the first', [sum('acrCycles') + R.length], [sum('keimCycles') + R.length], v => String(v)],
+                ['Coats applied', 'each about a day on site', [sum('acrCoats')], [sum('keimCoats')], v => String(v)],
                 ['Paint used', 'litres', [sum('acrL')], [sum('keimL')], v => n(v) + ' L'],
                 ['Repaint spend', "today's dollars", [acrSpend], [keimSpend], usd],
                 ['VOC in the paint', 'kg, from VOC content', [sum('acrVoc')], [sum('keimVoc')], v => v === 0 ? '0 kg' : v < 10 ? v.toFixed(1) + ' kg' : n(v) + ' kg'],
                 ['Organic / plastic', 'kg put on the walls', [sum('micro')], [sum('keimOrg')], v => n(v) + ' kg']
             ];
-            const bX = M + 36, bW = W - 2 * M - 36 - 26, bH = 4.2;
+            const bX = M + 36, bW = W - 2 * M - 36 - 26, bH = 3.9;
             bars.forEach(([lab, unit, a, k, f], idx) => {
                 const ta = a.reduce((s, v) => s + v, 0), tk = k.reduce((s, v) => s + v, 0), mx = Math.max(ta, tk) || 1;
                 T(lab, M, y + 3.2, { size: 9, bold: true }); T(unit, M, y + 7.2, { size: 7, color: GREY });
@@ -1226,7 +1233,7 @@
                     T('repainting (B2)', lx2 + 7.5, ly, { size: 6.8, color: GREY });
                     y += 4;
                 }
-                y += 2 * bH + 1.4 + 5;
+                y += 2 * bH + 1.4 + 4;
                 if (idx < bars.length - 1) { doc.setDrawColor(...LINE); doc.setLineWidth(0.2); doc.line(M, y - 3, W - M, y - 3); }
             });
             y += 3;
@@ -1234,8 +1241,8 @@
             // cumulative spend chart
             sectionTitle('Repaint spend over time', 'Cumulative cost of repainting (after the first paint job), at your rate per square metre, in today\'s dollars', y);
             y += 9;
-            stepChart(M + 12, y, W - 2 * M - 34, 36, cumSpend, v => '$' + short(v), usd);
-            y += 36 + 12;
+            stepChart(M + 12, y, W - 2 * M - 34, 32, cumSpend, v => '$' + short(v), usd);
+            y += 32 + 12;
 
             // inputs
             sectionTitle('Your inputs', null, y);
@@ -1255,7 +1262,7 @@
                 doc.setDrawColor(...LINE); doc.line(M, y + 2, W - M, y + 2);
             });
             y += 6;
-            T('Building life ' + L + ' years  |  two coats per paint job  |  0.25 kg of paint per square metre per coat  |  1.4 kg per litre', M + 2, y, { size: 7.5, color: GREY });
+            T('Building life ' + L + ' years  |  coats per job: KEIM ' + COATS_KEIM + ', acrylic ' + COATS_ACR + '  |  0.25 kg of paint per square metre per coat  |  1.4 kg per litre', M + 2, y, { size: 7.5, color: GREY });
             y += 9;
 
             // basis + C2C
@@ -1264,7 +1271,7 @@
             const logoW = 20, textW = W - 2 * M - (c2c ? logoW + 6 : 0);
             const basis = [
                 'Carbon per kg of paint is the same for both paints, from the 2025 EN 15804+A2 association EPDs: EPD-VDL-20240620-IBN1-EN (facade paints, 2.885 kg CO2e/kg, A1-A5) and EPD-VDL-20240617-IBN1-EN (interior wall paints, class 1, 2.645 kg CO2e/kg). Both valid to 2030.',
-                'The saving comes only from repainting less often. KEIM defaults follow the KEIM Australia warranty: 25 years exterior, 7-10 years interior. VOC uses typical acrylic content (45 g/L exterior, 30 g/L interior) and the top of the KEIM range from the Technical Data Sheets (Soldalit 0-3 g/L, Innostar 0-1 g/L). Organic content: acrylic binder share estimated at 20%; KEIM shown at its upper limit of 5% (TDS: under 5%).',
+                'The saving comes from fewer coats (KEIM ' + COATS_KEIM + ' per job, typical acrylic ' + COATS_ACR + ': primer plus 2 top coats; Soldalit is self-priming) and from repainting less often. Each coat counted as about one day on site (drying and recoat time). KEIM defaults follow the KEIM Australia warranty: 25 years exterior, 7-10 years interior. VOC uses typical acrylic content (45 g/L exterior, 30 g/L interior) and the top of the KEIM range from the Technical Data Sheets (Soldalit 0-3 g/L, Innostar 0-1 g/L). Organic content: acrylic binder share estimated at 20%; KEIM shown at its upper limit of 5% (TDS: under 5%).',
                 'KEIM Soldalit and KEIM Innostar are Cradle to Cradle Certified® Full Scope Silver (Version 5.0). C2C is not part of the carbon numbers above.',
                 'This is a projection, not a project-specific LCA. Association EPDs give average values for whole product groups; real results depend on the substrate, exposure and maintenance. For certified documentation, use the EPDs and certificates themselves.'
             ];
@@ -1363,12 +1370,13 @@
             const keys = currentScope === 'both' ? ['exterior', 'interior'] : [currentScope];
             const out = { A13: [0, 0], A4: [0, 0], A5: [0, 0], B2: [0, 0], area: 0 };
             keys.forEach(k => {
-                const cm = metrics[k], p = parts[k], r = partCalc(k), jobKg = p.area * KG_PER_COAT * COATS;
+                const cm = metrics[k], p = parts[k], r = partCalc(k);
+                const ja = p.area * KG_PER_COAT * COATS_ACR, jk = p.area * KG_PER_COAT * COATS_KEIM;
                 out.area += p.area;
-                out.A13[0] += jobKg * cm.a13; out.A13[1] += jobKg * cm.a13;
-                out.A4[0] += jobKg * cm.a4; out.A4[1] += jobKg * cm.a4;
-                out.A5[0] += jobKg * cm.a5; out.A5[1] += jobKg * cm.a5;
-                out.B2[0] += jobKg * cm.gwp * r.acrCycles; out.B2[1] += jobKg * cm.gwp * r.keimCycles;
+                out.A13[0] += ja * cm.a13; out.A13[1] += jk * cm.a13;
+                out.A4[0] += ja * cm.a4; out.A4[1] += jk * cm.a4;
+                out.A5[0] += ja * cm.a5; out.A5[1] += jk * cm.a5;
+                out.B2[0] += ja * cm.gwp * r.acrCycles; out.B2[1] += jk * cm.gwp * r.keimCycles;
             });
             return out;
         }
@@ -1386,7 +1394,7 @@
             const d = moduleData(), keys = currentScope === 'both' ? ['exterior', 'interior'] : [currentScope];
             const rows = [['KEIM Australia life cycle projection', new Date().toISOString().slice(0, 10)], ['Building life (years)', currentLife], ['Scope', currentScope]];
             keys.forEach(k => { const p = parts[k]; rows.push([k + ' area (m2)', p.area], [k + ' KEIM repaint interval (years)', p.keimInt], [k + ' acrylic repaint interval (years)', p.acrInt]); });
-            rows.push(['Paint per coat (kg/m2)', KG_PER_COAT], ['Coats per paint job', COATS], [], ['Module (EN 15978)', 'Acrylic kg CO2e', 'KEIM kg CO2e', 'Acrylic kg CO2e/m2', 'KEIM kg CO2e/m2']);
+            rows.push(['Paint per coat (kg/m2)', KG_PER_COAT], ['KEIM coats per paint job', COATS_KEIM], ['Acrylic coats per paint job', COATS_ACR], [], ['Module (EN 15978)', 'Acrylic kg CO2e', 'KEIM kg CO2e', 'Acrylic kg CO2e/m2', 'KEIM kg CO2e/m2']);
             let tA = 0, tK = 0;
             MODULE_ROWS.forEach(([k, lab]) => { tA += d[k][0]; tK += d[k][1]; rows.push([lab, d[k][0].toFixed(1), d[k][1].toFixed(1), (d[k][0] / d.area).toFixed(3), (d[k][1] / d.area).toFixed(3)]); });
             rows.push(['Total', tA.toFixed(1), tK.toFixed(1), (tA / d.area).toFixed(3), (tK / d.area).toFixed(3)], [], ['Modules C and D not modelled'], ['Source: EPD-VDL-20240620-IBN1-EN (facade paints) and EPD-VDL-20240617-IBN1-EN (interior wall paints class 1), EN 15804+A2'], ['Projection only, not a project-specific LCA']);
@@ -1398,14 +1406,16 @@
         // Calculation Engine
         function partCalc(k) {
             const cm = metrics[k], p = parts[k];
-            const jobKg = p.area * KG_PER_COAT * COATS;           // kg of paint per paint job (same for both paints)
+            const keimJobKg = p.area * KG_PER_COAT * COATS_KEIM;   // kg of paint per KEIM paint job
+            const acrJobKg = p.area * KG_PER_COAT * COATS_ACR;     // kg of paint per acrylic paint job
             const keimCycles = Math.max(0, Math.ceil(currentLife / p.keimInt) - 1);
             const acrCycles = Math.max(0, Math.ceil(currentLife / p.acrInt) - 1);
-            const keimKg = jobKg * (1 + keimCycles), acrKg = jobKg * (1 + acrCycles);
-            const up = jobKg * cm.gwp;
+            const keimKg = keimJobKg * (1 + keimCycles), acrKg = acrJobKg * (1 + acrCycles);
+            const kUp = keimJobKg * cm.gwp, aUp = acrJobKg * cm.gwp;
             return {
                 k, p, keimCycles, acrCycles, fewer: Math.max(0, acrCycles - keimCycles),
-                keimUp: up, acrUp: up, keimMaint: up * keimCycles, acrMaint: up * acrCycles,
+                keimCoats: COATS_KEIM * (1 + keimCycles), acrCoats: COATS_ACR * (1 + acrCycles),
+                keimUp: kUp, acrUp: aUp, keimMaint: kUp * keimCycles, acrMaint: aUp * acrCycles,
                 keimL: keimKg / DENSITY, acrL: acrKg / DENSITY,
                 keimVoc: keimKg / DENSITY * cm.keimVoc / 1000, acrVoc: acrKg / DENSITY * cm.acrVoc / 1000,
                 micro: acrKg * BINDER_SHARE, keimOrg: keimKg * KEIM_ORGANIC_MAX,
@@ -1459,6 +1469,7 @@
             // Micro Metrics
             document.getElementById('out-paint').innerText = Math.max(0, acrTotalLitres - keimTotalLitres).toLocaleString(undefined, { maximumFractionDigits: 0 });
             document.getElementById('out-repaints').innerText = fewer;
+            document.getElementById('out-coats').innerText = Math.max(0, sum('acrCoats') - sum('keimCoats'));
             document.getElementById('out-vocs').innerText = (acrTotalVoc - keimTotalVoc).toFixed(1);
             
             const microEl1 = document.getElementById('out-micro');

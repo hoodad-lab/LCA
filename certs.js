@@ -10,7 +10,7 @@ const CERTS = {
     greenstar: {
         name: 'Green Star Buildings', ver: 'v1.1 (GBCA)', credits: [
             { c: 'Impacts Disclosure', st: 'confirm', how: 'Whole-of-life LCA (modules A to D) over 60 years. This is where KEIM&rsquo;s fewer repaints (B2) count.', ev: 'EN 15804+A2 EPDs; the module table and CSV below for the consultant&rsquo;s LCA.' },
-            { c: 'Upfront Carbon Reduction', st: 'none', how: 'Counts A1 to A5 only, so repainting is outside it. Per kg, the association EPD gives KEIM and acrylic the same carbon.', ev: 'A KEIM-specific EPD (requested) could change this.' },
+            { c: 'Upfront Carbon Reduction', st: 'confirm', how: 'Counts A1 to A5 only (the first paint job). KEIM&rsquo;s 2-coat system uses a third less paint than a typical 3-coat acrylic system, so less upfront carbon. Per kg, the association EPD gives both the same carbon.', ev: 'Module table and CSV; Technical Data Sheets (coats and consumption). A KEIM-specific EPD (requested) could add more.' },
             { c: 'Exposure to Toxins', st: 'ready', how: 'Paint VOC content limits. KEIM Innostar 0&ndash;1 g/L, Innoprim 0&ndash;1 g/L, Soldalit 0&ndash;3 g/L.', ev: 'Technical Data Sheets; T&Uuml;V S&Uuml;D AgBB letter for Innostar.' },
             { c: 'Responsible Finishes', st: 'confirm', how: 'Third-party product certification for finishes.', ev: 'C2C Certified&reg; Full Scope Silver v5.0, certificate 12367.' }
         ]
