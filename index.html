@@ -1354,8 +1354,8 @@
                 T(l, ec[0], y + 3.8, { size: 7.6, lh: 1.2 });
                 [1, 2, 3].forEach(i => {
                     const v = r[i];
-                    const txt = v === 'ready' ? 'Yes' : v === 'requested' ? 'Requested' : v ? strip(v) : '-';
-                    const col = v === 'ready' ? KEIM : v === 'requested' ? CERT_STATUS.requested.rgb : v ? INK : [203, 213, 225];
+                    const txt = v === 'ready' ? 'Yes' : v ? strip(v) : '-';
+                    const col = v === 'ready' ? KEIM : v ? INK : [203, 213, 225];
                     T(txt, ec[i], y + 3.8, { size: 7.4, bold: !!v, color: col, max: 26 });
                 });
                 y += rh; doc.setDrawColor(...LINE); doc.line(M, y, W - M, y);

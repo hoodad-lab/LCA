@@ -1,16 +1,15 @@
 // ---------- Certification helper ----------
-// status: ready | confirm | requested | none
+// status: ready | confirm | none
 const CERT_STATUS = {
     ready: { lab: 'Evidence ready', dot: 'bg-emerald-600', chip: 'bg-emerald-50 text-emerald-800 border-emerald-200', rgb: [4, 120, 87] },
     confirm: { lab: 'Consultant to confirm', dot: 'bg-amber-500', chip: 'bg-amber-50 text-amber-800 border-amber-200', rgb: [217, 119, 6] },
-    requested: { lab: 'Requested from KEIM Germany', dot: 'bg-sky-600', chip: 'bg-sky-50 text-sky-800 border-sky-200', rgb: [2, 132, 199] },
     none: { lab: 'No advantage claimed', dot: 'bg-slate-400', chip: 'bg-slate-50 text-slate-600 border-slate-200', rgb: [148, 163, 184] }
 };
 const CERTS = {
     greenstar: {
         name: 'Green Star Buildings', ver: 'v1.1 (GBCA)', credits: [
             { c: 'Impacts Disclosure', st: 'confirm', how: 'Whole-of-life LCA (modules A to D) over 60 years. This is where KEIM&rsquo;s fewer repaints (B2) count.', ev: 'EN 15804+A2 EPDs; the module table and CSV below for the consultant&rsquo;s LCA.' },
-            { c: 'Upfront Carbon Reduction', st: 'confirm', how: 'Counts A1 to A5 only (the first paint job). KEIM&rsquo;s 2-coat system uses a third less paint than a typical 3-coat acrylic system, so less upfront carbon. Per kg, the association EPD gives both the same carbon.', ev: 'Module table and CSV; Technical Data Sheets (coats and consumption). A KEIM-specific EPD (requested) could add more.' },
+            { c: 'Upfront Carbon Reduction', st: 'confirm', how: 'Counts A1 to A5 only (the first paint job). KEIM&rsquo;s 2-coat system uses a third less paint than a typical 3-coat acrylic system, so less upfront carbon. Per kg, the association EPD gives both the same carbon.', ev: 'Module table and CSV; Technical Data Sheets (coats and consumption).' },
             { c: 'Exposure to Toxins', st: 'ready', how: 'Paint VOC content limits. KEIM Innostar 0&ndash;1 g/L, Innoprim 0&ndash;1 g/L, Soldalit 0&ndash;3 g/L.', ev: 'Technical Data Sheets; T&Uuml;V S&Uuml;D AgBB letter for Innostar.' },
             { c: 'Responsible Finishes', st: 'confirm', how: 'Third-party product certification for finishes.', ev: 'C2C Certified&reg; Full Scope Silver v5.0, certificate 12367.' }
         ]
@@ -27,7 +26,7 @@ const CERTS = {
         name: 'LEED', ver: 'v5 (USGBC)', credits: [
             { c: 'Building Product Selection and Procurement', st: 'confirm', how: 'Product transparency and optimisation through third-party certification.', ev: 'C2C Certified&reg; Full Scope Silver v5.0 and Material Health Gold.' },
             { c: 'Low-Emitting Materials', st: 'confirm', how: 'LEED usually asks for CDPH v1.2 emissions testing. Innostar has AgBB testing; check whether the project can use it.', ev: 'T&Uuml;V S&Uuml;D AgBB letter for Innostar.' },
-            { c: 'Reduce Embodied Carbon', st: 'confirm', how: 'EPD-based. The association EPDs qualify as industry-wide EPDs; a KEIM-specific EPD would rate higher.', ev: 'EN 15804+A2 association EPDs. KEIM-specific EPD requested.' }
+            { c: 'Reduce Embodied Carbon', st: 'confirm', how: 'EPD-based. The association EPDs qualify as industry-wide EPDs.', ev: 'EN 15804+A2 association EPDs.' }
         ]
     }
 };
@@ -36,10 +35,9 @@ const EVIDENCE = [
     ['natureplus&reg; certified, full composition declared', 'ready', 'ready', ''],
     ['VOC content (Technical Data Sheet)', '0&ndash;1 g/L', '0&ndash;3 g/L', '0&ndash;1 g/L'],
     ['Organic content (Technical Data Sheet)', 'under 5%', 'under 5%', 'under 5%'],
-    ['VOC emissions to AgBB 2024 (T&Uuml;V S&Uuml;D)', 'ready', 'requested', ''],
+    ['VOC emissions to AgBB 2024 (T&Uuml;V S&Uuml;D)', 'ready', '', ''],
     ['Fire: A2-s1,d0 to EN 13501-1', '', 'ready', ''],
-    ['EPD, EN 15804+A2', 'Association', 'Association', 'Association'],
-    ['KEIM-specific EPD (old one expired July 2024)', 'requested', 'requested', 'requested']
+    ['EPD, EN 15804+A2', 'Association', 'Association', 'Association']
 ];
 let certTab = 'greenstar';
 function renderCerts() {
@@ -51,7 +49,6 @@ function renderCerts() {
     }).join('');
     const cell = v => {
         if (v === 'ready') return '<span class="inline-flex items-center gap-1 text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> Yes</span>';
-        if (v === 'requested') return '<span class="inline-flex items-center gap-1 text-sky-700 font-bold"><i class="fa-solid fa-clock"></i> Requested</span>';
         if (!v) return '<span class="text-slate-300">&ndash;</span>';
         return '<span class="font-bold text-slate-800">' + v + '</span>';
     };
