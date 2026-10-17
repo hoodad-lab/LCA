@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEIM Certification Helper</title>
+<meta name="description" content="Which Green Star, WELL and LEED credits KEIM mineral paints can contribute to, with the evidence for each.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+<script src="certs.js"></script>
+<style>body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<img src="keim-header.png" alt="KEIM" class="w-full h-auto block bg-[#3a3c40]">
+<main class="max-w-5xl mx-auto px-4 py-8">
+        <!-- CERTIFICATION HELPER -->
+        <div id="sec-certs" class="reveal scroll-mt-4  break-inside-avoid">
+            <div class="text-center mb-8">
+                <p class="text-xs sm:text-sm font-bold text-emerald-600 uppercase tracking-widest mb-2">Rating tools</p>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Certification helper</h2>
+                <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">Which credits KEIM can contribute to, and the document that proves it. Your ESD consultant or assessor makes the final call on every credit.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 mb-6" id="cert-tabs"></div>
+            <div class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-[11px] sm:text-xs font-bold text-slate-500 mb-6">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>Evidence ready</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Supports, consultant to confirm</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-600"></span>Evidence requested from KEIM Germany</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>No KEIM advantage claimed</span>
+            </div>
+            <div id="cert-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+            <div class="mt-8 bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200">
+                <h3 class="text-lg font-black text-slate-900 mb-1">Evidence library</h3>
+                <p class="text-xs sm:text-sm text-slate-500 mb-4">What each product can show today. Ask KEIM Australia for copies: (02) 9748 7160, info@keim.com.au.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm min-w-[560px]" id="cert-evidence"></table>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-200 text-sm text-slate-600">
+                <h3 class="text-lg font-black text-slate-900 mb-1">Carbon by life cycle module (EN 15978)</h3>
+                <p>The module split (A1&ndash;A3, A4, A5, B2) for your own project comes from the <a class="text-emerald-700 font-bold underline" href="https://www.keim.com.au/lca-projection" target="_blank" rel="noopener">LCA calculator</a>: use <strong>Module data (CSV)</strong> for your consultant&rsquo;s whole-building LCA, or download the PDF report, which includes this helper on page 3.</p>
+            </div>
+        </div>
+
+<p class="text-[11px] text-slate-400 text-center mt-8">Sources: Green Star Buildings v1.1 (GBCA), WELL v2 (IWBI), LEED v5 (USGBC) credit requirements; KEIM Technical Data Sheets; T&Uuml;V S&Uuml;D letter 26-K1317-1 (16 June 2026); C2C Certified&reg; certificate 12367 (EPEA). Guidance only: the project&rsquo;s ESD consultant or assessor decides every credit. KEIM Australia &middot; 7/19 McCauley St, Matraville NSW 2036 &middot; (02) 9748 7160 &middot; keim.com.au</p>
+</main>
+<script>renderCerts();</script>
+</body>
+</html>
