@@ -30,16 +30,6 @@ const CERTS = {
         ]
     }
 };
-const EVIDENCE = [
-    ['Cradle to Cradle Certified&reg; Full Scope Silver v5.0 (Material Health Gold, Circularity Silver), cert. 12367, EPEA', 'ready', 'ready', 'ready'],
-    ['natureplus&reg; certified, full composition declared', 'ready', 'ready', ''],
-    ['VOC content (Technical Data Sheet)', '0&ndash;1 g/L', '0&ndash;3 g/L', '0&ndash;1 g/L'],
-    ['Under EU Decopaint limit (2004/42/EC)', 'ready', 'ready', 'ready'],
-    ['Organic content (Technical Data Sheet)', 'under 5%', 'under 5%', 'under 5%'],
-    ['VOC emissions to AgBB 2024 (T&Uuml;V S&Uuml;D)', 'ready', 'Not needed', ''],
-    ['Fire: A2-s1,d0 to EN 13501-1', '', 'ready', ''],
-    ['EPD, EN 15804+A2', 'Association', 'Association', 'Association']
-];
 let certTab = 'greenstar';
 function renderCerts() {
     const tabs = document.getElementById('cert-tabs'); if (!tabs) return;
@@ -48,11 +38,5 @@ function renderCerts() {
         const s = CERT_STATUS[x.st];
         return '<div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200"><div class="flex items-start justify-between gap-3 mb-2"><h4 class="font-black text-slate-900 text-sm sm:text-base">' + x.c + '</h4><span class="shrink-0 inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-1 rounded-full border ' + s.chip + '"><span class="w-2 h-2 rounded-full ' + s.dot + '"></span>' + s.lab + '</span></div><p class="text-xs sm:text-sm text-slate-600">' + x.how + '</p>' + (x.ev ? '<p class="text-[11px] sm:text-xs text-slate-500 mt-2"><strong class="text-slate-700">Evidence:</strong> ' + x.ev + '</p>' : '') + '</div>';
     }).join('');
-    const cell = v => {
-        if (v === 'ready') return '<span class="inline-flex items-center gap-1 text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> Yes</span>';
-        if (!v) return '<span class="text-slate-300">&ndash;</span>';
-        return '<span class="font-bold text-slate-800">' + v + '</span>';
-    };
-    document.getElementById('cert-evidence').innerHTML = '<thead><tr class="text-left text-slate-500 border-b border-slate-200"><th class="py-2 pr-3 font-bold">Evidence</th><th class="py-2 px-2 font-bold">Innostar</th><th class="py-2 px-2 font-bold">Soldalit</th><th class="py-2 px-2 font-bold">Innoprim</th></tr></thead><tbody>' +
-        EVIDENCE.map(r => '<tr class="border-b border-slate-100"><td class="py-2 pr-3 text-slate-700">' + r[0] + '</td><td class="py-2 px-2">' + cell(r[1]) + '</td><td class="py-2 px-2">' + cell(r[2]) + '</td><td class="py-2 px-2">' + cell(r[3]) + '</td></tr>').join('') + '</tbody>';
+
 }

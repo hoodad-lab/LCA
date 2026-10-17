@@ -1341,25 +1341,10 @@
             rowM('Total, ' + L + ' years', mA, mK, true);
             y += 10;
 
-            // evidence library
-            sectionTitle('Evidence library', 'Ask KEIM Australia for copies: (02) 9748 7160, info@keim.com.au', y);
-            y += 9;
-            const ec = [M + 2, M + 118, M + 146, M + 168];
-            doc.setFillColor(241, 245, 249); doc.rect(M, y, W - 2 * M, 6, 'F');
-            ['Evidence', 'Innostar', 'Soldalit', 'Innoprim'].forEach((h, i) => T(h, ec[i], y + 4.1, { size: 7.5, bold: true, color: GREY }));
-            y += 6;
-            EVIDENCE.forEach(r => {
-                doc.setFontSize(7.6); const l = doc.splitTextToSize(strip(r[0]), 112);
-                const rh = Math.max(5.2, l.length * 3.2 + 2);
-                T(l, ec[0], y + 3.8, { size: 7.6, lh: 1.2 });
-                [1, 2, 3].forEach(i => {
-                    const v = r[i];
-                    const txt = v === 'ready' ? 'Yes' : v ? strip(v) : '-';
-                    const col = v === 'ready' ? KEIM : v ? INK : [203, 213, 225];
-                    T(txt, ec[i], y + 3.8, { size: 7.4, bold: !!v, color: col, max: 26 });
-                });
-                y += rh; doc.setDrawColor(...LINE); doc.line(M, y, W - M, y);
-            });
+            // documents note
+            doc.setFillColor(...KEIM_L); doc.roundedRect(M, y, W - 2 * M, 14, 2.5, 2.5, 'F');
+            T('Supporting documents available on request', W / 2, y + 6, { size: 10, bold: true, color: KEIM, align: 'center' });
+            T('Certificates, test reports, EPDs and Technical Data Sheets: (02) 9748 7160  |  info@keim.com.au', W / 2, y + 10.8, { size: 8, color: INK, align: 'center' });
             footer(3);
 
             doc.save('KEIM-LCA-Report-' + (project ? project.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' : '') + new Date().toISOString().slice(0, 10) + '.pdf');
