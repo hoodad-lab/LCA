@@ -40,7 +40,7 @@ input[type=range]{accent-color:#059669}
   <section class="bg-slate-900 rounded-2xl p-5 sm:p-8 mb-8 text-white overflow-hidden">
     <p class="text-xs font-bold uppercase tracking-widest text-emerald-300 mb-1 text-center">Same dark colour, two paints</p>
     <h2 class="text-2xl sm:text-3xl font-black text-center mb-6">KEIM Coolit keeps dark facades cooler</h2>
-    <svg viewBox="0 0 800 400" class="w-full h-auto" role="img" aria-label="Sun shining on two dark walls of the same colour. The standard paint absorbs the heat; the KEIM Coolit wall reflects the near-infrared heat and stays 10 to 20 degrees cooler.">
+    <svg viewBox="0 0 800 400" class="w-full h-auto" role="img" aria-label="Sun shining on two dark walls of the same colour. The acrylic paint absorbs the heat; the KEIM Coolit wall reflects the near-infrared heat and stays cooler.">
       <defs>
         <radialGradient id="sun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></radialGradient>
         <linearGradient id="hot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ef4444" stop-opacity=".55"/><stop offset="1" stop-color="#ef4444" stop-opacity="0"/></linearGradient>
@@ -83,7 +83,7 @@ input[type=range]{accent-color:#059669}
     </svg>
     <div class="grid grid-cols-2 gap-3 sm:gap-6 -mt-1 text-center">
       <div>
-        <p class="text-base sm:text-lg font-black">Standard dark paint</p>
+        <p class="text-base sm:text-lg font-black">Acrylic paint</p>
         <p class="text-xs sm:text-sm text-red-300 font-bold">Heat soaks into the wall</p>
       </div>
       <div>
@@ -94,18 +94,18 @@ input[type=range]{accent-color:#059669}
     <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
       <div class="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
         <p class="text-3xl sm:text-4xl font-black text-teal-300">10&ndash;20&nbsp;&deg;C</p>
-        <p class="text-xs sm:text-sm text-slate-300 mt-1">cooler surface on dark colours</p>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1">cooler surface on dark colours. The darker the colour, the bigger the difference</p>
       </div>
       <div class="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
-        <p class="text-3xl sm:text-4xl font-black text-teal-300">TSR 25+</p>
-        <p class="text-xs sm:text-sm text-slate-300 mt-1">in every Coolit tone, safe on insulated facades</p>
+        <p class="text-3xl sm:text-4xl font-black text-teal-300">TSR &ge; 30</p>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1">for every Coolit shade, above the 25 needed on insulated facades</p>
       </div>
       <div class="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
         <p class="text-3xl sm:text-4xl font-black text-teal-300"><i class="fa-solid fa-snowflake"></i></p>
         <p class="text-xs sm:text-sm text-slate-300 mt-1">less heat into the building, less cooling needed</p>
       </div>
     </div>
-    <p class="text-[11px] text-slate-400 mt-4 text-center">Illustration. The colour looks the same; the difference is in the near-infrared part of sunlight, which you can't see. Cradle to Cradle Certified.</p>
+    <p class="text-[11px] text-slate-400 mt-4 text-center">Illustration: KEIM Coolit compared with an acrylic paint in the same dark colour. The colour looks the same; the difference is in the near-infrared part of sunlight, which you can't see. How much cooler a real facade stays depends on the site: sun exposure, orientation, nearby buildings and the substrate. Cradle to Cradle Certified.</p>
   </section>
 
   <!-- CHECKER -->
@@ -113,12 +113,15 @@ input[type=range]{accent-color:#059669}
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
       <div>
         <h2 class="text-lg sm:text-xl font-black text-slate-900">Check a colour</h2>
-        <p class="text-xs sm:text-sm text-slate-500">Enter the colour's tested value. Ask KEIM Australia for the value of your colour.</p>
+        <p class="text-xs sm:text-sm text-slate-500">Enter a tested TSR or absorptance value, or use the KEIM Coolit minimum.</p>
       </div>
       <div class="inline-flex rounded-lg border border-slate-300 overflow-hidden text-sm font-bold self-start" role="group" aria-label="Value type">
         <button id="m-tsr" class="px-4 py-2 bg-emerald-600 text-white" onclick="setMode('tsr')">TSR %</button>
         <button id="m-sa" class="px-4 py-2 bg-white text-slate-700" onclick="setMode('sa')">Solar absorptance</button>
       </div>
+    </div>
+    <div class="mb-5">
+      <button type="button" onclick="useCoolit()" class="text-sm font-bold px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700"><i class="fa-solid fa-snowflake mr-1.5 text-teal-300"></i>Use KEIM Coolit minimum (TSR 30)</button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-center">
@@ -153,7 +156,7 @@ input[type=range]{accent-color:#059669}
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="checks"></div>
 
-    <p class="mt-5 text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><strong>Estimate only.</strong> Use the tested value for the exact colour. Light reflectance (LRV) is not the same as TSR and cannot be converted into it, so don't use a colour's LRV here.</p>
+    <p class="mt-5 text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><strong>Estimate only.</strong> Light reflectance (LRV) is not the same as TSR and cannot be converted into it, so don't use a colour's LRV here. Real surface temperatures depend on the site, so do a site assessment for the project.</p>
   </section>
 
   <!-- HOW COLOUR COUNTS -->
@@ -173,7 +176,7 @@ input[type=range]{accent-color:#059669}
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
         <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3"><i class="fa-solid fa-temperature-high"></i></div>
         <h3 class="font-black text-slate-900 mb-1">Dark colours on insulated facades</h3>
-        <p class="text-sm text-slate-600">Not a Section J rule, but it matters for the same colour choice. For external insulation systems (ETICS/EIFS), dark colours need a TSR of at least 25% to stay thermally safe (IWM guidance). KEIM Coolit reaches a TSR well above 25 in all its tones.</p>
+        <p class="text-sm text-slate-600">Not a Section J rule, but it matters for the same colour choice. For external insulation systems (ETICS/EIFS), dark colours need a TSR of at least 25% to stay thermally safe (VDPM guidance). KEIM Coolit has a TSR of 30 or more in every shade.</p>
       </div>
     </div>
   </section>
@@ -181,8 +184,8 @@ input[type=range]{accent-color:#059669}
   <!-- KEIM -->
   <section class="mt-10">
     <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-      <p class="text-sm sm:text-base font-bold text-emerald-900"><i class="fa-solid fa-folder-open mr-2"></i>TSR values available on request</p>
-      <p class="text-sm text-emerald-800 mt-2">Tell us the product and colour and we'll send the tested solar reflectance for your energy assessor.</p>
+      <p class="text-sm sm:text-base font-bold text-emerald-900"><i class="fa-solid fa-comments mr-2"></i>Talk to us about your project</p>
+      <p class="text-sm text-emerald-800 mt-2">KEIM gives one TSR statement for the whole Coolit range (30 or more for every shade) rather than a value per colour. How much a facade heats up depends on the site, so we'll help you plan a sample area and assessment. The Coolit brochure and supporting documents are available on request.</p>
       <p class="text-sm font-bold text-emerald-900 mt-3">(02) 9748 7160 &middot; info@keim.com.au</p>
     </div>
   </section>
@@ -193,7 +196,7 @@ input[type=range]{accent-color:#059669}
     <p class="mt-3">Related: the <a class="text-emerald-700 font-bold underline" href="https://www.keim.com.au/lca-projection" target="_blank" rel="noopener">LCA calculator</a> for carbon over the building's life, and the <a class="text-emerald-700 font-bold underline" href="certifications.html">certification helper</a> for Green Star, WELL and LEED.</p>
   </section>
 
-  <p class="text-[11px] text-slate-400 text-center mt-8">Based on NCC 2022 Volume One, Section J (ABCB) and the IWM information sheet on Total Solar Reflectance (TSR measured to ASTM G173). Guidance only: the project's energy assessor, ESD consultant or certifier decides compliance. KEIM Australia &middot; 7/19 McCauley St, Matraville NSW 2036 &middot; (02) 9748 7160 &middot; keim.com.au</p>
+  <p class="text-[11px] text-slate-400 text-center mt-8">Based on NCC 2022 Volume One, Section J (ABCB), the VDPM leaflet &ldquo;Total Solar Reflectance and light reference value&rdquo; (04/2021, TSR to ASTM G173) and the KEIM Coolit brochure (04/2026). Guidance only: the project's energy assessor, ESD consultant or certifier decides compliance. KEIM Australia &middot; 7/19 McCauley St, Matraville NSW 2036 &middot; (02) 9748 7160 &middot; keim.com.au</p>
 </main>
 
 <script>
@@ -210,6 +213,7 @@ function setMode(m) {
   if (m === 'tsr') { rng.min = 0; rng.max = 100; rng.step = 1; setVal(Math.round((1 - sa) * 100)); }
   else { rng.min = 0; rng.max = 1; rng.step = 0.01; setVal(Math.round(sa * 100) / 100); }
 }
+function useCoolit() { if (mode !== 'tsr') setMode('tsr'); setVal(30); }
 function setVal(v) { rng.value = v; num.value = v; update(); }
 function currentSA() {
   let v = parseFloat(num.value); if (isNaN(v)) v = 0;
@@ -232,7 +236,7 @@ function update() {
     card(roofOk, roofOk ? 'Roof: meets 0.45' : 'Roof: over 0.45',
       roofOk ? 'Within the deemed-to-satisfy roof limit (J4D4).' : 'Too much heat absorbed for the deemed-to-satisfy roof limit. A lighter colour, or the energy modelling route, would be needed.') +
     card(eticsOk, eticsOk ? 'Insulated facade: TSR 25+' : 'Insulated facade: under TSR 25',
-      eticsOk ? 'Meets the dark-colour guidance for external insulation systems.' : 'Too dark for external insulation systems. Choose a lighter colour or a Coolit tone.') +
+      eticsOk ? 'Meets the dark-colour guidance for external insulation systems.' : 'Too dark for external insulation systems. Choose a lighter colour or KEIM Coolit (TSR 30 or more in every shade).') +
     card(true, 'Walls: give the modeller ' + sa.toFixed(2),
       'Use this solar absorptance for the facade in the energy model.', true);
 }
