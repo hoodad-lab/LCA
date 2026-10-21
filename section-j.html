@@ -16,6 +16,13 @@ input[type=range]{accent-color:#059669}
 .mark span{position:absolute;top:30px;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:700}
 .pin{position:absolute;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#059669;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:left .2s}
 .mark.amber span{top:46px}
+.ray{stroke-dasharray:10 10;animation:flow 1.2s linear infinite}
+.ray.out{animation-direction:reverse}
+@keyframes flow{to{stroke-dashoffset:-20}}
+.heat{animation:rise 2.4s ease-in-out infinite}
+.heat.d2{animation-delay:.8s}.heat.d3{animation-delay:1.6s}
+@keyframes rise{0%{opacity:0;transform:translateY(8px)}40%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
+@media (prefers-reduced-motion:reduce){.ray,.heat{animation:none}}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -27,6 +34,79 @@ input[type=range]{accent-color:#059669}
     <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Section J helper</h1>
     <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">How a paint colour counts in Section J, and a quick check of its solar reflectance. Your energy assessor or ESD consultant makes the final call.</p>
   </div>
+
+
+  <!-- VISUAL: same colour, two paints -->
+  <section class="bg-slate-900 rounded-2xl p-5 sm:p-8 mb-8 text-white overflow-hidden">
+    <p class="text-xs font-bold uppercase tracking-widest text-emerald-300 mb-1 text-center">Same dark colour, two paints</p>
+    <h2 class="text-2xl sm:text-3xl font-black text-center mb-6">KEIM Coolit keeps dark facades cooler</h2>
+    <svg viewBox="0 0 800 400" class="w-full h-auto" role="img" aria-label="Sun shining on two dark walls of the same colour. The standard paint absorbs the heat; the KEIM Coolit wall reflects the near-infrared heat and stays 10 to 20 degrees cooler.">
+      <defs>
+        <radialGradient id="sun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></radialGradient>
+        <linearGradient id="hot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ef4444" stop-opacity=".55"/><stop offset="1" stop-color="#ef4444" stop-opacity="0"/></linearGradient>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12"/></filter>
+        <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f454b"/><stop offset="1" stop-color="#2a2e33"/></linearGradient>
+      </defs>
+      <!-- sun -->
+      <circle cx="400" cy="58" r="36" fill="url(#sun)"/>
+      <g stroke="#fbbf24" stroke-width="4" stroke-linecap="round">
+        <line x1="400" y1="6" x2="400" y2="14"/><line x1="452" y1="58" x2="460" y2="58"/><line x1="340" y1="58" x2="348" y2="58"/><line x1="437" y1="21" x2="443" y2="15"/><line x1="363" y1="21" x2="357" y2="15"/>
+      </g>
+      <!-- incoming rays -->
+      <g stroke="#fbbf24" stroke-width="5" fill="none" stroke-linecap="round">
+        <path class="ray" d="M375 92 L210 190"/><path class="ray" d="M385 96 L270 190"/>
+        <path class="ray" d="M415 96 L530 190"/><path class="ray" d="M425 92 L590 190"/>
+      </g>
+      <!-- left wall: standard -->
+      <rect x="82" y="182" width="276" height="186" rx="16" fill="#ef4444" opacity=".55" filter="url(#glow)"/>
+      <rect x="90" y="190" width="260" height="170" rx="10" fill="url(#wall)"/>
+      <g stroke="#f87171" stroke-width="4" fill="none" stroke-linecap="round">
+        <path class="heat" d="M150 180 q8 -10 0 -20 q-8 -10 0 -20"/>
+        <path class="heat d2" d="M220 180 q8 -10 0 -20 q-8 -10 0 -20"/>
+        <path class="heat d3" d="M290 180 q8 -10 0 -20 q-8 -10 0 -20"/>
+      </g>
+      <!-- right wall: Coolit (same colour) -->
+      <rect x="450" y="190" width="260" height="170" rx="10" fill="url(#wall)"/>
+      <g stroke="#5eead4" stroke-width="5" fill="none" stroke-linecap="round">
+        <path class="ray out" d="M530 190 L620 110"/><path class="ray out" d="M590 190 L690 120"/>
+        <path d="M612 108 L622 108 L620 118" stroke-width="4"/><path d="M682 116 L692 118 L688 128" stroke-width="4"/>
+      </g>
+      <!-- thermometers -->
+      <g>
+        <rect x="320" y="215" width="16" height="110" rx="8" fill="#1f2328" stroke="#94a3b8" stroke-width="2"/>
+        <rect x="324" y="225" width="8" height="96" rx="4" fill="#ef4444"/>
+        <circle cx="328" cy="332" r="13" fill="#ef4444" stroke="#94a3b8" stroke-width="2"/>
+        <rect x="680" y="215" width="16" height="110" rx="8" fill="#1f2328" stroke="#94a3b8" stroke-width="2"/>
+        <rect x="684" y="275" width="8" height="46" rx="4" fill="#14b8a6"/>
+        <circle cx="688" cy="332" r="13" fill="#14b8a6" stroke="#94a3b8" stroke-width="2"/>
+      </g>
+    </svg>
+    <div class="grid grid-cols-2 gap-3 sm:gap-6 -mt-1 text-center">
+      <div>
+        <p class="text-base sm:text-lg font-black">Standard dark paint</p>
+        <p class="text-xs sm:text-sm text-red-300 font-bold">Heat soaks into the wall</p>
+      </div>
+      <div>
+        <p class="text-base sm:text-lg font-black">KEIM Coolit</p>
+        <p class="text-xs sm:text-sm text-teal-300 font-bold">Near-infrared heat reflected</p>
+      </div>
+    </div>
+    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
+        <p class="text-3xl sm:text-4xl font-black text-teal-300">10&ndash;20&nbsp;&deg;C</p>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1">cooler surface on dark colours</p>
+      </div>
+      <div class="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
+        <p class="text-3xl sm:text-4xl font-black text-teal-300">TSR 25+</p>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1">in every Coolit tone, safe on insulated facades</p>
+      </div>
+      <div class="rounded-xl bg-white/5 border border-white/10 p-4 text-center">
+        <p class="text-3xl sm:text-4xl font-black text-teal-300"><i class="fa-solid fa-snowflake"></i></p>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1">less heat into the building, less cooling needed</p>
+      </div>
+    </div>
+    <p class="text-[11px] text-slate-400 mt-4 text-center">Illustration. The colour looks the same; the difference is in the near-infrared part of sunlight, which you can't see. Cradle to Cradle Certified.</p>
+  </section>
 
   <!-- CHECKER -->
   <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7">
@@ -99,12 +179,7 @@ input[type=range]{accent-color:#059669}
   </section>
 
   <!-- KEIM -->
-  <section class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="bg-slate-900 text-white rounded-2xl p-6">
-      <p class="text-xs font-bold uppercase tracking-widest text-emerald-300 mb-2">KEIM Coolit</p>
-      <h3 class="text-xl font-black mb-2">Dark colours that stay cooler</h3>
-      <p class="text-sm text-slate-300">Mineral pigments that reflect near-infrared heat keep dark Coolit colours 10&ndash;20&nbsp;&deg;C cooler on the surface than standard dark paint. That means less heat into the building and less stress on the facade. Cradle to Cradle Certified.</p>
-    </div>
+  <section class="mt-10">
     <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
       <p class="text-sm sm:text-base font-bold text-emerald-900"><i class="fa-solid fa-folder-open mr-2"></i>TSR values available on request</p>
       <p class="text-sm text-emerald-800 mt-2">Tell us the product and colour and we'll send the tested solar reflectance for your energy assessor.</p>
