@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KEIM Section J Helper</title>
-<meta name="description" content="Check a facade or roof colour's solar reflectance (TSR) and solar absorptance against NCC Section J and the dark-colour rule for insulated facades.">
+<title>KEIM Coolit Benefit</title>
+<meta name="description" content="Work out how much cooler a dark KEIM Coolit facade runs than an acrylic paint in the same colour, the heat it keeps out, and what it means for Section J and insulated facades.">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
 <style>
@@ -23,6 +23,10 @@ input[type=range]{accent-color:#059669}
 .heat.d2{animation-delay:.8s}.heat.d3{animation-delay:1.6s}
 @keyframes rise{0%{opacity:0;transform:translateY(8px)}40%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
 @media (prefers-reduced-motion:reduce){.ray,.heat{animation:none}}
+
+.chip{padding:.5rem .75rem;border-radius:.6rem;border:1px solid #cbd5e1;background:#fff;font-weight:700;font-size:.85rem;color:#334155}
+.chip.on{background:#059669;border-color:#059669;color:#fff}
+.bar{height:34px;border-radius:10px;transition:width .3s}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -30,11 +34,10 @@ input[type=range]{accent-color:#059669}
 <main class="max-w-5xl mx-auto px-4 py-8">
 
   <div class="text-center mb-8">
-    <p class="text-xs sm:text-sm font-bold text-emerald-600 uppercase tracking-widest mb-2">NCC energy efficiency</p>
-    <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Section J helper</h1>
-    <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">How a paint colour counts in Section J, and a quick check of its solar reflectance. Your energy assessor or ESD consultant makes the final call.</p>
+    <p class="text-xs sm:text-sm font-bold text-emerald-600 uppercase tracking-widest mb-2">Section J &middot; dark facades</p>
+    <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Dark colours, cooler facades</h1>
+    <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">Work out how much cooler a dark KEIM Coolit facade runs than an acrylic paint in the same colour, the heat it keeps out, and the values to give your energy modeller.</p>
   </div>
-
 
   <!-- VISUAL: same colour, two paints -->
   <section class="bg-slate-900 rounded-2xl p-5 sm:p-8 mb-8 text-white overflow-hidden">
@@ -108,55 +111,99 @@ input[type=range]{accent-color:#059669}
     <p class="text-[11px] text-slate-400 mt-4 text-center">Illustration: KEIM Coolit compared with an acrylic paint in the same dark colour. The colour looks the same; the difference is in the near-infrared part of sunlight, which you can't see. The 10&ndash;20&nbsp;&deg;C figure comes from KEIM Australia&rsquo;s own tests (heat lamp and infrared thermometer on painted samples), not a laboratory test. How much cooler a real facade stays depends on the site: sun exposure, orientation, nearby buildings and the substrate. Cradle to Cradle Certified.</p>
   </section>
 
-  <!-- CHECKER -->
-  <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
+
+
+  <!-- CALCULATOR -->
+  <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7" id="calc">
+    <h2 class="text-lg sm:text-xl font-black text-slate-900">Coolit benefit calculator</h2>
+    <p class="text-xs sm:text-sm text-slate-500 mb-5">Uses KEIM's minimum Coolit value (TSR 30), so the real difference is usually larger.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div>
-        <h2 class="text-lg sm:text-xl font-black text-slate-900">Check a colour</h2>
-        <p class="text-xs sm:text-sm text-slate-500">Enter a tested TSR or absorptance value, or use the KEIM Coolit minimum.</p>
+        <p class="text-sm font-bold text-slate-700 mb-2">1. Sun on the wall</p>
+        <div class="flex flex-wrap gap-2" id="sun-chips">
+          <button class="chip" data-v="300">Light 300</button>
+          <button class="chip" data-v="500">Moderate 500</button>
+          <button class="chip on" data-v="700">Strong 700</button>
+          <button class="chip" data-v="900">Very strong 900</button>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-1">Watts per m&sup2; of sunlight hitting the wall at its peak. Your energy modeller has the exact figure for each facade.</p>
       </div>
-      <div class="inline-flex rounded-lg border border-slate-300 overflow-hidden text-sm font-bold self-start" role="group" aria-label="Value type">
-        <button id="m-tsr" class="px-4 py-2 bg-emerald-600 text-white" onclick="setMode('tsr')">TSR %</button>
-        <button id="m-sa" class="px-4 py-2 bg-white text-slate-700" onclick="setMode('sa')">Solar absorptance</button>
-      </div>
-    </div>
-    <div class="mb-5">
-      <button type="button" onclick="useCoolit()" class="text-sm font-bold px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700"><i class="fa-solid fa-snowflake mr-1.5 text-teal-300"></i>Use KEIM Coolit minimum (TSR 30)</button>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-center">
-      <input id="rng" type="range" min="0" max="100" step="1" value="35" class="w-full" aria-label="Value">
-      <div class="flex items-center gap-2">
-        <input id="num" type="number" inputmode="decimal" class="w-28 px-3 py-2 text-xl font-black text-center border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500" value="35">
-        <span id="unit" class="text-sm font-bold text-slate-500 w-6">%</span>
-      </div>
-    </div>
-
-    <!-- gauge -->
-    <div class="mt-8 mb-16">
-      <div class="flex justify-between text-[11px] font-bold text-slate-500 mb-2"><span>Absorbs little heat (light)</span><span>Absorbs most heat (dark)</span></div>
-      <div class="gauge" id="gauge">
-        <div class="mark" style="left:45%"><span class="text-red-600">Roof limit 0.45</span></div>
-        <div class="mark amber" style="left:75%"><span class="text-amber-700">TSR 25 (0.75)</span></div>
-        <div class="pin" id="pin" style="left:65%"></div>
-      </div>
-      <div class="flex justify-between text-[11px] text-slate-400 mt-1"><span>0</span><span>1</span></div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3 mb-5">
-      <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 text-center">
-        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Solar reflectance (TSR)</p>
-        <p class="text-3xl sm:text-4xl font-black text-slate-900" id="o-tsr">35%</p>
-      </div>
-      <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 text-center">
-        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Solar absorptance</p>
-        <p class="text-3xl sm:text-4xl font-black text-slate-900" id="o-sa">0.65</p>
+      <div>
+        <p class="text-sm font-bold text-slate-700 mb-2">2. Wall build-up</p>
+        <div class="flex flex-wrap gap-2" id="wall-chips">
+          <button class="chip" data-v="3.2">Bare concrete or masonry</button>
+          <button class="chip on" data-v="0.5">Insulated wall</button>
+          <button class="chip" data-v="0.3">External insulation (ETICS)</button>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-1">Typical U-values: 3.2, 0.5 and 0.3 W/m&sup2;K. Edit below if you know yours.</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="checks"></div>
+    <details class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <summary class="text-sm font-bold text-slate-700 cursor-pointer">More settings</summary>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3 text-sm">
+        <label class="block"><span class="text-xs font-bold text-slate-500">Acrylic TSR %</span><input id="in-acr" type="number" value="6" min="1" max="40" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></label>
+        <label class="block"><span class="text-xs font-bold text-slate-500">Coolit TSR %</span><input id="in-coo" type="number" value="30" min="30" max="80" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></label>
+        <label class="block"><span class="text-xs font-bold text-slate-500">Sun on wall W/m&sup2;</span><input id="in-sun" type="number" value="700" min="0" max="1100" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></label>
+        <label class="block"><span class="text-xs font-bold text-slate-500">Wall U-value W/m&sup2;K</span><input id="in-u" type="number" value="0.5" step="0.05" min="0.05" max="6" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></label>
+        <label class="block"><span class="text-xs font-bold text-slate-500">Outside air &deg;C</span><input id="in-air" type="number" value="35" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></label>
+        <label class="block"><span class="text-xs font-bold text-slate-500">Inside &deg;C</span><input id="in-in" type="number" value="24" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></label>
+        <label class="block col-span-2"><span class="text-xs font-bold text-slate-500">Dark facade area m&sup2;</span><input id="in-area" type="number" value="500" min="0" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></label>
+      </div>
+      <p class="text-[11px] text-slate-500 mt-2">Conventional dark paints reflect about 4&ndash;8% of sunlight (Berkeley Lab); 6% is used unless you know the product's tested value.</p>
+    </details>
 
-    <p class="mt-5 text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><strong>Estimate only.</strong> Light reflectance (LRV) is not the same as TSR and cannot be converted into it, so don't use a colour's LRV here. Real surface temperatures depend on the site, so do a site assessment for the project.</p>
+    <!-- RESULTS -->
+    <div class="mt-6 rounded-2xl bg-slate-900 text-white p-5 sm:p-6">
+      <p class="text-xs font-bold uppercase tracking-widest text-teal-300">Peak surface temperature</p>
+      <p class="text-3xl sm:text-5xl font-black mt-1"><span id="o-dt">7.7</span>&nbsp;&deg;C cooler <span class="text-base sm:text-xl font-bold text-slate-300">with Coolit</span></p>
+      <div class="mt-5 space-y-3">
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="font-bold">Acrylic paint</span><span class="font-black" id="o-ta">65 &deg;C</span></div>
+          <div class="bg-white/10 rounded-[10px]"><div class="bar bg-red-500" id="b-a" style="width:65%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="font-bold">KEIM Coolit</span><span class="font-black text-teal-300" id="o-tc">57 &deg;C</span></div>
+          <div class="bg-white/10 rounded-[10px]"><div class="bar bg-teal-400" id="b-c" style="width:57%"></div></div>
+        </div>
+        <p class="text-[11px] text-slate-400">Outside air <span id="o-air">35</span>&nbsp;&deg;C. Bars run from 0 to 100&nbsp;&deg;C.</p>
+        <p class="text-[11px] text-slate-400">Lower than our 10&ndash;20&nbsp;&deg;C heat-lamp results on purpose: this uses KEIM's minimum TSR and a normal breeze, while a heat lamp is mostly infrared, where Coolit works best.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+      <div class="rounded-xl border border-slate-200 p-4">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Heat through the wall at peak</p>
+        <p class="mt-1 text-sm"><span class="font-black text-2xl text-slate-900" id="o-qs">1.9</span> <span class="font-bold text-slate-600">W/m&sup2; less</span></p>
+        <p class="text-xs text-slate-600 mt-1" id="o-qtxt"></p>
+        <p class="text-xs text-slate-600 mt-1"><span class="font-bold" id="o-qarea">0.9 kW</span> less across <span id="o-area">500</span>&nbsp;m&sup2; of facade.</p>
+      </div>
+      <div class="rounded-xl border p-4" id="etics-card">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Safe on insulated facades</p>
+        <p class="mt-1 font-black" id="o-etics"></p>
+        <p class="text-xs text-slate-600 mt-1">Dark colours on external insulation need TSR 25 or more (VDPM).</p>
+      </div>
+      <div class="rounded-xl border border-sky-200 bg-sky-50 p-4">
+        <p class="text-[11px] font-bold uppercase tracking-wider text-sky-800">For your energy modeller</p>
+        <p class="mt-1 text-sm text-slate-800">Solar absorptance: acrylic <b id="o-aa">0.94</b>, KEIM Coolit <b id="o-ac">0.70</b> or lower.</p>
+        <p class="text-xs text-slate-600 mt-1">Enter these for the dark facades in the J1V3 energy model.</p>
+      </div>
+    </div>
+
+    <div class="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-900" id="o-story"></div>
+
+    <details class="mt-4 text-xs text-slate-600">
+      <summary class="font-bold cursor-pointer text-slate-700">How it's worked out</summary>
+      <div class="mt-2 space-y-1">
+        <p>Solar absorptance = 1 &minus; TSR.</p>
+        <p>Peak surface temperature = outside air + absorptance &times; sun on the wall &times; 0.04 (the standard outside surface resistance, m&sup2;K/W, ISO 6946). This is the sol-air temperature used in building physics.</p>
+        <p>Heat through the wall = U-value &times; (surface temperature &minus; inside temperature), at the peak moment. Thermal mass delays and smooths this in a real building.</p>
+        <p>Still air gives higher surface temperatures than this; wind gives lower. Real results depend on the site, so test on site before relying on them.</p>
+      </div>
+    </details>
+
+    <p class="mt-4 text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><strong>Estimate only.</strong> This is a peak-moment estimate, not an annual energy figure or a Section J compliance check. The project's energy modeller works out compliance with the absorptance values above.</p>
   </section>
 
   <!-- HOW COLOUR COUNTS -->
@@ -164,24 +211,23 @@ input[type=range]{accent-color:#059669}
     <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-4 text-center">Where colour counts in Section J</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
-        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-3"><i class="fa-solid fa-house"></i></div>
-        <h3 class="font-black text-slate-900 mb-1">Roofs: a pass or fail limit</h3>
-        <p class="text-sm text-slate-600">In the deemed-to-satisfy route (NCC 2022, J4D4) the upper surface of a roof must have a solar absorptance of no more than <strong>0.45</strong>, which is a TSR of at least 55%. This applies in most climate zones; check the clause for your zone and any exemptions.</p>
-      </div>
-      <div class="bg-white rounded-2xl border border-slate-200 p-5">
         <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center mb-3"><i class="fa-solid fa-building"></i></div>
         <h3 class="font-black text-slate-900 mb-1">Walls: an input for the modeller</h3>
-        <p class="text-sm text-slate-600">The deemed-to-satisfy wall rules are about insulation and glazing, not colour. Where the building is energy modelled (the verification route), the modeller enters each facade's solar absorptance. A lower value means less heat soaking into the wall and less cooling.</p>
+        <p class="text-sm text-slate-600">The deemed-to-satisfy wall rules are about insulation and glazing, not colour. Where the building is energy modelled (J1V3), the modeller enters each facade's solar absorptance. Coolit's lower value means less heat gain in the model.</p>
       </div>
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
         <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3"><i class="fa-solid fa-temperature-high"></i></div>
-        <h3 class="font-black text-slate-900 mb-1">Dark colours on insulated facades</h3>
-        <p class="text-sm text-slate-600">Not a Section J rule, but it matters for the same colour choice. For external insulation systems (ETICS/EIFS), dark colours need a TSR of at least 25% to stay thermally safe (VDPM guidance). KEIM Coolit has a TSR of 30 or more in every shade.</p>
+        <h3 class="font-black text-slate-900 mb-1">Insulated facades need TSR 25+</h3>
+        <p class="text-sm text-slate-600">Section J keeps raising insulation levels, so more buildings use external insulation. A dark colour on insulation overheats unless its TSR is 25 or more (VDPM). KEIM Coolit has a TSR of 30 or more in every shade.</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-3"><i class="fa-solid fa-house"></i></div>
+        <h3 class="font-black text-slate-900 mb-1">Roofs: a pass or fail limit</h3>
+        <p class="text-sm text-slate-600">In the deemed-to-satisfy route (NCC 2022, J4D4) a roof's upper surface must have a solar absorptance of 0.45 or less in most climate zones. This applies to roof finishes rather than facade paints.</p>
       </div>
     </div>
   </section>
 
-  <!-- KEIM -->
   <section class="mt-10">
     <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
       <p class="text-sm sm:text-base font-bold text-emerald-900"><i class="fa-solid fa-comments mr-2"></i>Talk to us about your project</p>
@@ -192,57 +238,53 @@ input[type=range]{accent-color:#059669}
 
   <section class="mt-6 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 text-sm text-slate-600">
     <h3 class="text-lg font-black text-slate-900 mb-1">Which NCC edition?</h3>
-    <p>These limits are from NCC 2022 Volume One. NCC 2025 is being adopted state by state from 2026 to 2027, with different timing in each state. Check which edition applies to your project with the building certifier.</p>
+    <p>The Section J references are from NCC 2022 Volume One. NCC 2025 is being adopted state by state from 2026 to 2027, with different timing in each state. Check which edition applies to your project with the building certifier.</p>
     <p class="mt-3">Related: the <a class="text-emerald-700 font-bold underline" href="https://www.keim.com.au/lca-projection" target="_blank" rel="noopener">LCA calculator</a> for carbon over the building's life, and the <a class="text-emerald-700 font-bold underline" href="certifications.html">certification helper</a> for Green Star, WELL and LEED.</p>
   </section>
 
-  <p class="text-[11px] text-slate-400 text-center mt-8">Based on NCC 2022 Volume One, Section J (ABCB), the VDPM leaflet &ldquo;Total Solar Reflectance and light reference value&rdquo; (04/2021, TSR to ASTM G173) and the KEIM Coolit brochure (04/2026). Guidance only: the project's energy assessor, ESD consultant or certifier decides compliance. KEIM Australia &middot; 7/19 McCauley St, Matraville NSW 2036 &middot; (02) 9748 7160 &middot; keim.com.au</p>
+  <p class="text-[11px] text-slate-400 text-center mt-8">Based on NCC 2022 Volume One, Section J (ABCB); VDPM leaflet &ldquo;Total Solar Reflectance and light reference value&rdquo; (04/2021, TSR to ASTM G173); KEIM Coolit brochure (04/2026); Berkeley Lab cool-colour research (conventional dark finishes 4&ndash;8% solar reflectance); outside surface resistance 0.04 m&sup2;K/W (ISO 6946). Guidance only: the project's energy assessor, ESD consultant or certifier decides compliance. KEIM Australia &middot; 7/19 McCauley St, Matraville NSW 2036 &middot; (02) 9748 7160 &middot; keim.com.au</p>
 </main>
 
 <script>
-let mode = 'tsr';
-const rng = document.getElementById('rng'), num = document.getElementById('num');
-const ROOF_MAX = 0.45, ETICS_MIN_TSR = 25;
-
-function setMode(m) {
-  const sa = currentSA();
-  mode = m;
-  document.getElementById('m-tsr').className = 'px-4 py-2 ' + (m === 'tsr' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700');
-  document.getElementById('m-sa').className = 'px-4 py-2 ' + (m === 'sa' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700');
-  document.getElementById('unit').textContent = m === 'tsr' ? '%' : '';
-  if (m === 'tsr') { rng.min = 0; rng.max = 100; rng.step = 1; setVal(Math.round((1 - sa) * 100)); }
-  else { rng.min = 0; rng.max = 1; rng.step = 0.01; setVal(Math.round(sa * 100) / 100); }
+const RSE = 0.04;
+const $ = id => document.getElementById(id);
+const num = id => { const v = parseFloat($(id).value); return isNaN(v) ? 0 : v; };
+function chips(groupId, inputId) {
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(b => b.addEventListener('click', () => {
+    $(inputId).value = b.dataset.v; calc();
+  }));
 }
-function useCoolit() { if (mode !== 'tsr') setMode('tsr'); setVal(30); }
-function setVal(v) { rng.value = v; num.value = v; update(); }
-function currentSA() {
-  let v = parseFloat(num.value); if (isNaN(v)) v = 0;
-  const sa = mode === 'tsr' ? 1 - v / 100 : v;
-  return Math.min(1, Math.max(0, sa));
+function syncChips(groupId, value) {
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(b => b.classList.toggle('on', Math.abs(parseFloat(b.dataset.v) - value) < 1e-9));
 }
-function card(ok, title, body, neutral) {
-  const c = neutral ? ['bg-sky-50 border-sky-200', 'text-sky-800', 'fa-circle-info']
-          : ok ? ['bg-emerald-50 border-emerald-200', 'text-emerald-800', 'fa-circle-check']
-               : ['bg-red-50 border-red-200', 'text-red-700', 'fa-circle-xmark'];
-  return `<div class="rounded-xl border ${c[0]} p-4"><p class="font-black ${c[1]}"><i class="fa-solid ${c[2]} mr-1.5"></i>${title}</p><p class="text-sm text-slate-700 mt-1">${body}</p></div>`;
+const f1 = v => (Math.round(v * 10) / 10).toFixed(1);
+function calc() {
+  const tA = Math.min(Math.max(num('in-acr'), 0), 100), tC = Math.min(Math.max(num('in-coo'), 30), 100);
+  const G = Math.max(num('in-sun'), 0), U = Math.max(num('in-u'), 0), air = num('in-air'), ins = num('in-in'), area = Math.max(num('in-area'), 0);
+  syncChips('sun-chips', G); syncChips('wall-chips', U);
+  const aA = 1 - tA / 100, aC = 1 - tC / 100;
+  const sA = air + aA * G * RSE, sC = air + aC * G * RSE, dT = sA - sC;
+  const qA = Math.max(0, U * (sA - ins)), qC = Math.max(0, U * (sC - ins)), dq = qA - qC;
+  $('o-dt').textContent = f1(dT);
+  $('o-ta').innerHTML = Math.round(sA) + ' &deg;C'; $('o-tc').innerHTML = Math.round(sC) + ' &deg;C';
+  $('b-a').style.width = Math.min(100, Math.max(0, sA)) + '%'; $('b-c').style.width = Math.min(100, Math.max(0, sC)) + '%';
+  $('o-air').textContent = air;
+  $('o-qs').textContent = f1(dq);
+  $('o-qtxt').innerHTML = 'Acrylic ' + f1(qA) + ' vs Coolit ' + f1(qC) + ' W/m&sup2;.';
+  $('o-qarea').textContent = (dq * area / 1000).toFixed(1) + ' kW';
+  $('o-area').textContent = area;
+  $('o-aa').textContent = aA.toFixed(2); $('o-ac').textContent = aC.toFixed(2);
+  const aOk = tA >= 25;
+  $('o-etics').innerHTML = '<span class="' + (aOk ? 'text-emerald-700' : 'text-red-600') + '"><i class="fa-solid ' + (aOk ? 'fa-circle-check' : 'fa-circle-xmark') + ' mr-1"></i>Acrylic: TSR ' + tA + '</span><br><span class="text-emerald-700"><i class="fa-solid fa-circle-check mr-1"></i>KEIM Coolit: TSR ' + tC + '+</span>';
+  $('etics-card').className = 'rounded-xl border p-4 ' + (aOk ? 'border-slate-200' : 'border-amber-200 bg-amber-50');
+  const kw = (dq * area / 1000).toFixed(1);
+  $('o-story').innerHTML = U >= 1.5
+    ? '<strong>Bare concrete or masonry:</strong> the cooler surface cuts the heat coming through the wall by about ' + f1(dq) + ' W per m&sup2; at peak, ' + kw + ' kW across the facade. That is a cooling saving the energy modeller can count.'
+    : '<strong>Insulated walls:</strong> the insulation already blocks most heat, so the energy saving through the wall is small (' + f1(dq) + ' W per m&sup2; at peak). The main benefit is a facade surface about ' + f1(dT) + '&nbsp;&deg;C cooler: less thermal stress, lower risk of cracking, a longer life, and dark colours that are safe on external insulation.';
 }
-function update() {
-  const sa = currentSA(), tsr = (1 - sa) * 100;
-  document.getElementById('o-tsr').textContent = Math.round(tsr) + '%';
-  document.getElementById('o-sa').textContent = sa.toFixed(2);
-  document.getElementById('pin').style.left = (sa * 100) + '%';
-  const roofOk = sa <= ROOF_MAX + 1e-9, eticsOk = tsr >= ETICS_MIN_TSR - 1e-9;
-  document.getElementById('checks').innerHTML =
-    card(roofOk, roofOk ? 'Roof: meets 0.45' : 'Roof: over 0.45',
-      roofOk ? 'Within the deemed-to-satisfy roof limit (J4D4).' : 'Too much heat absorbed for the deemed-to-satisfy roof limit. A lighter colour, or the energy modelling route, would be needed.') +
-    card(eticsOk, eticsOk ? 'Insulated facade: TSR 25+' : 'Insulated facade: under TSR 25',
-      eticsOk ? 'Meets the dark-colour guidance for external insulation systems.' : 'Too dark for external insulation systems. Choose a lighter colour or KEIM Coolit (TSR 30 or more in every shade).') +
-    card(true, 'Walls: give the modeller ' + sa.toFixed(2),
-      'Use this solar absorptance for the facade in the energy model.', true);
-}
-rng.addEventListener('input', () => { num.value = rng.value; update(); });
-num.addEventListener('input', () => { rng.value = num.value; update(); });
-update();
+chips('sun-chips', 'in-sun'); chips('wall-chips', 'in-u');
+['in-acr','in-coo','in-sun','in-u','in-air','in-in','in-area'].forEach(id => $(id).addEventListener('input', calc));
+calc();
 </script>
 </body>
 </html>
