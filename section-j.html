@@ -28,20 +28,24 @@ input[type=range]{accent-color:#059669}
 .chip{padding:.5rem .75rem;border-radius:.6rem;border:1px solid #cbd5e1;background:#fff;font-weight:700;font-size:.85rem;color:#334155}
 .chip.on{background:#059669;border-color:#059669;color:#fff}
 .bar{height:34px;border-radius:10px;transition:width .3s}
+.embed .no-embed{display:none!important}
+.embed main{padding-top:4px;padding-bottom:8px}
+.only-embed{display:none}.embed .only-embed{display:block}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
-<img src="keim-header.png" alt="KEIM" class="w-full h-auto block bg-[#3a3c40]">
+<script>try{if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed")}catch(e){}</script>
+<img src="keim-header.png" alt="KEIM" class="no-embed w-full h-auto block bg-[#3a3c40]">
 <main class="max-w-5xl mx-auto px-4 py-8">
 
-  <div class="text-center mb-8">
+  <div class="no-embed text-center mb-8">
     <p class="text-xs sm:text-sm font-bold text-emerald-600 uppercase tracking-widest mb-2">Section J &middot; dark facades</p>
     <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Dark colours, cooler facades</h1>
     <p class="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">Work out how much cooler a dark KEIM Coolit facade runs than an acrylic paint in the same colour, the heat it keeps out, and the values to give your energy modeller.</p>
   </div>
 
   <!-- VISUAL: same colour, two paints -->
-  <section class="bg-slate-900 rounded-2xl p-5 sm:p-8 mb-8 text-white overflow-hidden">
+  <section class="no-embed bg-slate-900 rounded-2xl p-5 sm:p-8 mb-8 text-white overflow-hidden">
     <p class="text-xs font-bold uppercase tracking-widest text-emerald-300 mb-1 text-center">Same dark colour, two paints</p>
     <h2 class="text-2xl sm:text-3xl font-black text-center mb-6">KEIM Coolit keeps dark facades cooler</h2>
     <svg viewBox="0 0 800 400" class="w-full h-auto" role="img" aria-label="Sun shining on two dark walls of the same colour. The acrylic paint absorbs the heat; the KEIM Coolit wall reflects the near-infrared heat and stays cooler.">
@@ -208,8 +212,9 @@ input[type=range]{accent-color:#059669}
     <p class="mt-4 text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><strong>Estimate only.</strong> This is a peak-moment estimate, not an annual energy figure or a Section J compliance check. The project's energy modeller works out compliance with the absorptance values above.</p>
   </section>
 
+  <p class="only-embed text-[11px] text-slate-500 text-center mt-3">Guidance only; the energy modeller decides compliance. <a href="https://hoodad-lab.github.io/LCA/section-j.html" target="_blank" rel="noopener" class="font-bold underline text-emerald-700">Full guide: where colour counts in Section J</a></p>
   <!-- HOW COLOUR COUNTS -->
-  <section class="mt-10">
+  <section class="no-embed mt-10">
     <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-4 text-center">Where colour counts in Section J</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-white rounded-2xl border border-slate-200 p-5">
@@ -230,7 +235,7 @@ input[type=range]{accent-color:#059669}
     </div>
   </section>
 
-  <section class="mt-10">
+  <section class="no-embed mt-10">
     <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
       <p class="text-sm sm:text-base font-bold text-emerald-900"><i class="fa-solid fa-comments mr-2"></i>Talk to us about your project</p>
       <p class="text-sm text-emerald-800 mt-2">KEIM gives one TSR statement for the whole Coolit range (30 or more for every shade) rather than a value per colour. How much a facade heats up depends on the site, so we'll help you plan a sample area and assessment. The Coolit brochure and supporting documents are available on request.</p>
@@ -238,13 +243,13 @@ input[type=range]{accent-color:#059669}
     </div>
   </section>
 
-  <section class="mt-6 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 text-sm text-slate-600">
+  <section class="no-embed mt-6 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 text-sm text-slate-600">
     <h3 class="text-lg font-black text-slate-900 mb-1">Which NCC edition?</h3>
     <p>The Section J references are from NCC 2022 Volume One. NCC 2025 is being adopted state by state from 2026 to 2027, with different timing in each state. Check which edition applies to your project with the building certifier.</p>
     <p class="mt-3">Related: the <a class="text-emerald-700 font-bold underline" href="https://www.keim.com.au/lca-projection" target="_blank" rel="noopener">LCA calculator</a> for carbon over the building's life, and the <a class="text-emerald-700 font-bold underline" href="certifications.html">certification helper</a> for Green Star, WELL and LEED.</p>
   </section>
 
-  <p class="text-[11px] text-slate-400 text-center mt-8">Based on NCC 2022 Volume One, Section J (ABCB); VDPM leaflet &ldquo;Total Solar Reflectance and light reference value&rdquo; (04/2021, TSR to ASTM G173); KEIM Coolit brochure (04/2026); Berkeley Lab cool-colour research (conventional dark finishes 4&ndash;8% solar reflectance); outside surface resistance 0.04 m&sup2;K/W (ISO 6946). Guidance only: the project's energy assessor, ESD consultant or certifier decides compliance. KEIM Australia &middot; 7/19 McCauley St, Matraville NSW 2036 &middot; (02) 9748 7160 &middot; keim.com.au</p>
+  <p class="no-embed text-[11px] text-slate-400 text-center mt-8">Based on NCC 2022 Volume One, Section J (ABCB); VDPM leaflet &ldquo;Total Solar Reflectance and light reference value&rdquo; (04/2021, TSR to ASTM G173); KEIM Coolit brochure (04/2026); Berkeley Lab cool-colour research (conventional dark finishes 4&ndash;8% solar reflectance); outside surface resistance 0.04 m&sup2;K/W (ISO 6946). Guidance only: the project's energy assessor, ESD consultant or certifier decides compliance. KEIM Australia &middot; 7/19 McCauley St, Matraville NSW 2036 &middot; (02) 9748 7160 &middot; keim.com.au</p>
 </main>
 
 <script>
