@@ -7,6 +7,7 @@
 <meta name="description" content="Work out how much cooler a dark KEIM Coolit facade runs than an acrylic paint in the same colour, the heat it keeps out, and what it means for Section J and insulated facades.">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 input[type=range]{accent-color:#059669}
@@ -193,15 +194,16 @@ input[type=range]{accent-color:#059669}
 
     <div class="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-900" id="o-story"></div>
 
-    <details class="mt-4 text-xs text-slate-600">
-      <summary class="font-bold cursor-pointer text-slate-700">How it's worked out</summary>
-      <div class="mt-2 space-y-1">
-        <p>Solar absorptance = 1 &minus; TSR.</p>
-        <p>Peak surface temperature = outside air + absorptance &times; sun on the wall &times; 0.04 (the standard outside surface resistance, m&sup2;K/W, ISO 6946). This is the sol-air temperature used in building physics.</p>
-        <p>Heat through the wall = U-value &times; (surface temperature &minus; inside temperature), at the peak moment. Thermal mass delays and smooths this in a real building.</p>
-        <p>Still air gives higher surface temperatures than this; wind gives lower. Real results depend on the site, so test on site before relying on them.</p>
-      </div>
-    </details>
+    <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">Your calculation</p>
+      <ol class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-decimal pl-5" id="o-steps"></ol>
+      <p class="text-[11px] text-slate-500 mt-2">0.04 m&sup2;K/W is the standard outside surface resistance (ISO 6946); this is the sol-air method used in building physics. Still air gives higher surface temperatures, wind lower, and thermal mass delays and smooths the heat flow.</p>
+    </div>
+
+    <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:items-end">
+      <label class="block flex-1"><span class="text-xs font-bold text-slate-500">Project name (shown on the report)</span><input id="in-proj" type="text" placeholder="e.g. 12 Smith St, Surry Hills" class="mt-1 w-full px-3 py-2.5 border border-slate-300 rounded-lg"></label>
+      <button type="button" id="dl" onclick="downloadReport()" class="bg-slate-900 hover:bg-slate-700 text-white font-bold px-5 py-3 rounded-lg text-sm"><i class="fa-solid fa-file-arrow-down mr-2"></i>Download report (PDF)</button>
+    </div>
 
     <p class="mt-4 text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><strong>Estimate only.</strong> This is a peak-moment estimate, not an annual energy figure or a Section J compliance check. The project's energy modeller works out compliance with the absorptance values above.</p>
   </section>
@@ -278,10 +280,79 @@ function calc() {
   $('o-etics').innerHTML = '<span class="' + (aOk ? 'text-emerald-700' : 'text-red-600') + '"><i class="fa-solid ' + (aOk ? 'fa-circle-check' : 'fa-circle-xmark') + ' mr-1"></i>Acrylic: TSR ' + tA + '</span><br><span class="text-emerald-700"><i class="fa-solid fa-circle-check mr-1"></i>KEIM Coolit: TSR ' + tC + '+</span>';
   $('etics-card').className = 'rounded-xl border p-4 ' + (aOk ? 'border-slate-200' : 'border-amber-200 bg-amber-50');
   const kw = (dq * area / 1000).toFixed(1);
-  $('o-story').innerHTML = U >= 1.5
+  const n2 = v => v.toFixed(2);
+  const steps = [
+    'Solar absorptance = 1 \u2212 TSR: acrylic 1 \u2212 ' + (tA / 100).toFixed(2) + ' = ' + n2(aA) + '; Coolit 1 \u2212 ' + (tC / 100).toFixed(2) + ' = ' + n2(aC),
+    'Acrylic surface = ' + air + ' + ' + n2(aA) + ' \u00d7 ' + G + ' \u00d7 0.04 = ' + f1(sA) + ' \u00b0C',
+    'Coolit surface = ' + air + ' + ' + n2(aC) + ' \u00d7 ' + G + ' \u00d7 0.04 = ' + f1(sC) + ' \u00b0C, so ' + f1(dT) + ' \u00b0C cooler',
+    'Heat through wall = U \u00d7 (surface \u2212 inside): acrylic ' + U + ' \u00d7 (' + f1(sA) + ' \u2212 ' + ins + ') = ' + f1(qA) + ' W/m\u00b2; Coolit ' + U + ' \u00d7 (' + f1(sC) + ' \u2212 ' + ins + ') = ' + f1(qC) + ' W/m\u00b2',
+    'Saving = ' + f1(dq) + ' W/m\u00b2 \u00d7 ' + area + ' m\u00b2 = ' + kw + ' kW less heat at peak'
+  ];
+  $('o-steps').innerHTML = steps.map(t => '<li>' + t + '</li>').join('');
+  window.R = {tA, tC, G, U, air, ins, area, aA, aC, sA, sC, dT, qA, qC, dq, kw, steps, aOk: tA >= 25};
+  R.story = U >= 1.5
     ? '<strong>Bare concrete or masonry:</strong> the cooler surface cuts the heat coming through the wall by about ' + f1(dq) + ' W per m&sup2; at peak, ' + kw + ' kW across the facade. That is a cooling saving the energy modeller can count.'
     : '<strong>Insulated walls:</strong> the insulation already blocks most heat, so the energy saving through the wall is small (' + f1(dq) + ' W per m&sup2; at peak). The main benefit is a facade surface about ' + f1(dT) + '&nbsp;&deg;C cooler: less thermal stress, lower risk of cracking, a longer life, and dark colours that are safe on external insulation.';
+  $('o-story').innerHTML = R.story;
 }
+
+// ---------- PDF report ----------
+function loadImg(src) {
+  return new Promise(res => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => { try { const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext('2d').drawImage(im, 0, 0); res({ data: c.toDataURL('image/png'), w: im.naturalWidth, h: im.naturalHeight }); } catch (e) { res(null); } }; im.onerror = () => res(null); im.src = src; });
+}
+const plain = s => String(s).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&deg;/g, '°').replace(/&sup2;/g, '²').replace(/&amp;/g, '&').replace(/−/g, '-').replace(/²/g, '2').replace(/m2K/g, 'm2K');
+async function downloadReport() {
+  const btn = $('dl'); btn.disabled = true;
+  try {
+    calc();
+    const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const W = 210, M = 16, DARK = [15, 23, 42], GREY = [100, 116, 139], TEAL = [13, 148, 136], RED = [220, 38, 38], LINE = [226, 232, 240];
+    const T = (t, x, y, o = {}) => { doc.setFont('helvetica', o.bold ? 'bold' : 'normal'); doc.setFontSize(o.size || 10); doc.setTextColor(...(o.color || DARK)); doc.text(t, x, y, { align: o.align || 'left', maxWidth: o.max }); };
+    const r = window.R, proj = ($('in-proj').value || '').trim();
+    const d = new Date(), dateStr = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+    const hdr = await loadImg('keim-header.png');
+    let y = 0;
+    if (hdr) { const h = W * hdr.h / hdr.w; doc.addImage(hdr.data, 'PNG', 0, 0, W, h); y = h + 8; } else { doc.setFillColor(58, 60, 64); doc.rect(0, 0, W, 22, 'F'); T('KEIM', M, 14, { size: 16, bold: true, color: [255, 255, 255] }); y = 30; }
+    T('Dark colours, cooler facades', M, y, { size: 18, bold: true }); y += 6;
+    T('KEIM Coolit vs acrylic paint in the same dark colour' + (proj ? '  |  ' + proj : ''), M, y, { size: 9.5, color: GREY });
+    T(dateStr, W - M, y, { size: 9.5, color: GREY, align: 'right' }); y += 8;
+    // headline box
+    doc.setFillColor(...DARK); doc.roundedRect(M, y, W - 2 * M, 44, 3, 3, 'F');
+    T('PEAK SURFACE TEMPERATURE', M + 6, y + 8, { size: 8, bold: true, color: [94, 234, 212] });
+    T(r.dT.toFixed(1) + ' °C cooler with KEIM Coolit', M + 6, y + 17, { size: 16, bold: true, color: [255, 255, 255] });
+    const bx = M + 6, bw = W - 2 * M - 40, sc = bw / 100;
+    T('Acrylic', bx, y + 26, { size: 8.5, color: [226, 232, 240] }); doc.setFillColor(51, 65, 85); doc.roundedRect(bx, y + 27.5, bw, 4.5, 1.5, 1.5, 'F'); doc.setFillColor(...RED); doc.roundedRect(bx, y + 27.5, Math.max(2, Math.min(100, r.sA)) * sc, 4.5, 1.5, 1.5, 'F'); T(Math.round(r.sA) + ' °C', bx + bw + 4, y + 31.3, { size: 9, bold: true, color: [255, 255, 255] });
+    T('KEIM Coolit', bx, y + 36, { size: 8.5, color: [226, 232, 240] }); doc.setFillColor(51, 65, 85); doc.roundedRect(bx, y + 37.5, bw, 4.5, 1.5, 1.5, 'F'); doc.setFillColor(45, 212, 191); doc.roundedRect(bx, y + 37.5, Math.max(2, Math.min(100, r.sC)) * sc, 4.5, 1.5, 1.5, 'F'); T(Math.round(r.sC) + ' °C', bx + bw + 4, y + 41.3, { size: 9, bold: true, color: [94, 234, 212] });
+    y += 52;
+    // three result tiles
+    const tw = (W - 2 * M - 8) / 3, tiles = [
+      ['HEAT THROUGH THE WALL AT PEAK', r.dq.toFixed(1) + ' W/m2 less', 'Acrylic ' + r.qA.toFixed(1) + ' vs Coolit ' + r.qC.toFixed(1) + ' W/m2. ' + r.kw + ' kW less across ' + r.area + ' m2.'],
+      ['SAFE ON INSULATED FACADES', (r.aOk ? 'Acrylic passes' : 'Acrylic fails') + ', Coolit passes', 'Dark colours on external insulation need TSR 25+ (VDPM). Acrylic TSR ' + r.tA + ', Coolit TSR ' + r.tC + '+.'],
+      ['FOR THE ENERGY MODELLER', 'Absorptance ' + r.aA.toFixed(2) + ' vs ' + r.aC.toFixed(2), 'Acrylic ' + r.aA.toFixed(2) + ', KEIM Coolit ' + r.aC.toFixed(2) + ' or lower, for the J1V3 energy model.']];
+    tiles.forEach((t, i) => { const x = M + i * (tw + 4); doc.setDrawColor(...LINE); doc.setLineWidth(0.3); doc.roundedRect(x, y, tw, 30, 2, 2, 'S'); T(t[0], x + 3, y + 5.5, { size: 6.5, bold: true, color: GREY }); T(t[1], x + 3, y + 12, { size: 10, bold: true }); doc.setFontSize(7.5); T(doc.splitTextToSize(t[2], tw - 6), x + 3, y + 18, { size: 7.5, color: GREY }); });
+    y += 36;
+    // story
+    doc.setFillColor(236, 253, 245); doc.setFontSize(9); const st = doc.splitTextToSize(plain(r.story), W - 2 * M - 8); doc.setFontSize(9); doc.roundedRect(M, y, W - 2 * M, st.length * 4.4 + 6, 2, 2, 'F'); T(st, M + 4, y + 6, { size: 9, color: [6, 78, 59] }); y += st.length * 4.4 + 12;
+    // inputs
+    T('Inputs', M, y, { size: 11, bold: true }); y += 5;
+    const inp = [['Sun on the wall', r.G + ' W/m2'], ['Wall U-value', r.U + ' W/m2K'], ['Outside air / inside', r.air + ' °C / ' + r.ins + ' °C'], ['Dark facade area', r.area + ' m2'], ['Acrylic TSR', r.tA + '% (conventional dark finishes 4-8%, Berkeley Lab)'], ['KEIM Coolit TSR', r.tC + '% (KEIM minimum for every shade)']];
+    inp.forEach((row, i) => { const yy = y + i * 5.2; if (i % 2 === 0) { doc.setFillColor(248, 250, 252); doc.rect(M, yy - 3.6, W - 2 * M, 5.2, 'F'); } T(row[0], M + 2, yy, { size: 8.5, color: GREY }); T(row[1], M + 52, yy, { size: 8.5 }); });
+    y += inp.length * 5.2 + 5;
+    // steps
+    T('Calculation', M, y, { size: 11, bold: true }); y += 5;
+    r.steps.forEach((s, i) => { const l = doc.splitTextToSize((i + 1) + '.  ' + plain(s), W - 2 * M - 2); doc.setFontSize(8.5); T(l, M + 2, y, { size: 8.5 }); y += l.length * 4 + 1.2; });
+    doc.setFontSize(7.5); const meth = doc.splitTextToSize('Method: surface temperature = outside air + solar absorptance x sun on the wall x 0.04 m2K/W (standard outside surface resistance, ISO 6946), i.e. the sol-air temperature. Heat through the wall = U-value x (surface - inside temperature). Still air gives higher surface temperatures, wind lower; thermal mass delays and smooths heat flow.', W - 2 * M);
+    T(meth, M, y + 1, { size: 7.5, color: GREY }); y += meth.length * 3.4 + 5;
+    // notes
+    doc.setFillColor(255, 251, 235); doc.setFontSize(8); const note = doc.splitTextToSize('Estimate only. A peak-moment estimate, not an annual energy figure or a Section J compliance check; the project\'s energy modeller, ESD consultant or certifier decides compliance. Results on a real facade depend on the site (sun exposure, orientation, nearby buildings, substrate), so do a sample area and site assessment before relying on them. Section J references: NCC 2022 Volume One; check which NCC edition applies in your state.', W - 2 * M - 8);
+    doc.setFontSize(8); doc.roundedRect(M, y, W - 2 * M, note.length * 3.7 + 5, 2, 2, 'F'); T(note, M + 4, y + 5, { size: 8, color: [120, 53, 15] }); y += note.length * 3.7 + 9;
+    doc.setDrawColor(...LINE); doc.line(M, 284, W - M, 284);
+    T('KEIM Australia  |  7/19 McCauley St, Matraville NSW 2036  |  (02) 9748 7160  |  info@keim.com.au  |  keim.com.au', W / 2, 289, { size: 7.5, color: GREY, align: 'center' });
+    T('Sources: KEIM Coolit brochure 04/2026 (TSR 30+ all shades); VDPM leaflet TSR 04/2021; Berkeley Lab cool-colour research; ISO 6946; NCC 2022 Section J (ABCB).', W / 2, 293, { size: 6.5, color: GREY, align: 'center' });
+    doc.save('KEIM-Coolit-facade-report' + (proj ? '-' + proj.replace(/[^a-z0-9]+/gi, '-').slice(0, 40) : '') + '.pdf');
+  } finally { btn.disabled = false; }
+}
+
 chips('sun-chips', 'in-sun'); chips('wall-chips', 'in-u');
 ['in-acr','in-coo','in-sun','in-u','in-air','in-in','in-area'].forEach(id => $(id).addEventListener('input', calc));
 calc();
